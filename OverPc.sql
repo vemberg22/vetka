@@ -1,23 +1,23 @@
 -- phpMyAdmin SQL Dump
--- version 4.4.15.5
+-- version 3.5.1
 -- http://www.phpmyadmin.net
 --
--- Хост: 127.0.0.1:3306
--- Время создания: Май 28 2017 г., 10:25
--- Версия сервера: 5.6.29
--- Версия PHP: 5.3.29
+-- Хост: 127.0.0.1
+-- Время создания: Май 29 2017 г., 19:06
+-- Версия сервера: 5.5.25
+-- Версия PHP: 5.3.13
 
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
 
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
+/*!40101 SET NAMES utf8 */;
 
 --
--- База данных: `OverPc`
+-- База данных: `overpc`
 --
 
 -- --------------------------------------------------------
@@ -27,11 +27,14 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE IF NOT EXISTS `wp_commentmeta` (
-  `meta_id` bigint(20) unsigned NOT NULL,
+  `meta_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `comment_id` bigint(20) unsigned NOT NULL DEFAULT '0',
   `meta_key` varchar(255) DEFAULT NULL,
-  `meta_value` longtext
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `meta_value` longtext,
+  PRIMARY KEY (`meta_id`),
+  KEY `comment_id` (`comment_id`),
+  KEY `meta_key` (`meta_key`(191))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -40,7 +43,7 @@ CREATE TABLE IF NOT EXISTS `wp_commentmeta` (
 --
 
 CREATE TABLE IF NOT EXISTS `wp_comments` (
-  `comment_ID` bigint(20) unsigned NOT NULL,
+  `comment_ID` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `comment_post_ID` bigint(20) unsigned NOT NULL DEFAULT '0',
   `comment_author` tinytext NOT NULL,
   `comment_author_email` varchar(100) NOT NULL DEFAULT '',
@@ -54,8 +57,15 @@ CREATE TABLE IF NOT EXISTS `wp_comments` (
   `comment_agent` varchar(255) NOT NULL DEFAULT '',
   `comment_type` varchar(20) NOT NULL DEFAULT '',
   `comment_parent` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `user_id` bigint(20) unsigned NOT NULL DEFAULT '0'
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+  `user_id` bigint(20) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`comment_ID`),
+  KEY `comment_post_ID` (`comment_post_ID`),
+  KEY `comment_approved_date_gmt` (`comment_approved`,`comment_date_gmt`),
+  KEY `comment_date_gmt` (`comment_date_gmt`),
+  KEY `comment_parent` (`comment_parent`),
+  KEY `comment_author_email` (`comment_author_email`(10)),
+  KEY `woo_idx_comment_type` (`comment_type`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
 
 --
 -- Дамп данных таблицы `wp_comments`
@@ -71,7 +81,7 @@ INSERT INTO `wp_comments` (`comment_ID`, `comment_post_ID`, `comment_author`, `c
 --
 
 CREATE TABLE IF NOT EXISTS `wp_links` (
-  `link_id` bigint(20) unsigned NOT NULL,
+  `link_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `link_url` varchar(255) NOT NULL DEFAULT '',
   `link_name` varchar(255) NOT NULL DEFAULT '',
   `link_image` varchar(255) NOT NULL DEFAULT '',
@@ -83,8 +93,10 @@ CREATE TABLE IF NOT EXISTS `wp_links` (
   `link_updated` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `link_rel` varchar(255) NOT NULL DEFAULT '',
   `link_notes` mediumtext NOT NULL,
-  `link_rss` varchar(255) NOT NULL DEFAULT ''
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `link_rss` varchar(255) NOT NULL DEFAULT '',
+  PRIMARY KEY (`link_id`),
+  KEY `link_visible` (`link_visible`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -93,11 +105,13 @@ CREATE TABLE IF NOT EXISTS `wp_links` (
 --
 
 CREATE TABLE IF NOT EXISTS `wp_options` (
-  `option_id` bigint(20) unsigned NOT NULL,
+  `option_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `option_name` varchar(191) NOT NULL DEFAULT '',
   `option_value` longtext NOT NULL,
-  `autoload` varchar(20) NOT NULL DEFAULT 'yes'
-) ENGINE=InnoDB AUTO_INCREMENT=439 DEFAULT CHARSET=utf8;
+  `autoload` varchar(20) NOT NULL DEFAULT 'yes',
+  PRIMARY KEY (`option_id`),
+  UNIQUE KEY `option_name` (`option_name`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=571 ;
 
 --
 -- Дамп данных таблицы `wp_options`
@@ -142,7 +156,7 @@ INSERT INTO `wp_options` (`option_id`, `option_name`, `option_value`, `autoload`
 (36, 'comment_max_links', '2', 'yes'),
 (37, 'gmt_offset', '3', 'yes'),
 (38, 'default_email_category', '1', 'yes'),
-(39, 'recently_edited', 'a:2:{i:0;s:76:"C:\\OpenServer\\domains\\localhost\\OverPc/wp-content/themes/travelify/style.css";i:2;s:0:"";}', 'no'),
+(39, 'recently_edited', 'a:3:{i:0;s:66:"Z:\\home\\localhost\\www\\OverPc/wp-content/themes/travelify/style.css";i:2;s:76:"C:\\OpenServer\\domains\\localhost\\OverPc/wp-content/themes/travelify/style.css";i:3;s:0:"";}', 'no'),
 (40, 'template', 'travelify', 'yes'),
 (41, 'stylesheet', 'travelify', 'yes'),
 (42, 'comment_whitelist', '1', 'yes'),
@@ -203,23 +217,21 @@ INSERT INTO `wp_options` (`option_id`, `option_name`, `option_value`, `autoload`
 (97, 'widget_recent-comments', 'a:2:{i:2;a:2:{s:5:"title";s:0:"";s:6:"number";i:5;}s:12:"_multiwidget";i:1;}', 'yes'),
 (98, 'widget_archives', 'a:2:{i:2;a:3:{s:5:"title";s:0:"";s:5:"count";i:0;s:8:"dropdown";i:0;}s:12:"_multiwidget";i:1;}', 'yes'),
 (99, 'widget_meta', 'a:2:{i:2;a:1:{s:5:"title";s:0:"";}s:12:"_multiwidget";i:1;}', 'yes'),
-(100, 'sidebars_widgets', 'a:5:{s:19:"wp_inactive_widgets";a:3:{i:0;s:25:"woocommerce_layered_nav-2";i:1;s:25:"woocommerce_layered_nav-3";i:2;s:32:"woocommerce_product_categories-2";}s:22:"travelify_left_sidebar";a:4:{i:0;s:17:"recent-comments-2";i:1;s:10:"archives-2";i:2;s:12:"categories-2";i:3;s:6:"meta-2";}s:23:"travelify_right_sidebar";a:6:{i:0;s:8:"search-2";i:1;s:25:"woocommerce_layered_nav-6";i:2;s:26:"woocommerce_price_filter-2";i:3;s:25:"woocommerce_layered_nav-5";i:4;s:25:"woocommerce_layered_nav-4";i:5;s:32:"woocommerce_product_categories-3";}s:23:"travelify_footer_widget";a:3:{i:0;s:14:"recent-posts-2";i:1;s:31:"woocommerce_product_tag_cloud-2";i:2;s:38:"woocommerce_recently_viewed_products-2";}s:13:"array_version";i:3;}', 'yes'),
+(100, 'sidebars_widgets', 'a:5:{s:19:"wp_inactive_widgets";a:3:{i:0;s:25:"woocommerce_layered_nav-2";i:1;s:25:"woocommerce_layered_nav-3";i:2;s:32:"woocommerce_product_categories-2";}s:22:"travelify_left_sidebar";a:4:{i:0;s:17:"recent-comments-2";i:1;s:10:"archives-2";i:2;s:12:"categories-2";i:3;s:6:"meta-2";}s:23:"travelify_right_sidebar";a:11:{i:0;s:8:"search-2";i:1;s:25:"woocommerce_layered_nav-6";i:2;s:26:"woocommerce_layered_nav-11";i:3;s:26:"woocommerce_layered_nav-10";i:4;s:26:"woocommerce_price_filter-2";i:5;s:25:"woocommerce_layered_nav-5";i:6;s:25:"woocommerce_layered_nav-4";i:7;s:25:"woocommerce_layered_nav-8";i:8;s:25:"woocommerce_layered_nav-7";i:9;s:32:"woocommerce_product_categories-3";i:10;s:25:"woocommerce_layered_nav-9";}s:23:"travelify_footer_widget";a:3:{i:0;s:14:"recent-posts-2";i:1;s:31:"woocommerce_product_tag_cloud-2";i:2;s:38:"woocommerce_recently_viewed_products-2";}s:13:"array_version";i:3;}', 'yes'),
 (101, 'widget_pages', 'a:1:{s:12:"_multiwidget";i:1;}', 'yes'),
 (102, 'widget_calendar', 'a:1:{s:12:"_multiwidget";i:1;}', 'yes'),
 (103, 'widget_tag_cloud', 'a:1:{s:12:"_multiwidget";i:1;}', 'yes'),
 (104, 'widget_nav_menu', 'a:1:{s:12:"_multiwidget";i:1;}', 'yes'),
-(105, 'cron', 'a:9:{i:1495859517;a:1:{s:28:"woocommerce_cleanup_sessions";a:1:{s:32:"40cd750bba9870f18aada2478b24840a";a:3:{s:8:"schedule";s:10:"twicedaily";s:4:"args";a:0:{}s:8:"interval";i:43200;}}}i:1495860825;a:1:{s:32:"woocommerce_cancel_unpaid_orders";a:1:{s:32:"40cd750bba9870f18aada2478b24840a";a:2:{s:8:"schedule";b:0;s:4:"args";a:0:{}}}}i:1495900420;a:3:{s:16:"wp_version_check";a:1:{s:32:"40cd750bba9870f18aada2478b24840a";a:3:{s:8:"schedule";s:10:"twicedaily";s:4:"args";a:0:{}s:8:"interval";i:43200;}}s:17:"wp_update_plugins";a:1:{s:32:"40cd750bba9870f18aada2478b24840a";a:3:{s:8:"schedule";s:10:"twicedaily";s:4:"args";a:0:{}s:8:"interval";i:43200;}}s:16:"wp_update_themes";a:1:{s:32:"40cd750bba9870f18aada2478b24840a";a:3:{s:8:"schedule";s:10:"twicedaily";s:4:"args";a:0:{}s:8:"interval";i:43200;}}}i:1495900438;a:1:{s:19:"wp_scheduled_delete";a:1:{s:32:"40cd750bba9870f18aada2478b24840a";a:3:{s:8:"schedule";s:5:"daily";s:4:"args";a:0:{}s:8:"interval";i:86400;}}}i:1495902717;a:1:{s:30:"woocommerce_tracker_send_event";a:1:{s:32:"40cd750bba9870f18aada2478b24840a";a:3:{s:8:"schedule";s:5:"daily";s:4:"args";a:0:{}s:8:"interval";i:86400;}}}i:1495907565;a:1:{s:30:"wp_scheduled_auto_draft_delete";a:1:{s:32:"40cd750bba9870f18aada2478b24840a";a:3:{s:8:"schedule";s:5:"daily";s:4:"args";a:0:{}s:8:"interval";i:86400;}}}i:1495918800;a:1:{s:27:"woocommerce_scheduled_sales";a:1:{s:32:"40cd750bba9870f18aada2478b24840a";a:3:{s:8:"schedule";s:5:"daily";s:4:"args";a:0:{}s:8:"interval";i:86400;}}}i:1496707200;a:1:{s:25:"woocommerce_geoip_updater";a:1:{s:32:"40cd750bba9870f18aada2478b24840a";a:3:{s:8:"schedule";s:7:"monthly";s:4:"args";a:0:{}s:8:"interval";i:2635200;}}}s:7:"version";i:2;}', 'yes'),
+(105, 'cron', 'a:8:{i:1496049974;a:1:{s:32:"woocommerce_cancel_unpaid_orders";a:1:{s:32:"40cd750bba9870f18aada2478b24840a";a:2:{s:8:"schedule";b:0;s:4:"args";a:0:{}}}}i:1496073220;a:3:{s:16:"wp_version_check";a:1:{s:32:"40cd750bba9870f18aada2478b24840a";a:3:{s:8:"schedule";s:10:"twicedaily";s:4:"args";a:0:{}s:8:"interval";i:43200;}}s:17:"wp_update_plugins";a:1:{s:32:"40cd750bba9870f18aada2478b24840a";a:3:{s:8:"schedule";s:10:"twicedaily";s:4:"args";a:0:{}s:8:"interval";i:43200;}}s:16:"wp_update_themes";a:1:{s:32:"40cd750bba9870f18aada2478b24840a";a:3:{s:8:"schedule";s:10:"twicedaily";s:4:"args";a:0:{}s:8:"interval";i:43200;}}}i:1496073238;a:1:{s:19:"wp_scheduled_delete";a:1:{s:32:"40cd750bba9870f18aada2478b24840a";a:3:{s:8:"schedule";s:5:"daily";s:4:"args";a:0:{}s:8:"interval";i:86400;}}}i:1496075517;a:2:{s:30:"woocommerce_tracker_send_event";a:1:{s:32:"40cd750bba9870f18aada2478b24840a";a:3:{s:8:"schedule";s:5:"daily";s:4:"args";a:0:{}s:8:"interval";i:86400;}}s:28:"woocommerce_cleanup_sessions";a:1:{s:32:"40cd750bba9870f18aada2478b24840a";a:3:{s:8:"schedule";s:10:"twicedaily";s:4:"args";a:0:{}s:8:"interval";i:43200;}}}i:1496080365;a:1:{s:30:"wp_scheduled_auto_draft_delete";a:1:{s:32:"40cd750bba9870f18aada2478b24840a";a:3:{s:8:"schedule";s:5:"daily";s:4:"args";a:0:{}s:8:"interval";i:86400;}}}i:1496091600;a:1:{s:27:"woocommerce_scheduled_sales";a:1:{s:32:"40cd750bba9870f18aada2478b24840a";a:3:{s:8:"schedule";s:5:"daily";s:4:"args";a:0:{}s:8:"interval";i:86400;}}}i:1496707200;a:1:{s:25:"woocommerce_geoip_updater";a:1:{s:32:"40cd750bba9870f18aada2478b24840a";a:3:{s:8:"schedule";s:7:"monthly";s:4:"args";a:0:{}s:8:"interval";i:2635200;}}}s:7:"version";i:2;}', 'yes'),
 (106, 'theme_mods_twentyseventeen', 'a:2:{s:18:"custom_css_post_id";i:-1;s:16:"sidebars_widgets";a:2:{s:4:"time";i:1495818807;s:4:"data";a:4:{s:19:"wp_inactive_widgets";a:0:{}s:9:"sidebar-1";a:6:{i:0;s:8:"search-2";i:1;s:14:"recent-posts-2";i:2;s:17:"recent-comments-2";i:3;s:10:"archives-2";i:4;s:12:"categories-2";i:5;s:6:"meta-2";}s:9:"sidebar-2";a:0:{}s:9:"sidebar-3";a:0:{}}}}', 'yes'),
 (118, '_site_transient_timeout_browser_5d9a37c6a96acca914609d0251644dda', '1496418841', 'no'),
 (119, '_site_transient_browser_5d9a37c6a96acca914609d0251644dda', 'a:9:{s:8:"platform";s:7:"Windows";s:4:"name";s:6:"Chrome";s:7:"version";s:13:"58.0.3029.110";s:10:"update_url";s:28:"http://www.google.com/chrome";s:7:"img_src";s:49:"http://s.wordpress.org/images/browsers/chrome.png";s:11:"img_src_ssl";s:48:"https://wordpress.org/images/browsers/chrome.png";s:15:"current_version";s:2:"18";s:7:"upgrade";b:0;s:8:"insecure";b:0;}', 'no'),
 (120, 'can_compress_scripts', '1', 'no'),
-(131, '_transient_timeout_plugin_slugs', '1495903974', 'no'),
-(132, '_transient_plugin_slugs', 'a:3:{i:0;s:19:"akismet/akismet.php";i:1;s:9:"hello.php";i:2;s:27:"woocommerce/woocommerce.php";}', 'no'),
 (136, 'auto_core_update_notified', 'a:4:{s:4:"type";s:7:"success";s:5:"email";s:19:"vemberg22@gmail.com";s:7:"version";s:5:"4.7.5";s:9:"timestamp";i:1495814108;}', 'no'),
 (139, 'recently_activated', 'a:0:{}', 'yes'),
 (141, '_site_transient_timeout_wporg_theme_feature_list', '1495831168', 'no'),
 (142, '_site_transient_wporg_theme_feature_list', 'a:0:{}', 'no'),
-(144, '_site_transient_update_core', 'O:8:"stdClass":4:{s:7:"updates";a:1:{i:0;O:8:"stdClass":10:{s:8:"response";s:6:"latest";s:8:"download";s:64:"http://downloads.wordpress.org/release/ru_RU/wordpress-4.7.5.zip";s:6:"locale";s:5:"ru_RU";s:8:"packages";O:8:"stdClass":5:{s:4:"full";s:64:"http://downloads.wordpress.org/release/ru_RU/wordpress-4.7.5.zip";s:10:"no_content";b:0;s:11:"new_bundled";b:0;s:7:"partial";b:0;s:8:"rollback";b:0;}s:7:"current";s:5:"4.7.5";s:7:"version";s:5:"4.7.5";s:11:"php_version";s:5:"5.2.4";s:13:"mysql_version";s:3:"5.0";s:11:"new_bundled";s:3:"4.7";s:15:"partial_version";s:0:"";}}s:12:"last_checked";i:1495857244;s:15:"version_checked";s:5:"4.7.5";s:12:"translations";a:0:{}}', 'no'),
+(144, '_site_transient_update_core', 'O:8:"stdClass":4:{s:7:"updates";a:1:{i:0;O:8:"stdClass":10:{s:8:"response";s:6:"latest";s:8:"download";s:65:"https://downloads.wordpress.org/release/ru_RU/wordpress-4.7.5.zip";s:6:"locale";s:5:"ru_RU";s:8:"packages";O:8:"stdClass":5:{s:4:"full";s:65:"https://downloads.wordpress.org/release/ru_RU/wordpress-4.7.5.zip";s:10:"no_content";b:0;s:11:"new_bundled";b:0;s:7:"partial";b:0;s:8:"rollback";b:0;}s:7:"current";s:5:"4.7.5";s:7:"version";s:5:"4.7.5";s:11:"php_version";s:5:"5.2.4";s:13:"mysql_version";s:3:"5.0";s:11:"new_bundled";s:3:"4.7";s:15:"partial_version";s:0:"";}}s:12:"last_checked";i:1496039151;s:15:"version_checked";s:5:"4.7.5";s:12:"translations";a:0:{}}', 'no'),
 (147, 'woocommerce_default_country', 'RU', 'yes'),
 (148, 'woocommerce_allowed_countries', 'all', 'yes'),
 (149, 'woocommerce_all_except_countries', 'a:0:{}', 'yes'),
@@ -317,7 +329,7 @@ INSERT INTO `wp_options` (`option_id`, `option_name`, `option_value`, `autoload`
 (245, '_transient_woocommerce_webhook_ids', 'a:0:{}', 'yes'),
 (246, 'widget_woocommerce_widget_cart', 'a:1:{s:12:"_multiwidget";i:1;}', 'yes'),
 (247, 'widget_woocommerce_layered_nav_filters', 'a:1:{s:12:"_multiwidget";i:1;}', 'yes'),
-(248, 'widget_woocommerce_layered_nav', 'a:6:{i:2;a:4:{s:5:"title";s:28:"Фильтр по цвету";s:9:"attribute";s:5:"color";s:12:"display_type";s:4:"list";s:10:"query_type";s:3:"and";}i:3;a:4:{s:5:"title";s:53:"Фильтр по оперативной памяти";s:9:"attribute";s:3:"ram";s:12:"display_type";s:4:"list";s:10:"query_type";s:3:"and";}i:4;a:4:{s:5:"title";s:28:"Фильтр по цвету";s:9:"attribute";s:5:"color";s:12:"display_type";s:4:"list";s:10:"query_type";s:3:"and";}i:5;a:4:{s:5:"title";s:26:"Фильтр по весу";s:9:"attribute";s:9:"вес-г";s:12:"display_type";s:4:"list";s:10:"query_type";s:3:"and";}i:6;a:4:{s:5:"title";s:38:"Фильтр по кол-ву ядер";s:9:"attribute";s:5:"cores";s:12:"display_type";s:4:"list";s:10:"query_type";s:3:"and";}s:12:"_multiwidget";i:1;}', 'yes'),
+(248, 'widget_woocommerce_layered_nav', 'a:11:{i:2;a:4:{s:5:"title";s:28:"Фильтр по цвету";s:9:"attribute";s:5:"color";s:12:"display_type";s:4:"list";s:10:"query_type";s:3:"and";}i:3;a:4:{s:5:"title";s:53:"Фильтр по оперативной памяти";s:9:"attribute";s:3:"ram";s:12:"display_type";s:4:"list";s:10:"query_type";s:3:"and";}i:4;a:4:{s:5:"title";s:28:"Фильтр по цвету";s:9:"attribute";s:5:"color";s:12:"display_type";s:4:"list";s:10:"query_type";s:3:"and";}i:5;a:4:{s:5:"title";s:26:"Фильтр по весу";s:9:"attribute";s:9:"вес-г";s:12:"display_type";s:8:"dropdown";s:10:"query_type";s:3:"and";}i:6;a:4:{s:5:"title";s:38:"Фильтр по кол-ву ядер";s:9:"attribute";s:5:"cores";s:12:"display_type";s:8:"dropdown";s:10:"query_type";s:3:"and";}i:7;a:4:{s:5:"title";s:39:"Предустановленная ОС";s:9:"attribute";s:2:"os";s:12:"display_type";s:8:"dropdown";s:10:"query_type";s:3:"and";}i:8;a:4:{s:5:"title";s:33:"Модель видеокарты";s:9:"attribute";s:20:"видеокарта";s:12:"display_type";s:8:"dropdown";s:10:"query_type";s:3:"and";}i:9;a:4:{s:5:"title";s:17:"Фильтр по";s:9:"attribute";s:7:"battery";s:12:"display_type";s:4:"list";s:10:"query_type";s:3:"and";}i:10;a:4:{s:5:"title";s:3:"RAM";s:9:"attribute";s:3:"ram";s:12:"display_type";s:8:"dropdown";s:10:"query_type";s:3:"and";}i:11;a:4:{s:5:"title";s:33:"Модель процессора";s:9:"attribute";s:18:"процессор";s:12:"display_type";s:8:"dropdown";s:10:"query_type";s:3:"and";}s:12:"_multiwidget";i:1;}', 'yes'),
 (249, 'widget_woocommerce_price_filter', 'a:2:{i:2;a:1:{s:5:"title";s:26:"Фильтр по цене";}s:12:"_multiwidget";i:1;}', 'yes'),
 (250, 'widget_woocommerce_product_categories', 'a:3:{i:2;a:7:{s:5:"title";s:33:"Категории товаров";s:7:"orderby";s:4:"name";s:8:"dropdown";i:0;s:5:"count";i:0;s:12:"hierarchical";i:1;s:18:"show_children_only";i:0;s:10:"hide_empty";i:0;}i:3;a:7:{s:5:"title";s:33:"Категории товаров";s:7:"orderby";s:4:"name";s:8:"dropdown";i:0;s:5:"count";i:0;s:12:"hierarchical";i:1;s:18:"show_children_only";i:0;s:10:"hide_empty";i:0;}s:12:"_multiwidget";i:1;}', 'yes'),
 (251, 'widget_woocommerce_product_search', 'a:1:{s:12:"_multiwidget";i:1;}', 'yes'),
@@ -341,11 +353,6 @@ INSERT INTO `wp_options` (`option_id`, `option_name`, `option_value`, `autoload`
 (272, 'woocommerce_cheque_settings', 'a:1:{s:7:"enabled";s:2:"no";}', 'yes'),
 (273, 'woocommerce_bacs_settings', 'a:1:{s:7:"enabled";s:2:"no";}', 'yes'),
 (274, 'woocommerce_cod_settings', 'a:6:{s:7:"enabled";s:2:"no";s:5:"title";s:36:"Оплата при доставке";s:11:"description";s:69:"Оплата наличными при доставке заказа.";s:12:"instructions";s:69:"Оплата наличными при доставке заказа.";s:18:"enable_for_methods";a:1:{i:0;s:12:"local_pickup";}s:18:"enable_for_virtual";s:3:"yes";}', 'yes'),
-(275, '_transient_timeout_wc_report_sales_by_date', '1495944482', 'no');
-INSERT INTO `wp_options` (`option_id`, `option_name`, `option_value`, `autoload`) VALUES
-(276, '_transient_wc_report_sales_by_date', 'a:160:{s:32:"7761fa6d0a29bccbefea8d93a5448f38";a:0:{}s:32:"9167dea7df64aa8d89a18f66f99de5ad";a:0:{}s:32:"5a5227dc5802e745400e26fe1c242bf0";a:0:{}s:32:"2d530e1c44540a48828ffbe1350341ec";N;s:32:"03e58b7f4b51e05f04a20b279ec37e3a";a:0:{}s:32:"dc91dcfcde3be191f14f84f4a59ce965";a:0:{}s:32:"65a6203c0e40880c330c273d4eec0bf2";a:0:{}s:32:"0212af31429c1b0bb905fdc47bcbe074";a:0:{}s:32:"967e1f851a92fa40daebda6c3b2a28b4";a:0:{}s:32:"2f1dac597842f192569a7cbcc5410038";a:0:{}s:32:"ec240964300f8aa5c86fd3262f613634";a:0:{}s:32:"49232a13410ad8d1ffa92c1398a4ad78";N;s:32:"13ef1e3e33d3968a2508260442a3cca8";a:0:{}s:32:"c113306459f27c8d6f3f52517ebccfed";a:0:{}s:32:"4b06a8f2719b870be8240db2fb0c8639";a:0:{}s:32:"2205e543052745c999ec077e310fee6c";a:0:{}s:32:"9f45fcb60576aa7db4ec345b667f18ff";a:0:{}s:32:"faa753948620cb69bf2d77e798ee364e";a:0:{}s:32:"63827d77165dc5a9b22190c6697a5b22";a:0:{}s:32:"b789100f8cb0a8440e545dfcd8dedeb9";N;s:32:"7f219d46fcd6d9c06578a5b44b58a3e0";a:0:{}s:32:"35b6f0e5752ee8645dccc46a8b57b6d3";a:0:{}s:32:"ddb1344ecf32eb5003aa44504e1d9844";a:0:{}s:32:"3b4d166125df23d4d2f319d063661b7d";a:0:{}s:32:"85bf33fd0fa82be1a5798ccafb04e4cf";a:0:{}s:32:"2add790a103e43ce54dd1b16383aaffb";a:0:{}s:32:"d554f699ca701490698a717f5d6b58cb";a:0:{}s:32:"c7a43657b2a798f41fa820abc6100e7e";N;s:32:"4156a87ac60a6c4f6a32cdf2bb471edf";a:0:{}s:32:"9b0b4c77d0a1e2ca7004d769b7c6f0fd";a:0:{}s:32:"2c56571a01888042df32d3e948ba25c1";a:0:{}s:32:"237230147a03469ea8579a59fdeed90f";a:0:{}s:32:"a30de63dd4e8533e590d9f9d6195759a";a:0:{}s:32:"cd8f32b4641c79c2ce24bce33f0a80c8";a:0:{}s:32:"dcba093fffb42b7e60302aa7f7f182df";a:0:{}s:32:"078c70bcdc8f9ef43aa96e8437c35098";N;s:32:"ccaf839493ca9a5c0ecb5e09d9074cd3";a:0:{}s:32:"4d84e648b7863fe6df752ea6767e7836";a:0:{}s:32:"f903973d83511c9a08b160cd024bd760";a:0:{}s:32:"cab9f0c94559a3225794d7368913a927";a:0:{}s:32:"49788e60cfab92eabd6ed81a0913c508";a:0:{}s:32:"7c3268e367491e8f7ed48b27091bdf71";a:0:{}s:32:"6a3e151ca2c9abbff44b621a0d3545d7";a:0:{}s:32:"9a5f11c71b373df8f6b34d58a7de8bb2";N;s:32:"d3f01040ff3ed3fa989f3cd6ba044179";a:0:{}s:32:"573baa0f78cf1a57d6f43b617518ff9d";a:0:{}s:32:"f7a312837deba4a437d27ea23008e32e";a:0:{}s:32:"3c786e0376c7af4d9c5ef7c5143f68d8";a:0:{}s:32:"e363a2231bb031acdaa6b9dfe8c769af";a:0:{}s:32:"a90ffa909abc6c904f48ebbf674a12b9";a:0:{}s:32:"ca6da201336317d6ec8ab54e477181b0";a:0:{}s:32:"7d6cc854917d34096ca0a045662b4eea";N;s:32:"3d2bfa16d5a3ed5aa6c8cbdc2b1586bd";a:0:{}s:32:"42d44a77c528d580aa5937b65cae12e8";a:0:{}s:32:"6ab1064b8a19ac790612d68c468b1662";a:0:{}s:32:"07b30b40d668bd40d054a538a41bdabd";a:0:{}s:32:"3abbf67951c7cf9b024c91f9e7a0edbc";a:0:{}s:32:"71faa071f7fd99eaac8fa63789a096df";a:0:{}s:32:"0aa2cc0c5693a8d7c57afcedbe5453ae";a:0:{}s:32:"33f15f73c03c7b34df36f2420a15b5cd";N;s:32:"d87be5ca4bae15509c2071435bc0c3f3";a:0:{}s:32:"b42e81a09efb3f27b8c1e483e0d2aec7";a:0:{}s:32:"aa9af91eb2d353689fce3c2a68706dd7";a:0:{}s:32:"f6cfedd728f4f21123777bbce30dd346";a:0:{}s:32:"240e837c3c2b27467e2a02e994d0fc69";a:0:{}s:32:"4748818f8a5fefd2bd0a8f661afc0418";a:0:{}s:32:"68bec055361b382461eae2e2fd73e8ef";a:0:{}s:32:"1fee439edf8ee8b88e09a7f49c9c504d";N;s:32:"10b52a1e98ac95db5b2638c2caad1695";a:0:{}s:32:"8f2c55e9255513ca81b119b3b5450853";a:0:{}s:32:"b82ff5a4ee6bfbe7789e8987036f1c33";a:0:{}s:32:"66888cb360dc63d682a7789f6442665a";a:0:{}s:32:"2f92871e6ad1ba010b5117015987ef3b";a:0:{}s:32:"0373f8a94e586bc9c3ec1b69b25a4a15";a:0:{}s:32:"4d8c2301bb57384e9b73a5ec0c847391";a:0:{}s:32:"358907733380b675131a4e9ab548b3f4";N;s:32:"49e22ac5da38c2e6643c93f7aa5690ad";a:0:{}s:32:"43080d83f233dc51890cd98c879d81f5";a:0:{}s:32:"a6a1840eeda357060c0e25ce41470cce";a:0:{}s:32:"4ec0ada8aff8e9f29479c441d407a249";a:0:{}s:32:"1b172090d9b9d629c831df90ade8fa67";a:0:{}s:32:"b2ae42aff5518f62ff977dd5aac084d5";a:0:{}s:32:"d93f8da82b45dea8e387f7b7e95cb301";a:0:{}s:32:"16403574468ca34d6e3ee34ae873c4f8";N;s:32:"3b91765dddcab94fb78813698099581d";a:0:{}s:32:"f5f3de8281a45bf8cac4ab7c64c18e40";a:0:{}s:32:"71d3f18d7476eefb6464c7221e4bd75b";a:0:{}s:32:"1dcd8e9dfc86680c6d332388630e8d3c";a:0:{}s:32:"12690630b430a66cd0c46d1d65f59759";a:0:{}s:32:"facc40fb5d029a69b51bfd2c1b1ed0b9";a:0:{}s:32:"c8334cee7ce0034eb2fc336e773184a7";a:0:{}s:32:"5211699583208ff3475e987c2b50a22f";N;s:32:"696610582aef423368bfb391bcd6de1e";a:0:{}s:32:"80ddd23b6aa5067d426f2e3fa371f4ff";a:0:{}s:32:"1f046b8539e3429e7134ad70375e13a8";a:0:{}s:32:"80017cd700d9db4203283613b1bf838e";a:0:{}s:32:"e06ee38d4f73ec7f87faf47d54d3b54d";a:0:{}s:32:"f15493e726e4de05aaab9ed00f7dcad6";a:0:{}s:32:"d68ee1efa93a680b238159f78e9c3a2d";a:0:{}s:32:"49c12387f04d3454bb33634a953dd7b0";N;s:32:"cbe6ec48c5f4227298de0dade65832a0";a:0:{}s:32:"e495927c3e48454b8c8fdd95a1cc7639";a:0:{}s:32:"6c254884e3986254f99dfc19eceeb96a";a:0:{}s:32:"10ecb09074fbc9c7f1bd69a1c176102b";a:0:{}s:32:"dc444435f8f95479d409a0d0b894a045";a:0:{}s:32:"b97f5b4ec095dc6fb023c2255e20492a";a:0:{}s:32:"a859ba6ad4c02ba12336a044b65d2a20";a:0:{}s:32:"7b62afa4c0e3727122f186fdd1051e82";N;s:32:"864b8ad8556530c486a44f43a442f32d";a:0:{}s:32:"52b82a9fc020c78de3993d68e4e75bec";a:0:{}s:32:"54c3e408a2e019c51c64a10fd04bc786";a:0:{}s:32:"bcee3aa03855aec044c251f79fbc9cae";a:0:{}s:32:"9e217099b5cc865d6eb914ffb8ca1946";a:0:{}s:32:"35cfde6345322b4ece382def1d8e1c2b";a:0:{}s:32:"5cc6ceac472a68091f45fefd448a33f0";a:0:{}s:32:"0981804e824d890f135251a177ecb1f1";N;s:32:"01de479948e6badab7c352aebb38034d";a:0:{}s:32:"de81c2fb7fa79cd90817e402a00094a0";a:0:{}s:32:"8930b9a38aec7ad0806b6e1d22413b58";a:0:{}s:32:"6d43f063429617de24a41b002bb26fcd";a:0:{}s:32:"85eb95c9475464bb71de71cbb47388c6";a:0:{}s:32:"604aa84ddf42544a9f22e640e4f194d0";a:0:{}s:32:"24055c91284b40580e8c5cee19de32a7";a:0:{}s:32:"6175d9e6b81b8a884584657be389a754";N;s:32:"0d4da3d9bb53e9d906d7c7c833291338";a:0:{}s:32:"45cecd217bf43dff68efd301cdb79193";a:0:{}s:32:"b2ceb66c9f7c5178421e2dff17a540c4";a:0:{}s:32:"c33ef918ea4817f9bb0f05b7d1fe80d4";a:0:{}s:32:"c1e93aff6a15f06aea7b585cb6cfcad2";a:0:{}s:32:"e52a2e6f5f07d2be2be7ec2617b6b984";a:0:{}s:32:"b95b0a6a9d44d49ea7d009a41d0f5237";a:0:{}s:32:"983b07b0f51b4700590453ddd49d74f5";N;s:32:"841c8a9ac362a9182968db0e7594c3a7";a:0:{}s:32:"fd3391cd6b78b0ab56b3677e73f166d1";a:0:{}s:32:"4f1bb453f4751717080a1af91cc9bc3e";a:0:{}s:32:"1017b5548f2c54f2c698ad60ae3ba5b8";a:0:{}s:32:"aca3301ec75aa35748e6888e0c1ec433";a:0:{}s:32:"eccac08a3c715823e0a9794649def0a8";a:0:{}s:32:"782d95b6521e07b23070878527852104";a:0:{}s:32:"77d105d7cfb025913b2e5c3609461d03";N;s:32:"9fb03eaf2fe72ecbb7a4af9926776a23";a:0:{}s:32:"85c59635ff84d0e0d716c6501f926e8a";a:0:{}s:32:"7fcc3b0c6efd5ac1386340636221f04b";a:0:{}s:32:"b10f323a121cfd3fe6c28dcf9e0b8803";a:0:{}s:32:"4bf37932c3173f8efcb2d67f64760fa8";a:0:{}s:32:"6183bedaa694d61517b0d2241f561bff";a:0:{}s:32:"d09e93d19c30c1e780e570b5906fc5b6";a:0:{}s:32:"6e3a7be5810ed0571c5349211d4af600";N;s:32:"028371eaee3b090191f2f14c02c195ca";a:0:{}s:32:"a5151e6099071a9429d336e3af2700f2";a:0:{}s:32:"a3a4e41fd37b7024f4a9554fb6841064";a:0:{}s:32:"b18e70c804a736767812f83a91ac7971";a:0:{}s:32:"adbd55652d4213655746120402819206";a:0:{}s:32:"08c7e1126d91ef5157a93ae992df16e4";a:0:{}s:32:"ab61c6ce3f3d69a2e9442c481904c0c8";a:0:{}s:32:"a6714d240e783c37695952a66964aca4";N;s:32:"91436d0e14a878858a1e970e5dc6cf4f";a:0:{}s:32:"1d0129a64a1d8f50e2c31abadfdf7c0c";a:0:{}s:32:"04748c1cd8fe6b1b57412b3173bde582";a:0:{}s:32:"f3d178313c1abc72270a8dfe91388129";a:0:{}}', 'no'),
-(277, '_transient_timeout_wc_admin_report', '1495902783', 'no'),
-(278, '_transient_wc_admin_report', 'a:1:{s:32:"07250eb7845cab8138166d7723a967c8";a:0:{}}', 'no'),
 (288, 'current_theme', 'Travelify', 'yes'),
 (289, 'theme_mods_simple-shop', 'a:3:{i:0;b:0;s:18:"custom_css_post_id";i:-1;s:16:"sidebars_widgets";a:2:{s:4:"time";i:1495857562;s:4:"data";a:6:{s:19:"wp_inactive_widgets";a:5:{i:0;s:25:"woocommerce_layered_nav-4";i:1;s:25:"woocommerce_layered_nav-5";i:2;s:32:"woocommerce_product_categories-3";i:3;s:31:"woocommerce_product_tag_cloud-2";i:4;s:38:"woocommerce_recently_viewed_products-2";}s:15:"primary-sidebar";a:10:{i:0;s:8:"search-2";i:1;s:14:"recent-posts-2";i:2;s:17:"recent-comments-2";i:3;s:10:"archives-2";i:4;s:12:"categories-2";i:5;s:6:"meta-2";i:6;s:25:"woocommerce_layered_nav-3";i:7;s:25:"woocommerce_layered_nav-2";i:8;s:32:"woocommerce_product_categories-2";i:9;s:26:"woocommerce_price_filter-2";}s:25:"front-page-slider-sidebar";a:0:{}s:18:"front-page-sidebar";a:0:{}s:14:"footer-sidebar";a:0:{}s:22:"copyright-area-sidebar";a:0:{}}}}', 'yes'),
 (290, 'theme_switched', '', 'yes'),
@@ -355,36 +362,51 @@ INSERT INTO `wp_options` (`option_id`, `option_name`, `option_value`, `autoload`
 (295, 'widget_simple-shop-recent-posts', 'a:2:{i:1;a:0:{}s:12:"_multiwidget";i:1;}', 'yes'),
 (299, '_transient_timeout_wc_addons_sections', '1496424369', 'no'),
 (300, '_transient_wc_addons_sections', 'O:8:"stdClass":10:{s:8:"featured";O:8:"stdClass":2:{s:5:"title";s:8:"Featured";s:8:"endpoint";s:59:"https://d3t0oesq8995hv.cloudfront.net/section/featured.json";}s:7:"popular";O:8:"stdClass":2:{s:5:"title";s:7:"Popular";s:8:"endpoint";s:58:"https://d3t0oesq8995hv.cloudfront.net/section/popular.json";}s:16:"payment_gateways";O:8:"stdClass":2:{s:5:"title";s:16:"Payment Gateways";s:8:"endpoint";s:67:"https://d3t0oesq8995hv.cloudfront.net/section/payment_gateways.json";}s:16:"shipping_methods";O:8:"stdClass":2:{s:5:"title";s:16:"Shipping Methods";s:8:"endpoint";s:67:"https://d3t0oesq8995hv.cloudfront.net/section/shipping_methods.json";}s:13:"import_export";O:8:"stdClass":2:{s:5:"title";s:13:"Import/Export";s:8:"endpoint";s:64:"https://d3t0oesq8995hv.cloudfront.net/section/import_export.json";}s:10:"accounting";O:8:"stdClass":2:{s:5:"title";s:10:"Accounting";s:8:"endpoint";s:61:"https://d3t0oesq8995hv.cloudfront.net/section/accounting.json";}s:9:"marketing";O:8:"stdClass":2:{s:5:"title";s:9:"Marketing";s:8:"endpoint";s:60:"https://d3t0oesq8995hv.cloudfront.net/section/marketing.json";}s:7:"product";O:8:"stdClass":2:{s:5:"title";s:8:"Products";s:8:"endpoint";s:58:"https://d3t0oesq8995hv.cloudfront.net/section/product.json";}s:4:"free";O:8:"stdClass":2:{s:5:"title";s:4:"Free";s:8:"endpoint";s:55:"https://d3t0oesq8995hv.cloudfront.net/section/free.json";}s:11:"third_party";O:8:"stdClass":2:{s:5:"title";s:11:"Third-party";s:8:"endpoint";s:62:"https://d3t0oesq8995hv.cloudfront.net/section/third_party.json";}}', 'no'),
-(301, '_transient_timeout_wc_addons_featured', '1496424370', 'no'),
-(302, '_transient_wc_addons_featured', 'O:8:"stdClass":1:{s:8:"sections";a:10:{i:0;O:8:"stdClass":4:{s:6:"module";s:12:"banner_block";s:5:"title";s:50:"Take your store beyond the typical - sell anything";s:11:"description";s:83:"From services to content, there’s no limit to what you can sell with WooCommerce.";s:5:"items";a:3:{i:0;O:8:"stdClass":6:{s:4:"href";s:118:"https://woocommerce.com/products/woocommerce-subscriptions/?utm_source=product&utm_medium=upsell&utm_campaign=wcaddons";s:5:"title";s:13:"Subscriptions";s:5:"image";s:71:"https://d3t0oesq8995hv.cloudfront.net/add-ons/subscriptions-icon@2x.png";s:11:"description";s:98:"Let customers subscribe to your products or services and pay on a weekly, monthly or annual basis.";s:6:"button";s:10:"From: $199";s:6:"plugin";s:55:"woocommerce-subscriptions/woocommerce-subscriptions.php";}i:1;O:8:"stdClass":6:{s:4:"href";s:113:"https://woocommerce.com/products/woocommerce-bookings/?utm_source=product&utm_medium=upsell&utm_campaign=wcaddons";s:5:"title";s:8:"Bookings";s:5:"image";s:66:"https://d3t0oesq8995hv.cloudfront.net/add-ons/bookings-icon@2x.png";s:11:"description";s:76:"Allow customers to book appointments for services without leaving your site.";s:6:"button";s:10:"From: $249";s:6:"plugin";s:45:"woocommerce-bookings/woocommerce-bookings.php";}i:2;O:8:"stdClass":6:{s:4:"href";s:116:"https://woocommerce.com/products/woocommerce-memberships/?utm_source=product&utm_medium=upsell&utm_campaign=wcaddons";s:5:"title";s:11:"Memberships";s:5:"image";s:69:"https://d3t0oesq8995hv.cloudfront.net/add-ons/memberships-icon@2x.png";s:11:"description";s:76:"Give members access to restricted content or products, for a fee or for free";s:6:"button";s:10:"From: $149";s:6:"plugin";s:51:"woocommerce-memberships/woocommerce-memberships.php";}}}i:1;O:8:"stdClass":2:{s:6:"module";s:12:"column_start";s:9:"container";s:22:"column_container_start";}i:2;O:8:"stdClass":4:{s:6:"module";s:12:"column_block";s:5:"title";s:46:"Improve the main features of your online store";s:11:"description";s:71:"Sell more by helping customers find the products and options they want.";s:5:"items";a:3:{i:0;O:8:"stdClass":6:{s:4:"href";s:108:"https://woocommerce.com/products/product-add-ons/?utm_source=product&utm_medium=upsell&utm_campaign=wcaddons";s:5:"title";s:15:"Product Add-ons";s:5:"image";s:73:"https://d3t0oesq8995hv.cloudfront.net/add-ons/product-add-ons-icon@2x.png";s:11:"description";s:82:"Give your customers the option to customize their purchase or add personalization.";s:6:"button";s:9:"From: $49";s:6:"plugin";s:57:"woocommerce-product-addons/woocommerce-product-addons.php";}i:1;O:8:"stdClass":6:{s:4:"href";s:119:"https://woocommerce.com/products/woocommerce-product-search/?utm_source=product&utm_medium=upsell&utm_campaign=wcaddons";s:5:"title";s:14:"Product Search";s:5:"image";s:72:"https://d3t0oesq8995hv.cloudfront.net/add-ons/product-search-icon@2x.png";s:11:"description";s:67:"Make sure customers find what they want when they search your site.";s:6:"button";s:9:"From: $49";s:6:"plugin";s:57:"woocommerce-product-search/woocommerce-product-search.php";}i:2;O:8:"stdClass":6:{s:4:"href";s:121:"https://woocommerce.com/products/woocommerce-checkout-add-ons/?utm_source=product&utm_medium=upsell&utm_campaign=wcaddons";s:5:"title";s:16:"Checkout Add-ons";s:5:"image";s:74:"https://d3t0oesq8995hv.cloudfront.net/add-ons/checkout-add-ons-icon@2x.png";s:11:"description";s:89:"Highlight relevant products, offers like free shipping and other upsells during checkout.";s:6:"button";s:9:"From: $49";s:6:"plugin";s:61:"woocommerce-checkout-add-ons/woocommerce-checkout-add-ons.php";}}}i:3;O:8:"stdClass":5:{s:6:"module";s:17:"small_light_block";s:5:"title";s:34:"Get the official WooCommerce theme";s:11:"description";s:128:"Storefront is the lean, flexible, and free theme, built by the people who make WooCommerce - everything you need to get started.";s:5:"image";s:70:"https://d3t0oesq8995hv.cloudfront.net/add-ons/storefront-screen@2x.png";s:7:"buttons";a:2:{i:0;O:8:"stdClass":2:{s:4:"href";s:44:"/wp-admin/theme-install.php?theme=storefront";s:4:"text";s:7:"Install";}i:1;O:8:"stdClass":2:{s:4:"href";s:94:"https://woocommerce.com/storefront/?utm_source=product&utm_medium=upsell&utm_campaign=wcaddons";s:4:"text";s:9:"Read More";}}}i:4;O:8:"stdClass":1:{s:6:"module";s:10:"column_end";}i:5;O:8:"stdClass":1:{s:6:"module";s:12:"column_start";}i:6;O:8:"stdClass":4:{s:6:"module";s:16:"small_dark_block";s:5:"title";s:20:"Square + WooCommerce";s:11:"description";s:176:"Keep your WooCommerce and brick-and-mortar stores in sync. Use Square to take payments both online and offline, keep inventory updated between the two and sync product changes.";s:5:"items";a:1:{i:0;O:8:"stdClass":2:{s:4:"href";s:99:"https://woocommerce.com/products/square/?utm_source=product&utm_medium=upsell&utm_campaign=wcaddons";s:6:"button";s:9:"From: $79";}}}i:7;O:8:"stdClass":4:{s:6:"module";s:12:"column_block";s:5:"title";s:19:"Get deeper insights";s:11:"description";s:58:"Learn how your store is performing with enhanced reporting";s:5:"items";a:3:{i:0;O:8:"stdClass":6:{s:4:"href";s:121:"https://woocommerce.com/products/woocommerce-google-analytics/?utm_source=product&utm_medium=upsell&utm_campaign=wcaddons";s:5:"title";s:16:"Google Analytics";s:5:"image";s:60:"https://d3t0oesq8995hv.cloudfront.net/add-ons/ga-icon@2x.png";s:11:"description";s:93:"Understand your customers and increase revenue with the world’s leading analytics platform.";s:6:"button";s:4:"Free";s:6:"plugin";s:85:"woocommerce-google-analytics-integration/woocommerce-google-analytics-integration.php";}i:1;O:8:"stdClass":6:{s:4:"href";s:117:"https://woocommerce.com/products/woocommerce-cart-reports/?utm_source=product&utm_medium=upsell&utm_campaign=wcaddons";s:5:"title";s:12:"Cart reports";s:5:"image";s:70:"https://d3t0oesq8995hv.cloudfront.net/add-ons/cart-reports-icon@2x.png";s:11:"description";s:66:"Get real-time reports on what customers are leaving in their cart.";s:6:"button";s:9:"From: $79";s:6:"plugin";s:53:"woocommerce-cart-reports/woocommerce-cart-reports.php";}i:2;O:8:"stdClass":6:{s:4:"href";s:118:"https://woocommerce.com/products/woocommerce-cost-of-goods/?utm_source=product&utm_medium=upsell&utm_campaign=wcaddons";s:5:"title";s:13:"Cost of Goods";s:5:"image";s:71:"https://d3t0oesq8995hv.cloudfront.net/add-ons/cost-of-goods-icon@2x.png";s:11:"description";s:64:"Easily track profit by including  cost of goods in your reports.";s:6:"button";s:9:"From: $79";s:6:"plugin";s:55:"woocommerce-cost-of-goods/woocommerce-cost-of-goods.php";}}}i:8;O:8:"stdClass":2:{s:6:"module";s:10:"column_end";s:9:"container";s:20:"column_container_end";}i:9;O:8:"stdClass":4:{s:6:"module";s:12:"banner_block";s:5:"title";s:40:"Promote your products and increase sales";s:11:"description";s:77:"From coupons to emails, these extensions can power up your marketing efforts.";s:5:"items";a:3:{i:0;O:8:"stdClass":6:{s:4:"href";s:106:"https://woocommerce.com/products/smart-coupons/?utm_source=product&utm_medium=upsell&utm_campaign=wcaddons";s:5:"title";s:13:"Smart Coupons";s:5:"image";s:71:"https://d3t0oesq8995hv.cloudfront.net/add-ons/smart-coupons-icon@2x.png";s:11:"description";s:106:"Enhance your coupon options - create gift certificates, store credit, coupons based on purchases and more.";s:6:"button";s:9:"From: $99";s:6:"plugin";s:55:"woocommerce-smart-coupons/woocommerce-smart-coupons.php";}i:1;O:8:"stdClass":6:{s:4:"href";s:109:"https://woocommerce.com/products/follow-up-emails/?utm_source=product&utm_medium=upsell&utm_campaign=wcaddons";s:5:"title";s:16:"Follow Up Emails";s:5:"image";s:74:"https://d3t0oesq8995hv.cloudfront.net/add-ons/follow-up-emails-icon@2x.png";s:11:"description";s:140:"Automatically contact customers after purchase - be it everyone, your most loyal or your biggest spenders - and keep your store top-of-mind.";s:6:"button";s:9:"From: $99";s:6:"plugin";s:61:"woocommerce-follow-up-emails/woocommerce-follow-up-emails.php";}i:2;O:8:"stdClass":6:{s:4:"href";s:112:"https://woocommerce.com/products/google-product-feed/?utm_source=product&utm_medium=upsell&utm_campaign=wcaddons";s:5:"title";s:19:"Google Product Feed";s:5:"image";s:77:"https://d3t0oesq8995hv.cloudfront.net/add-ons/google-product-feed-icon@2x.png";s:11:"description";s:61:"Let customers find you when shopping for products via Google.";s:6:"button";s:9:"From: $79";s:6:"plugin";s:45:"woocommerce-product-feeds/woocommerce-gpf.php";}}}}}', 'no'),
-(304, '_site_transient_timeout_available_translations', '1495830888', 'no');
+(301, '_transient_timeout_wc_addons_featured', '1496424370', 'no');
 INSERT INTO `wp_options` (`option_id`, `option_name`, `option_value`, `autoload`) VALUES
+(302, '_transient_wc_addons_featured', 'O:8:"stdClass":1:{s:8:"sections";a:10:{i:0;O:8:"stdClass":4:{s:6:"module";s:12:"banner_block";s:5:"title";s:50:"Take your store beyond the typical - sell anything";s:11:"description";s:83:"From services to content, there’s no limit to what you can sell with WooCommerce.";s:5:"items";a:3:{i:0;O:8:"stdClass":6:{s:4:"href";s:118:"https://woocommerce.com/products/woocommerce-subscriptions/?utm_source=product&utm_medium=upsell&utm_campaign=wcaddons";s:5:"title";s:13:"Subscriptions";s:5:"image";s:71:"https://d3t0oesq8995hv.cloudfront.net/add-ons/subscriptions-icon@2x.png";s:11:"description";s:98:"Let customers subscribe to your products or services and pay on a weekly, monthly or annual basis.";s:6:"button";s:10:"From: $199";s:6:"plugin";s:55:"woocommerce-subscriptions/woocommerce-subscriptions.php";}i:1;O:8:"stdClass":6:{s:4:"href";s:113:"https://woocommerce.com/products/woocommerce-bookings/?utm_source=product&utm_medium=upsell&utm_campaign=wcaddons";s:5:"title";s:8:"Bookings";s:5:"image";s:66:"https://d3t0oesq8995hv.cloudfront.net/add-ons/bookings-icon@2x.png";s:11:"description";s:76:"Allow customers to book appointments for services without leaving your site.";s:6:"button";s:10:"From: $249";s:6:"plugin";s:45:"woocommerce-bookings/woocommerce-bookings.php";}i:2;O:8:"stdClass":6:{s:4:"href";s:116:"https://woocommerce.com/products/woocommerce-memberships/?utm_source=product&utm_medium=upsell&utm_campaign=wcaddons";s:5:"title";s:11:"Memberships";s:5:"image";s:69:"https://d3t0oesq8995hv.cloudfront.net/add-ons/memberships-icon@2x.png";s:11:"description";s:76:"Give members access to restricted content or products, for a fee or for free";s:6:"button";s:10:"From: $149";s:6:"plugin";s:51:"woocommerce-memberships/woocommerce-memberships.php";}}}i:1;O:8:"stdClass":2:{s:6:"module";s:12:"column_start";s:9:"container";s:22:"column_container_start";}i:2;O:8:"stdClass":4:{s:6:"module";s:12:"column_block";s:5:"title";s:46:"Improve the main features of your online store";s:11:"description";s:71:"Sell more by helping customers find the products and options they want.";s:5:"items";a:3:{i:0;O:8:"stdClass":6:{s:4:"href";s:108:"https://woocommerce.com/products/product-add-ons/?utm_source=product&utm_medium=upsell&utm_campaign=wcaddons";s:5:"title";s:15:"Product Add-ons";s:5:"image";s:73:"https://d3t0oesq8995hv.cloudfront.net/add-ons/product-add-ons-icon@2x.png";s:11:"description";s:82:"Give your customers the option to customize their purchase or add personalization.";s:6:"button";s:9:"From: $49";s:6:"plugin";s:57:"woocommerce-product-addons/woocommerce-product-addons.php";}i:1;O:8:"stdClass":6:{s:4:"href";s:119:"https://woocommerce.com/products/woocommerce-product-search/?utm_source=product&utm_medium=upsell&utm_campaign=wcaddons";s:5:"title";s:14:"Product Search";s:5:"image";s:72:"https://d3t0oesq8995hv.cloudfront.net/add-ons/product-search-icon@2x.png";s:11:"description";s:67:"Make sure customers find what they want when they search your site.";s:6:"button";s:9:"From: $49";s:6:"plugin";s:57:"woocommerce-product-search/woocommerce-product-search.php";}i:2;O:8:"stdClass":6:{s:4:"href";s:121:"https://woocommerce.com/products/woocommerce-checkout-add-ons/?utm_source=product&utm_medium=upsell&utm_campaign=wcaddons";s:5:"title";s:16:"Checkout Add-ons";s:5:"image";s:74:"https://d3t0oesq8995hv.cloudfront.net/add-ons/checkout-add-ons-icon@2x.png";s:11:"description";s:89:"Highlight relevant products, offers like free shipping and other upsells during checkout.";s:6:"button";s:9:"From: $49";s:6:"plugin";s:61:"woocommerce-checkout-add-ons/woocommerce-checkout-add-ons.php";}}}i:3;O:8:"stdClass":5:{s:6:"module";s:17:"small_light_block";s:5:"title";s:34:"Get the official WooCommerce theme";s:11:"description";s:128:"Storefront is the lean, flexible, and free theme, built by the people who make WooCommerce - everything you need to get started.";s:5:"image";s:70:"https://d3t0oesq8995hv.cloudfront.net/add-ons/storefront-screen@2x.png";s:7:"buttons";a:2:{i:0;O:8:"stdClass":2:{s:4:"href";s:44:"/wp-admin/theme-install.php?theme=storefront";s:4:"text";s:7:"Install";}i:1;O:8:"stdClass":2:{s:4:"href";s:94:"https://woocommerce.com/storefront/?utm_source=product&utm_medium=upsell&utm_campaign=wcaddons";s:4:"text";s:9:"Read More";}}}i:4;O:8:"stdClass":1:{s:6:"module";s:10:"column_end";}i:5;O:8:"stdClass":1:{s:6:"module";s:12:"column_start";}i:6;O:8:"stdClass":4:{s:6:"module";s:16:"small_dark_block";s:5:"title";s:20:"Square + WooCommerce";s:11:"description";s:176:"Keep your WooCommerce and brick-and-mortar stores in sync. Use Square to take payments both online and offline, keep inventory updated between the two and sync product changes.";s:5:"items";a:1:{i:0;O:8:"stdClass":2:{s:4:"href";s:99:"https://woocommerce.com/products/square/?utm_source=product&utm_medium=upsell&utm_campaign=wcaddons";s:6:"button";s:9:"From: $79";}}}i:7;O:8:"stdClass":4:{s:6:"module";s:12:"column_block";s:5:"title";s:19:"Get deeper insights";s:11:"description";s:58:"Learn how your store is performing with enhanced reporting";s:5:"items";a:3:{i:0;O:8:"stdClass":6:{s:4:"href";s:121:"https://woocommerce.com/products/woocommerce-google-analytics/?utm_source=product&utm_medium=upsell&utm_campaign=wcaddons";s:5:"title";s:16:"Google Analytics";s:5:"image";s:60:"https://d3t0oesq8995hv.cloudfront.net/add-ons/ga-icon@2x.png";s:11:"description";s:93:"Understand your customers and increase revenue with the world’s leading analytics platform.";s:6:"button";s:4:"Free";s:6:"plugin";s:85:"woocommerce-google-analytics-integration/woocommerce-google-analytics-integration.php";}i:1;O:8:"stdClass":6:{s:4:"href";s:117:"https://woocommerce.com/products/woocommerce-cart-reports/?utm_source=product&utm_medium=upsell&utm_campaign=wcaddons";s:5:"title";s:12:"Cart reports";s:5:"image";s:70:"https://d3t0oesq8995hv.cloudfront.net/add-ons/cart-reports-icon@2x.png";s:11:"description";s:66:"Get real-time reports on what customers are leaving in their cart.";s:6:"button";s:9:"From: $79";s:6:"plugin";s:53:"woocommerce-cart-reports/woocommerce-cart-reports.php";}i:2;O:8:"stdClass":6:{s:4:"href";s:118:"https://woocommerce.com/products/woocommerce-cost-of-goods/?utm_source=product&utm_medium=upsell&utm_campaign=wcaddons";s:5:"title";s:13:"Cost of Goods";s:5:"image";s:71:"https://d3t0oesq8995hv.cloudfront.net/add-ons/cost-of-goods-icon@2x.png";s:11:"description";s:64:"Easily track profit by including  cost of goods in your reports.";s:6:"button";s:9:"From: $79";s:6:"plugin";s:55:"woocommerce-cost-of-goods/woocommerce-cost-of-goods.php";}}}i:8;O:8:"stdClass":2:{s:6:"module";s:10:"column_end";s:9:"container";s:20:"column_container_end";}i:9;O:8:"stdClass":4:{s:6:"module";s:12:"banner_block";s:5:"title";s:40:"Promote your products and increase sales";s:11:"description";s:77:"From coupons to emails, these extensions can power up your marketing efforts.";s:5:"items";a:3:{i:0;O:8:"stdClass":6:{s:4:"href";s:106:"https://woocommerce.com/products/smart-coupons/?utm_source=product&utm_medium=upsell&utm_campaign=wcaddons";s:5:"title";s:13:"Smart Coupons";s:5:"image";s:71:"https://d3t0oesq8995hv.cloudfront.net/add-ons/smart-coupons-icon@2x.png";s:11:"description";s:106:"Enhance your coupon options - create gift certificates, store credit, coupons based on purchases and more.";s:6:"button";s:9:"From: $99";s:6:"plugin";s:55:"woocommerce-smart-coupons/woocommerce-smart-coupons.php";}i:1;O:8:"stdClass":6:{s:4:"href";s:109:"https://woocommerce.com/products/follow-up-emails/?utm_source=product&utm_medium=upsell&utm_campaign=wcaddons";s:5:"title";s:16:"Follow Up Emails";s:5:"image";s:74:"https://d3t0oesq8995hv.cloudfront.net/add-ons/follow-up-emails-icon@2x.png";s:11:"description";s:140:"Automatically contact customers after purchase - be it everyone, your most loyal or your biggest spenders - and keep your store top-of-mind.";s:6:"button";s:9:"From: $99";s:6:"plugin";s:61:"woocommerce-follow-up-emails/woocommerce-follow-up-emails.php";}i:2;O:8:"stdClass":6:{s:4:"href";s:112:"https://woocommerce.com/products/google-product-feed/?utm_source=product&utm_medium=upsell&utm_campaign=wcaddons";s:5:"title";s:19:"Google Product Feed";s:5:"image";s:77:"https://d3t0oesq8995hv.cloudfront.net/add-ons/google-product-feed-icon@2x.png";s:11:"description";s:61:"Let customers find you when shopping for products via Google.";s:6:"button";s:9:"From: $79";s:6:"plugin";s:45:"woocommerce-product-feeds/woocommerce-gpf.php";}}}}}', 'no'),
+(304, '_site_transient_timeout_available_translations', '1495830888', 'no'),
 (305, '_site_transient_available_translations', 'a:108:{s:2:"af";a:8:{s:8:"language";s:2:"af";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-03-27 04:32:49";s:12:"english_name";s:9:"Afrikaans";s:11:"native_name";s:9:"Afrikaans";s:7:"package";s:61:"https://downloads.wordpress.org/translation/core/4.7.5/af.zip";s:3:"iso";a:2:{i:1;s:2:"af";i:2;s:3:"afr";}s:7:"strings";a:1:{s:8:"continue";s:10:"Gaan voort";}}s:3:"ary";a:8:{s:8:"language";s:3:"ary";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-01-26 15:42:35";s:12:"english_name";s:15:"Moroccan Arabic";s:11:"native_name";s:31:"العربية المغربية";s:7:"package";s:62:"https://downloads.wordpress.org/translation/core/4.7.5/ary.zip";s:3:"iso";a:2:{i:1;s:2:"ar";i:3;s:3:"ary";}s:7:"strings";a:1:{s:8:"continue";s:16:"المتابعة";}}s:2:"ar";a:8:{s:8:"language";s:2:"ar";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-01-26 15:49:08";s:12:"english_name";s:6:"Arabic";s:11:"native_name";s:14:"العربية";s:7:"package";s:61:"https://downloads.wordpress.org/translation/core/4.7.5/ar.zip";s:3:"iso";a:2:{i:1;s:2:"ar";i:2;s:3:"ara";}s:7:"strings";a:1:{s:8:"continue";s:16:"المتابعة";}}s:2:"as";a:8:{s:8:"language";s:2:"as";s:7:"version";s:5:"4.7.2";s:7:"updated";s:19:"2016-11-22 18:59:07";s:12:"english_name";s:8:"Assamese";s:11:"native_name";s:21:"অসমীয়া";s:7:"package";s:61:"https://downloads.wordpress.org/translation/core/4.7.2/as.zip";s:3:"iso";a:3:{i:1;s:2:"as";i:2;s:3:"asm";i:3;s:3:"asm";}s:7:"strings";a:1:{s:8:"continue";s:0:"";}}s:3:"azb";a:8:{s:8:"language";s:3:"azb";s:7:"version";s:5:"4.7.2";s:7:"updated";s:19:"2016-09-12 20:34:31";s:12:"english_name";s:17:"South Azerbaijani";s:11:"native_name";s:29:"گؤنئی آذربایجان";s:7:"package";s:62:"https://downloads.wordpress.org/translation/core/4.7.2/azb.zip";s:3:"iso";a:2:{i:1;s:2:"az";i:3;s:3:"azb";}s:7:"strings";a:1:{s:8:"continue";s:8:"Continue";}}s:2:"az";a:8:{s:8:"language";s:2:"az";s:7:"version";s:5:"4.7.2";s:7:"updated";s:19:"2016-11-06 00:09:27";s:12:"english_name";s:11:"Azerbaijani";s:11:"native_name";s:16:"Azərbaycan dili";s:7:"package";s:61:"https://downloads.wordpress.org/translation/core/4.7.2/az.zip";s:3:"iso";a:2:{i:1;s:2:"az";i:2;s:3:"aze";}s:7:"strings";a:1:{s:8:"continue";s:5:"Davam";}}s:3:"bel";a:8:{s:8:"language";s:3:"bel";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-05-09 11:39:31";s:12:"english_name";s:10:"Belarusian";s:11:"native_name";s:29:"Беларуская мова";s:7:"package";s:62:"https://downloads.wordpress.org/translation/core/4.7.5/bel.zip";s:3:"iso";a:2:{i:1;s:2:"be";i:2;s:3:"bel";}s:7:"strings";a:1:{s:8:"continue";s:20:"Працягнуць";}}s:5:"bg_BG";a:8:{s:8:"language";s:5:"bg_BG";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-05-16 13:06:08";s:12:"english_name";s:9:"Bulgarian";s:11:"native_name";s:18:"Български";s:7:"package";s:64:"https://downloads.wordpress.org/translation/core/4.7.5/bg_BG.zip";s:3:"iso";a:2:{i:1;s:2:"bg";i:2;s:3:"bul";}s:7:"strings";a:1:{s:8:"continue";s:12:"Напред";}}s:5:"bn_BD";a:8:{s:8:"language";s:5:"bn_BD";s:7:"version";s:5:"4.7.2";s:7:"updated";s:19:"2017-01-04 16:58:43";s:12:"english_name";s:7:"Bengali";s:11:"native_name";s:15:"বাংলা";s:7:"package";s:64:"https://downloads.wordpress.org/translation/core/4.7.2/bn_BD.zip";s:3:"iso";a:1:{i:1;s:2:"bn";}s:7:"strings";a:1:{s:8:"continue";s:23:"এগিয়ে চল.";}}s:2:"bo";a:8:{s:8:"language";s:2:"bo";s:7:"version";s:5:"4.7.2";s:7:"updated";s:19:"2016-09-05 09:44:12";s:12:"english_name";s:7:"Tibetan";s:11:"native_name";s:21:"བོད་ཡིག";s:7:"package";s:61:"https://downloads.wordpress.org/translation/core/4.7.2/bo.zip";s:3:"iso";a:2:{i:1;s:2:"bo";i:2;s:3:"tib";}s:7:"strings";a:1:{s:8:"continue";s:24:"མུ་མཐུད།";}}s:5:"bs_BA";a:8:{s:8:"language";s:5:"bs_BA";s:7:"version";s:5:"4.7.2";s:7:"updated";s:19:"2016-09-04 20:20:28";s:12:"english_name";s:7:"Bosnian";s:11:"native_name";s:8:"Bosanski";s:7:"package";s:64:"https://downloads.wordpress.org/translation/core/4.7.2/bs_BA.zip";s:3:"iso";a:2:{i:1;s:2:"bs";i:2;s:3:"bos";}s:7:"strings";a:1:{s:8:"continue";s:7:"Nastavi";}}s:2:"ca";a:8:{s:8:"language";s:2:"ca";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-05-21 20:41:02";s:12:"english_name";s:7:"Catalan";s:11:"native_name";s:7:"Català";s:7:"package";s:61:"https://downloads.wordpress.org/translation/core/4.7.5/ca.zip";s:3:"iso";a:2:{i:1;s:2:"ca";i:2;s:3:"cat";}s:7:"strings";a:1:{s:8:"continue";s:8:"Continua";}}s:3:"ceb";a:8:{s:8:"language";s:3:"ceb";s:7:"version";s:5:"4.7.2";s:7:"updated";s:19:"2016-03-02 17:25:51";s:12:"english_name";s:7:"Cebuano";s:11:"native_name";s:7:"Cebuano";s:7:"package";s:62:"https://downloads.wordpress.org/translation/core/4.7.2/ceb.zip";s:3:"iso";a:2:{i:2;s:3:"ceb";i:3;s:3:"ceb";}s:7:"strings";a:1:{s:8:"continue";s:7:"Padayun";}}s:5:"cs_CZ";a:8:{s:8:"language";s:5:"cs_CZ";s:7:"version";s:5:"4.7.2";s:7:"updated";s:19:"2017-01-12 08:46:26";s:12:"english_name";s:5:"Czech";s:11:"native_name";s:12:"Čeština‎";s:7:"package";s:64:"https://downloads.wordpress.org/translation/core/4.7.2/cs_CZ.zip";s:3:"iso";a:2:{i:1;s:2:"cs";i:2;s:3:"ces";}s:7:"strings";a:1:{s:8:"continue";s:11:"Pokračovat";}}s:2:"cy";a:8:{s:8:"language";s:2:"cy";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-01-26 15:49:29";s:12:"english_name";s:5:"Welsh";s:11:"native_name";s:7:"Cymraeg";s:7:"package";s:61:"https://downloads.wordpress.org/translation/core/4.7.5/cy.zip";s:3:"iso";a:2:{i:1;s:2:"cy";i:2;s:3:"cym";}s:7:"strings";a:1:{s:8:"continue";s:6:"Parhau";}}s:5:"da_DK";a:8:{s:8:"language";s:5:"da_DK";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-04-05 09:50:06";s:12:"english_name";s:6:"Danish";s:11:"native_name";s:5:"Dansk";s:7:"package";s:64:"https://downloads.wordpress.org/translation/core/4.7.5/da_DK.zip";s:3:"iso";a:2:{i:1;s:2:"da";i:2;s:3:"dan";}s:7:"strings";a:1:{s:8:"continue";s:8:"Fortsæt";}}s:5:"de_CH";a:8:{s:8:"language";s:5:"de_CH";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-01-26 15:40:03";s:12:"english_name";s:20:"German (Switzerland)";s:11:"native_name";s:17:"Deutsch (Schweiz)";s:7:"package";s:64:"https://downloads.wordpress.org/translation/core/4.7.5/de_CH.zip";s:3:"iso";a:1:{i:1;s:2:"de";}s:7:"strings";a:1:{s:8:"continue";s:6:"Weiter";}}s:14:"de_CH_informal";a:8:{s:8:"language";s:14:"de_CH_informal";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-01-26 15:39:59";s:12:"english_name";s:30:"German (Switzerland, Informal)";s:11:"native_name";s:21:"Deutsch (Schweiz, Du)";s:7:"package";s:73:"https://downloads.wordpress.org/translation/core/4.7.5/de_CH_informal.zip";s:3:"iso";a:1:{i:1;s:2:"de";}s:7:"strings";a:1:{s:8:"continue";s:6:"Weiter";}}s:5:"de_DE";a:8:{s:8:"language";s:5:"de_DE";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-05-24 13:44:35";s:12:"english_name";s:6:"German";s:11:"native_name";s:7:"Deutsch";s:7:"package";s:64:"https://downloads.wordpress.org/translation/core/4.7.5/de_DE.zip";s:3:"iso";a:1:{i:1;s:2:"de";}s:7:"strings";a:1:{s:8:"continue";s:6:"Weiter";}}s:12:"de_DE_formal";a:8:{s:8:"language";s:12:"de_DE_formal";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-05-24 13:44:46";s:12:"english_name";s:15:"German (Formal)";s:11:"native_name";s:13:"Deutsch (Sie)";s:7:"package";s:71:"https://downloads.wordpress.org/translation/core/4.7.5/de_DE_formal.zip";s:3:"iso";a:1:{i:1;s:2:"de";}s:7:"strings";a:1:{s:8:"continue";s:6:"Weiter";}}s:3:"dzo";a:8:{s:8:"language";s:3:"dzo";s:7:"version";s:5:"4.7.2";s:7:"updated";s:19:"2016-06-29 08:59:03";s:12:"english_name";s:8:"Dzongkha";s:11:"native_name";s:18:"རྫོང་ཁ";s:7:"package";s:62:"https://downloads.wordpress.org/translation/core/4.7.2/dzo.zip";s:3:"iso";a:2:{i:1;s:2:"dz";i:2;s:3:"dzo";}s:7:"strings";a:1:{s:8:"continue";s:0:"";}}s:2:"el";a:8:{s:8:"language";s:2:"el";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-05-11 20:10:39";s:12:"english_name";s:5:"Greek";s:11:"native_name";s:16:"Ελληνικά";s:7:"package";s:61:"https://downloads.wordpress.org/translation/core/4.7.5/el.zip";s:3:"iso";a:2:{i:1;s:2:"el";i:2;s:3:"ell";}s:7:"strings";a:1:{s:8:"continue";s:16:"Συνέχεια";}}s:5:"en_GB";a:8:{s:8:"language";s:5:"en_GB";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-01-28 03:10:25";s:12:"english_name";s:12:"English (UK)";s:11:"native_name";s:12:"English (UK)";s:7:"package";s:64:"https://downloads.wordpress.org/translation/core/4.7.5/en_GB.zip";s:3:"iso";a:3:{i:1;s:2:"en";i:2;s:3:"eng";i:3;s:3:"eng";}s:7:"strings";a:1:{s:8:"continue";s:8:"Continue";}}s:5:"en_ZA";a:8:{s:8:"language";s:5:"en_ZA";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-01-26 15:53:43";s:12:"english_name";s:22:"English (South Africa)";s:11:"native_name";s:22:"English (South Africa)";s:7:"package";s:64:"https://downloads.wordpress.org/translation/core/4.7.5/en_ZA.zip";s:3:"iso";a:3:{i:1;s:2:"en";i:2;s:3:"eng";i:3;s:3:"eng";}s:7:"strings";a:1:{s:8:"continue";s:8:"Continue";}}s:5:"en_AU";a:8:{s:8:"language";s:5:"en_AU";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-01-27 00:40:28";s:12:"english_name";s:19:"English (Australia)";s:11:"native_name";s:19:"English (Australia)";s:7:"package";s:64:"https://downloads.wordpress.org/translation/core/4.7.5/en_AU.zip";s:3:"iso";a:3:{i:1;s:2:"en";i:2;s:3:"eng";i:3;s:3:"eng";}s:7:"strings";a:1:{s:8:"continue";s:8:"Continue";}}s:5:"en_CA";a:8:{s:8:"language";s:5:"en_CA";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-01-26 15:49:34";s:12:"english_name";s:16:"English (Canada)";s:11:"native_name";s:16:"English (Canada)";s:7:"package";s:64:"https://downloads.wordpress.org/translation/core/4.7.5/en_CA.zip";s:3:"iso";a:3:{i:1;s:2:"en";i:2;s:3:"eng";i:3;s:3:"eng";}s:7:"strings";a:1:{s:8:"continue";s:8:"Continue";}}s:5:"en_NZ";a:8:{s:8:"language";s:5:"en_NZ";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-01-26 15:54:30";s:12:"english_name";s:21:"English (New Zealand)";s:11:"native_name";s:21:"English (New Zealand)";s:7:"package";s:64:"https://downloads.wordpress.org/translation/core/4.7.5/en_NZ.zip";s:3:"iso";a:3:{i:1;s:2:"en";i:2;s:3:"eng";i:3;s:3:"eng";}s:7:"strings";a:1:{s:8:"continue";s:8:"Continue";}}s:2:"eo";a:8:{s:8:"language";s:2:"eo";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-05-04 18:08:49";s:12:"english_name";s:9:"Esperanto";s:11:"native_name";s:9:"Esperanto";s:7:"package";s:61:"https://downloads.wordpress.org/translation/core/4.7.5/eo.zip";s:3:"iso";a:2:{i:1;s:2:"eo";i:2;s:3:"epo";}s:7:"strings";a:1:{s:8:"continue";s:8:"Daŭrigi";}}s:5:"es_ES";a:8:{s:8:"language";s:5:"es_ES";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-05-10 16:26:52";s:12:"english_name";s:15:"Spanish (Spain)";s:11:"native_name";s:8:"Español";s:7:"package";s:64:"https://downloads.wordpress.org/translation/core/4.7.5/es_ES.zip";s:3:"iso";a:1:{i:1;s:2:"es";}s:7:"strings";a:1:{s:8:"continue";s:9:"Continuar";}}s:5:"es_CO";a:8:{s:8:"language";s:5:"es_CO";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-01-26 15:54:37";s:12:"english_name";s:18:"Spanish (Colombia)";s:11:"native_name";s:20:"Español de Colombia";s:7:"package";s:64:"https://downloads.wordpress.org/translation/core/4.7.5/es_CO.zip";s:3:"iso";a:2:{i:1;s:2:"es";i:2;s:3:"spa";}s:7:"strings";a:1:{s:8:"continue";s:9:"Continuar";}}s:5:"es_GT";a:8:{s:8:"language";s:5:"es_GT";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-01-26 15:54:37";s:12:"english_name";s:19:"Spanish (Guatemala)";s:11:"native_name";s:21:"Español de Guatemala";s:7:"package";s:64:"https://downloads.wordpress.org/translation/core/4.7.5/es_GT.zip";s:3:"iso";a:2:{i:1;s:2:"es";i:2;s:3:"spa";}s:7:"strings";a:1:{s:8:"continue";s:9:"Continuar";}}s:5:"es_MX";a:8:{s:8:"language";s:5:"es_MX";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-01-26 15:42:28";s:12:"english_name";s:16:"Spanish (Mexico)";s:11:"native_name";s:19:"Español de México";s:7:"package";s:64:"https://downloads.wordpress.org/translation/core/4.7.5/es_MX.zip";s:3:"iso";a:2:{i:1;s:2:"es";i:2;s:3:"spa";}s:7:"strings";a:1:{s:8:"continue";s:9:"Continuar";}}s:5:"es_VE";a:8:{s:8:"language";s:5:"es_VE";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-04-23 23:02:31";s:12:"english_name";s:19:"Spanish (Venezuela)";s:11:"native_name";s:21:"Español de Venezuela";s:7:"package";s:64:"https://downloads.wordpress.org/translation/core/4.7.5/es_VE.zip";s:3:"iso";a:2:{i:1;s:2:"es";i:2;s:3:"spa";}s:7:"strings";a:1:{s:8:"continue";s:9:"Continuar";}}s:5:"es_CL";a:8:{s:8:"language";s:5:"es_CL";s:7:"version";s:5:"4.7.2";s:7:"updated";s:19:"2016-11-28 20:09:49";s:12:"english_name";s:15:"Spanish (Chile)";s:11:"native_name";s:17:"Español de Chile";s:7:"package";s:64:"https://downloads.wordpress.org/translation/core/4.7.2/es_CL.zip";s:3:"iso";a:2:{i:1;s:2:"es";i:2;s:3:"spa";}s:7:"strings";a:1:{s:8:"continue";s:9:"Continuar";}}s:5:"es_PE";a:8:{s:8:"language";s:5:"es_PE";s:7:"version";s:5:"4.7.2";s:7:"updated";s:19:"2016-09-09 09:36:22";s:12:"english_name";s:14:"Spanish (Peru)";s:11:"native_name";s:17:"Español de Perú";s:7:"package";s:64:"https://downloads.wordpress.org/translation/core/4.7.2/es_PE.zip";s:3:"iso";a:2:{i:1;s:2:"es";i:2;s:3:"spa";}s:7:"strings";a:1:{s:8:"continue";s:9:"Continuar";}}s:5:"es_AR";a:8:{s:8:"language";s:5:"es_AR";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-01-26 15:41:31";s:12:"english_name";s:19:"Spanish (Argentina)";s:11:"native_name";s:21:"Español de Argentina";s:7:"package";s:64:"https://downloads.wordpress.org/translation/core/4.7.5/es_AR.zip";s:3:"iso";a:2:{i:1;s:2:"es";i:2;s:3:"spa";}s:7:"strings";a:1:{s:8:"continue";s:9:"Continuar";}}s:2:"et";a:8:{s:8:"language";s:2:"et";s:7:"version";s:5:"4.7.2";s:7:"updated";s:19:"2017-01-27 16:37:11";s:12:"english_name";s:8:"Estonian";s:11:"native_name";s:5:"Eesti";s:7:"package";s:61:"https://downloads.wordpress.org/translation/core/4.7.2/et.zip";s:3:"iso";a:2:{i:1;s:2:"et";i:2;s:3:"est";}s:7:"strings";a:1:{s:8:"continue";s:6:"Jätka";}}s:2:"eu";a:8:{s:8:"language";s:2:"eu";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-05-12 06:40:28";s:12:"english_name";s:6:"Basque";s:11:"native_name";s:7:"Euskara";s:7:"package";s:61:"https://downloads.wordpress.org/translation/core/4.7.5/eu.zip";s:3:"iso";a:2:{i:1;s:2:"eu";i:2;s:3:"eus";}s:7:"strings";a:1:{s:8:"continue";s:8:"Jarraitu";}}s:5:"fa_IR";a:8:{s:8:"language";s:5:"fa_IR";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-02-02 15:21:03";s:12:"english_name";s:7:"Persian";s:11:"native_name";s:10:"فارسی";s:7:"package";s:64:"https://downloads.wordpress.org/translation/core/4.7.5/fa_IR.zip";s:3:"iso";a:2:{i:1;s:2:"fa";i:2;s:3:"fas";}s:7:"strings";a:1:{s:8:"continue";s:10:"ادامه";}}s:2:"fi";a:8:{s:8:"language";s:2:"fi";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-01-26 15:42:25";s:12:"english_name";s:7:"Finnish";s:11:"native_name";s:5:"Suomi";s:7:"package";s:61:"https://downloads.wordpress.org/translation/core/4.7.5/fi.zip";s:3:"iso";a:2:{i:1;s:2:"fi";i:2;s:3:"fin";}s:7:"strings";a:1:{s:8:"continue";s:5:"Jatka";}}s:5:"fr_FR";a:8:{s:8:"language";s:5:"fr_FR";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-05-05 12:10:24";s:12:"english_name";s:15:"French (France)";s:11:"native_name";s:9:"Français";s:7:"package";s:64:"https://downloads.wordpress.org/translation/core/4.7.5/fr_FR.zip";s:3:"iso";a:1:{i:1;s:2:"fr";}s:7:"strings";a:1:{s:8:"continue";s:9:"Continuer";}}s:5:"fr_CA";a:8:{s:8:"language";s:5:"fr_CA";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-02-03 21:08:25";s:12:"english_name";s:15:"French (Canada)";s:11:"native_name";s:19:"Français du Canada";s:7:"package";s:64:"https://downloads.wordpress.org/translation/core/4.7.5/fr_CA.zip";s:3:"iso";a:2:{i:1;s:2:"fr";i:2;s:3:"fra";}s:7:"strings";a:1:{s:8:"continue";s:9:"Continuer";}}s:5:"fr_BE";a:8:{s:8:"language";s:5:"fr_BE";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-01-26 15:40:32";s:12:"english_name";s:16:"French (Belgium)";s:11:"native_name";s:21:"Français de Belgique";s:7:"package";s:64:"https://downloads.wordpress.org/translation/core/4.7.5/fr_BE.zip";s:3:"iso";a:2:{i:1;s:2:"fr";i:2;s:3:"fra";}s:7:"strings";a:1:{s:8:"continue";s:9:"Continuer";}}s:2:"gd";a:8:{s:8:"language";s:2:"gd";s:7:"version";s:5:"4.7.2";s:7:"updated";s:19:"2016-08-23 17:41:37";s:12:"english_name";s:15:"Scottish Gaelic";s:11:"native_name";s:9:"Gàidhlig";s:7:"package";s:61:"https://downloads.wordpress.org/translation/core/4.7.2/gd.zip";s:3:"iso";a:3:{i:1;s:2:"gd";i:2;s:3:"gla";i:3;s:3:"gla";}s:7:"strings";a:1:{s:8:"continue";s:15:"Lean air adhart";}}s:5:"gl_ES";a:8:{s:8:"language";s:5:"gl_ES";s:7:"version";s:5:"4.7.2";s:7:"updated";s:19:"2017-01-26 15:40:27";s:12:"english_name";s:8:"Galician";s:11:"native_name";s:6:"Galego";s:7:"package";s:64:"https://downloads.wordpress.org/translation/core/4.7.2/gl_ES.zip";s:3:"iso";a:2:{i:1;s:2:"gl";i:2;s:3:"glg";}s:7:"strings";a:1:{s:8:"continue";s:9:"Continuar";}}s:2:"gu";a:8:{s:8:"language";s:2:"gu";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-04-21 14:17:42";s:12:"english_name";s:8:"Gujarati";s:11:"native_name";s:21:"ગુજરાતી";s:7:"package";s:61:"https://downloads.wordpress.org/translation/core/4.7.5/gu.zip";s:3:"iso";a:2:{i:1;s:2:"gu";i:2;s:3:"guj";}s:7:"strings";a:1:{s:8:"continue";s:31:"ચાલુ રાખવું";}}s:3:"haz";a:8:{s:8:"language";s:3:"haz";s:7:"version";s:5:"4.4.2";s:7:"updated";s:19:"2015-12-05 00:59:09";s:12:"english_name";s:8:"Hazaragi";s:11:"native_name";s:15:"هزاره گی";s:7:"package";s:62:"https://downloads.wordpress.org/translation/core/4.4.2/haz.zip";s:3:"iso";a:1:{i:3;s:3:"haz";}s:7:"strings";a:1:{s:8:"continue";s:10:"ادامه";}}s:5:"he_IL";a:8:{s:8:"language";s:5:"he_IL";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-01-29 21:21:10";s:12:"english_name";s:6:"Hebrew";s:11:"native_name";s:16:"עִבְרִית";s:7:"package";s:64:"https://downloads.wordpress.org/translation/core/4.7.5/he_IL.zip";s:3:"iso";a:1:{i:1;s:2:"he";}s:7:"strings";a:1:{s:8:"continue";s:8:"המשך";}}s:5:"hi_IN";a:8:{s:8:"language";s:5:"hi_IN";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-05-17 06:35:04";s:12:"english_name";s:5:"Hindi";s:11:"native_name";s:18:"हिन्दी";s:7:"package";s:64:"https://downloads.wordpress.org/translation/core/4.7.5/hi_IN.zip";s:3:"iso";a:2:{i:1;s:2:"hi";i:2;s:3:"hin";}s:7:"strings";a:1:{s:8:"continue";s:12:"जारी";}}s:2:"hr";a:8:{s:8:"language";s:2:"hr";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-03-28 13:34:22";s:12:"english_name";s:8:"Croatian";s:11:"native_name";s:8:"Hrvatski";s:7:"package";s:61:"https://downloads.wordpress.org/translation/core/4.7.5/hr.zip";s:3:"iso";a:2:{i:1;s:2:"hr";i:2;s:3:"hrv";}s:7:"strings";a:1:{s:8:"continue";s:7:"Nastavi";}}s:5:"hu_HU";a:8:{s:8:"language";s:5:"hu_HU";s:7:"version";s:5:"4.7.2";s:7:"updated";s:19:"2017-01-26 15:48:39";s:12:"english_name";s:9:"Hungarian";s:11:"native_name";s:6:"Magyar";s:7:"package";s:64:"https://downloads.wordpress.org/translation/core/4.7.2/hu_HU.zip";s:3:"iso";a:2:{i:1;s:2:"hu";i:2;s:3:"hun";}s:7:"strings";a:1:{s:8:"continue";s:10:"Folytatás";}}s:2:"hy";a:8:{s:8:"language";s:2:"hy";s:7:"version";s:5:"4.7.2";s:7:"updated";s:19:"2016-12-03 16:21:10";s:12:"english_name";s:8:"Armenian";s:11:"native_name";s:14:"Հայերեն";s:7:"package";s:61:"https://downloads.wordpress.org/translation/core/4.7.2/hy.zip";s:3:"iso";a:2:{i:1;s:2:"hy";i:2;s:3:"hye";}s:7:"strings";a:1:{s:8:"continue";s:20:"Շարունակել";}}s:5:"id_ID";a:8:{s:8:"language";s:5:"id_ID";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-05-02 14:01:52";s:12:"english_name";s:10:"Indonesian";s:11:"native_name";s:16:"Bahasa Indonesia";s:7:"package";s:64:"https://downloads.wordpress.org/translation/core/4.7.5/id_ID.zip";s:3:"iso";a:2:{i:1;s:2:"id";i:2;s:3:"ind";}s:7:"strings";a:1:{s:8:"continue";s:9:"Lanjutkan";}}s:5:"is_IS";a:8:{s:8:"language";s:5:"is_IS";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-04-13 13:55:54";s:12:"english_name";s:9:"Icelandic";s:11:"native_name";s:9:"Íslenska";s:7:"package";s:64:"https://downloads.wordpress.org/translation/core/4.7.5/is_IS.zip";s:3:"iso";a:2:{i:1;s:2:"is";i:2;s:3:"isl";}s:7:"strings";a:1:{s:8:"continue";s:6:"Áfram";}}s:5:"it_IT";a:8:{s:8:"language";s:5:"it_IT";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-04-08 04:57:54";s:12:"english_name";s:7:"Italian";s:11:"native_name";s:8:"Italiano";s:7:"package";s:64:"https://downloads.wordpress.org/translation/core/4.7.5/it_IT.zip";s:3:"iso";a:2:{i:1;s:2:"it";i:2;s:3:"ita";}s:7:"strings";a:1:{s:8:"continue";s:8:"Continua";}}s:2:"ja";a:8:{s:8:"language";s:2:"ja";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-05-02 05:13:51";s:12:"english_name";s:8:"Japanese";s:11:"native_name";s:9:"日本語";s:7:"package";s:61:"https://downloads.wordpress.org/translation/core/4.7.5/ja.zip";s:3:"iso";a:1:{i:1;s:2:"ja";}s:7:"strings";a:1:{s:8:"continue";s:9:"続ける";}}s:5:"ka_GE";a:8:{s:8:"language";s:5:"ka_GE";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-04-05 06:17:00";s:12:"english_name";s:8:"Georgian";s:11:"native_name";s:21:"ქართული";s:7:"package";s:64:"https://downloads.wordpress.org/translation/core/4.7.5/ka_GE.zip";s:3:"iso";a:2:{i:1;s:2:"ka";i:2;s:3:"kat";}s:7:"strings";a:1:{s:8:"continue";s:30:"გაგრძელება";}}s:3:"kab";a:8:{s:8:"language";s:3:"kab";s:7:"version";s:5:"4.7.2";s:7:"updated";s:19:"2017-01-26 15:39:13";s:12:"english_name";s:6:"Kabyle";s:11:"native_name";s:9:"Taqbaylit";s:7:"package";s:62:"https://downloads.wordpress.org/translation/core/4.7.2/kab.zip";s:3:"iso";a:2:{i:2;s:3:"kab";i:3;s:3:"kab";}s:7:"strings";a:1:{s:8:"continue";s:6:"Kemmel";}}s:2:"km";a:8:{s:8:"language";s:2:"km";s:7:"version";s:5:"4.7.2";s:7:"updated";s:19:"2016-12-07 02:07:59";s:12:"english_name";s:5:"Khmer";s:11:"native_name";s:27:"ភាសាខ្មែរ";s:7:"package";s:61:"https://downloads.wordpress.org/translation/core/4.7.2/km.zip";s:3:"iso";a:2:{i:1;s:2:"km";i:2;s:3:"khm";}s:7:"strings";a:1:{s:8:"continue";s:12:"បន្ត";}}s:5:"ko_KR";a:8:{s:8:"language";s:5:"ko_KR";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-04-18 05:09:08";s:12:"english_name";s:6:"Korean";s:11:"native_name";s:9:"한국어";s:7:"package";s:64:"https://downloads.wordpress.org/translation/core/4.7.5/ko_KR.zip";s:3:"iso";a:2:{i:1;s:2:"ko";i:2;s:3:"kor";}s:7:"strings";a:1:{s:8:"continue";s:6:"계속";}}s:3:"ckb";a:8:{s:8:"language";s:3:"ckb";s:7:"version";s:5:"4.7.2";s:7:"updated";s:19:"2017-01-26 15:48:25";s:12:"english_name";s:16:"Kurdish (Sorani)";s:11:"native_name";s:13:"كوردی‎";s:7:"package";s:62:"https://downloads.wordpress.org/translation/core/4.7.2/ckb.zip";s:3:"iso";a:2:{i:1;s:2:"ku";i:3;s:3:"ckb";}s:7:"strings";a:1:{s:8:"continue";s:30:"به‌رده‌وام به‌";}}s:2:"lo";a:8:{s:8:"language";s:2:"lo";s:7:"version";s:5:"4.7.2";s:7:"updated";s:19:"2016-11-12 09:59:23";s:12:"english_name";s:3:"Lao";s:11:"native_name";s:21:"ພາສາລາວ";s:7:"package";s:61:"https://downloads.wordpress.org/translation/core/4.7.2/lo.zip";s:3:"iso";a:2:{i:1;s:2:"lo";i:2;s:3:"lao";}s:7:"strings";a:1:{s:8:"continue";s:18:"ຕໍ່​ໄປ";}}s:5:"lt_LT";a:8:{s:8:"language";s:5:"lt_LT";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-03-30 09:46:13";s:12:"english_name";s:10:"Lithuanian";s:11:"native_name";s:15:"Lietuvių kalba";s:7:"package";s:64:"https://downloads.wordpress.org/translation/core/4.7.5/lt_LT.zip";s:3:"iso";a:2:{i:1;s:2:"lt";i:2;s:3:"lit";}s:7:"strings";a:1:{s:8:"continue";s:6:"Tęsti";}}s:2:"lv";a:8:{s:8:"language";s:2:"lv";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-03-17 20:40:40";s:12:"english_name";s:7:"Latvian";s:11:"native_name";s:16:"Latviešu valoda";s:7:"package";s:61:"https://downloads.wordpress.org/translation/core/4.7.5/lv.zip";s:3:"iso";a:2:{i:1;s:2:"lv";i:2;s:3:"lav";}s:7:"strings";a:1:{s:8:"continue";s:9:"Turpināt";}}s:5:"mk_MK";a:8:{s:8:"language";s:5:"mk_MK";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-01-26 15:54:41";s:12:"english_name";s:10:"Macedonian";s:11:"native_name";s:31:"Македонски јазик";s:7:"package";s:64:"https://downloads.wordpress.org/translation/core/4.7.5/mk_MK.zip";s:3:"iso";a:2:{i:1;s:2:"mk";i:2;s:3:"mkd";}s:7:"strings";a:1:{s:8:"continue";s:16:"Продолжи";}}s:5:"ml_IN";a:8:{s:8:"language";s:5:"ml_IN";s:7:"version";s:5:"4.7.2";s:7:"updated";s:19:"2017-01-27 03:43:32";s:12:"english_name";s:9:"Malayalam";s:11:"native_name";s:18:"മലയാളം";s:7:"package";s:64:"https://downloads.wordpress.org/translation/core/4.7.2/ml_IN.zip";s:3:"iso";a:2:{i:1;s:2:"ml";i:2;s:3:"mal";}s:7:"strings";a:1:{s:8:"continue";s:18:"തുടരുക";}}s:2:"mn";a:8:{s:8:"language";s:2:"mn";s:7:"version";s:5:"4.7.2";s:7:"updated";s:19:"2017-01-12 07:29:35";s:12:"english_name";s:9:"Mongolian";s:11:"native_name";s:12:"Монгол";s:7:"package";s:61:"https://downloads.wordpress.org/translation/core/4.7.2/mn.zip";s:3:"iso";a:2:{i:1;s:2:"mn";i:2;s:3:"mon";}s:7:"strings";a:1:{s:8:"continue";s:24:"Үргэлжлүүлэх";}}s:2:"mr";a:8:{s:8:"language";s:2:"mr";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-03-24 06:52:11";s:12:"english_name";s:7:"Marathi";s:11:"native_name";s:15:"मराठी";s:7:"package";s:61:"https://downloads.wordpress.org/translation/core/4.7.5/mr.zip";s:3:"iso";a:2:{i:1;s:2:"mr";i:2;s:3:"mar";}s:7:"strings";a:1:{s:8:"continue";s:25:"सुरु ठेवा";}}s:5:"ms_MY";a:8:{s:8:"language";s:5:"ms_MY";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-03-05 09:45:10";s:12:"english_name";s:5:"Malay";s:11:"native_name";s:13:"Bahasa Melayu";s:7:"package";s:64:"https://downloads.wordpress.org/translation/core/4.7.5/ms_MY.zip";s:3:"iso";a:2:{i:1;s:2:"ms";i:2;s:3:"msa";}s:7:"strings";a:1:{s:8:"continue";s:8:"Teruskan";}}s:5:"my_MM";a:8:{s:8:"language";s:5:"my_MM";s:7:"version";s:6:"4.1.18";s:7:"updated";s:19:"2015-03-26 15:57:42";s:12:"english_name";s:17:"Myanmar (Burmese)";s:11:"native_name";s:15:"ဗမာစာ";s:7:"package";s:65:"https://downloads.wordpress.org/translation/core/4.1.18/my_MM.zip";s:3:"iso";a:2:{i:1;s:2:"my";i:2;s:3:"mya";}s:7:"strings";a:1:{s:8:"continue";s:54:"ဆက်လက်လုပ်ဆောင်ပါ။";}}s:5:"nb_NO";a:8:{s:8:"language";s:5:"nb_NO";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-01-26 15:42:31";s:12:"english_name";s:19:"Norwegian (Bokmål)";s:11:"native_name";s:13:"Norsk bokmål";s:7:"package";s:64:"https://downloads.wordpress.org/translation/core/4.7.5/nb_NO.zip";s:3:"iso";a:2:{i:1;s:2:"nb";i:2;s:3:"nob";}s:7:"strings";a:1:{s:8:"continue";s:8:"Fortsett";}}s:5:"ne_NP";a:8:{s:8:"language";s:5:"ne_NP";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-05-17 11:59:55";s:12:"english_name";s:6:"Nepali";s:11:"native_name";s:18:"नेपाली";s:7:"package";s:64:"https://downloads.wordpress.org/translation/core/4.7.5/ne_NP.zip";s:3:"iso";a:2:{i:1;s:2:"ne";i:2;s:3:"nep";}s:7:"strings";a:1:{s:8:"continue";s:43:"जारी राख्नुहोस्";}}s:5:"nl_NL";a:8:{s:8:"language";s:5:"nl_NL";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-05-11 15:57:29";s:12:"english_name";s:5:"Dutch";s:11:"native_name";s:10:"Nederlands";s:7:"package";s:64:"https://downloads.wordpress.org/translation/core/4.7.5/nl_NL.zip";s:3:"iso";a:2:{i:1;s:2:"nl";i:2;s:3:"nld";}s:7:"strings";a:1:{s:8:"continue";s:8:"Doorgaan";}}s:5:"nl_BE";a:8:{s:8:"language";s:5:"nl_BE";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-05-15 08:29:44";s:12:"english_name";s:15:"Dutch (Belgium)";s:11:"native_name";s:20:"Nederlands (België)";s:7:"package";s:64:"https://downloads.wordpress.org/translation/core/4.7.5/nl_BE.zip";s:3:"iso";a:2:{i:1;s:2:"nl";i:2;s:3:"nld";}s:7:"strings";a:1:{s:8:"continue";s:8:"Doorgaan";}}s:12:"nl_NL_formal";a:8:{s:8:"language";s:12:"nl_NL_formal";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-02-16 13:24:21";s:12:"english_name";s:14:"Dutch (Formal)";s:11:"native_name";s:20:"Nederlands (Formeel)";s:7:"package";s:71:"https://downloads.wordpress.org/translation/core/4.7.5/nl_NL_formal.zip";s:3:"iso";a:2:{i:1;s:2:"nl";i:2;s:3:"nld";}s:7:"strings";a:1:{s:8:"continue";s:8:"Doorgaan";}}s:5:"nn_NO";a:8:{s:8:"language";s:5:"nn_NO";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-01-26 15:40:57";s:12:"english_name";s:19:"Norwegian (Nynorsk)";s:11:"native_name";s:13:"Norsk nynorsk";s:7:"package";s:64:"https://downloads.wordpress.org/translation/core/4.7.5/nn_NO.zip";s:3:"iso";a:2:{i:1;s:2:"nn";i:2;s:3:"nno";}s:7:"strings";a:1:{s:8:"continue";s:9:"Hald fram";}}s:3:"oci";a:8:{s:8:"language";s:3:"oci";s:7:"version";s:5:"4.7.2";s:7:"updated";s:19:"2017-01-02 13:47:38";s:12:"english_name";s:7:"Occitan";s:11:"native_name";s:7:"Occitan";s:7:"package";s:62:"https://downloads.wordpress.org/translation/core/4.7.2/oci.zip";s:3:"iso";a:2:{i:1;s:2:"oc";i:2;s:3:"oci";}s:7:"strings";a:1:{s:8:"continue";s:9:"Contunhar";}}s:5:"pa_IN";a:8:{s:8:"language";s:5:"pa_IN";s:7:"version";s:5:"4.7.2";s:7:"updated";s:19:"2017-01-16 05:19:43";s:12:"english_name";s:7:"Punjabi";s:11:"native_name";s:18:"ਪੰਜਾਬੀ";s:7:"package";s:64:"https://downloads.wordpress.org/translation/core/4.7.2/pa_IN.zip";s:3:"iso";a:2:{i:1;s:2:"pa";i:2;s:3:"pan";}s:7:"strings";a:1:{s:8:"continue";s:25:"ਜਾਰੀ ਰੱਖੋ";}}s:5:"pl_PL";a:8:{s:8:"language";s:5:"pl_PL";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-04-23 09:31:28";s:12:"english_name";s:6:"Polish";s:11:"native_name";s:6:"Polski";s:7:"package";s:64:"https://downloads.wordpress.org/translation/core/4.7.5/pl_PL.zip";s:3:"iso";a:2:{i:1;s:2:"pl";i:2;s:3:"pol";}s:7:"strings";a:1:{s:8:"continue";s:9:"Kontynuuj";}}s:2:"ps";a:8:{s:8:"language";s:2:"ps";s:7:"version";s:6:"4.1.18";s:7:"updated";s:19:"2015-03-29 22:19:48";s:12:"english_name";s:6:"Pashto";s:11:"native_name";s:8:"پښتو";s:7:"package";s:62:"https://downloads.wordpress.org/translation/core/4.1.18/ps.zip";s:3:"iso";a:2:{i:1;s:2:"ps";i:2;s:3:"pus";}s:7:"strings";a:1:{s:8:"continue";s:19:"دوام ورکړه";}}s:5:"pt_BR";a:8:{s:8:"language";s:5:"pt_BR";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-04-17 15:02:48";s:12:"english_name";s:19:"Portuguese (Brazil)";s:11:"native_name";s:20:"Português do Brasil";s:7:"package";s:64:"https://downloads.wordpress.org/translation/core/4.7.5/pt_BR.zip";s:3:"iso";a:2:{i:1;s:2:"pt";i:2;s:3:"por";}s:7:"strings";a:1:{s:8:"continue";s:9:"Continuar";}}s:5:"pt_PT";a:8:{s:8:"language";s:5:"pt_PT";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-05-15 10:57:32";s:12:"english_name";s:21:"Portuguese (Portugal)";s:11:"native_name";s:10:"Português";s:7:"package";s:64:"https://downloads.wordpress.org/translation/core/4.7.5/pt_PT.zip";s:3:"iso";a:1:{i:1;s:2:"pt";}s:7:"strings";a:1:{s:8:"continue";s:9:"Continuar";}}s:3:"rhg";a:8:{s:8:"language";s:3:"rhg";s:7:"version";s:5:"4.7.2";s:7:"updated";s:19:"2016-03-16 13:03:18";s:12:"english_name";s:8:"Rohingya";s:11:"native_name";s:8:"Ruáinga";s:7:"package";s:62:"https://downloads.wordpress.org/translation/core/4.7.2/rhg.zip";s:3:"iso";a:1:{i:3;s:3:"rhg";}s:7:"strings";a:1:{s:8:"continue";s:0:"";}}s:5:"ro_RO";a:8:{s:8:"language";s:5:"ro_RO";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-05-20 07:00:07";s:12:"english_name";s:8:"Romanian";s:11:"native_name";s:8:"Română";s:7:"package";s:64:"https://downloads.wordpress.org/translation/core/4.7.5/ro_RO.zip";s:3:"iso";a:2:{i:1;s:2:"ro";i:2;s:3:"ron";}s:7:"strings";a:1:{s:8:"continue";s:9:"Continuă";}}s:5:"ru_RU";a:8:{s:8:"language";s:5:"ru_RU";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-04-20 10:13:53";s:12:"english_name";s:7:"Russian";s:11:"native_name";s:14:"Русский";s:7:"package";s:64:"https://downloads.wordpress.org/translation/core/4.7.5/ru_RU.zip";s:3:"iso";a:2:{i:1;s:2:"ru";i:2;s:3:"rus";}s:7:"strings";a:1:{s:8:"continue";s:20:"Продолжить";}}s:3:"sah";a:8:{s:8:"language";s:3:"sah";s:7:"version";s:5:"4.7.2";s:7:"updated";s:19:"2017-01-21 02:06:41";s:12:"english_name";s:5:"Sakha";s:11:"native_name";s:14:"Сахалыы";s:7:"package";s:62:"https://downloads.wordpress.org/translation/core/4.7.2/sah.zip";s:3:"iso";a:2:{i:2;s:3:"sah";i:3;s:3:"sah";}s:7:"strings";a:1:{s:8:"continue";s:12:"Салҕаа";}}s:5:"si_LK";a:8:{s:8:"language";s:5:"si_LK";s:7:"version";s:5:"4.7.2";s:7:"updated";s:19:"2016-11-12 06:00:52";s:12:"english_name";s:7:"Sinhala";s:11:"native_name";s:15:"සිංහල";s:7:"package";s:64:"https://downloads.wordpress.org/translation/core/4.7.2/si_LK.zip";s:3:"iso";a:2:{i:1;s:2:"si";i:2;s:3:"sin";}s:7:"strings";a:1:{s:8:"continue";s:44:"දිගටම කරගෙන යන්න";}}s:5:"sk_SK";a:8:{s:8:"language";s:5:"sk_SK";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-05-10 13:48:29";s:12:"english_name";s:6:"Slovak";s:11:"native_name";s:11:"Slovenčina";s:7:"package";s:64:"https://downloads.wordpress.org/translation/core/4.7.5/sk_SK.zip";s:3:"iso";a:2:{i:1;s:2:"sk";i:2;s:3:"slk";}s:7:"strings";a:1:{s:8:"continue";s:12:"Pokračovať";}}s:5:"sl_SI";a:8:{s:8:"language";s:5:"sl_SI";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-02-08 17:57:45";s:12:"english_name";s:9:"Slovenian";s:11:"native_name";s:13:"Slovenščina";s:7:"package";s:64:"https://downloads.wordpress.org/translation/core/4.7.5/sl_SI.zip";s:3:"iso";a:2:{i:1;s:2:"sl";i:2;s:3:"slv";}s:7:"strings";a:1:{s:8:"continue";s:8:"Nadaljuj";}}s:2:"sq";a:8:{s:8:"language";s:2:"sq";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-04-24 08:35:30";s:12:"english_name";s:8:"Albanian";s:11:"native_name";s:5:"Shqip";s:7:"package";s:61:"https://downloads.wordpress.org/translation/core/4.7.5/sq.zip";s:3:"iso";a:2:{i:1;s:2:"sq";i:2;s:3:"sqi";}s:7:"strings";a:1:{s:8:"continue";s:6:"Vazhdo";}}s:5:"sr_RS";a:8:{s:8:"language";s:5:"sr_RS";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-01-26 15:41:03";s:12:"english_name";s:7:"Serbian";s:11:"native_name";s:23:"Српски језик";s:7:"package";s:64:"https://downloads.wordpress.org/translation/core/4.7.5/sr_RS.zip";s:3:"iso";a:2:{i:1;s:2:"sr";i:2;s:3:"srp";}s:7:"strings";a:1:{s:8:"continue";s:14:"Настави";}}s:5:"sv_SE";a:8:{s:8:"language";s:5:"sv_SE";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-04-03 00:34:10";s:12:"english_name";s:7:"Swedish";s:11:"native_name";s:7:"Svenska";s:7:"package";s:64:"https://downloads.wordpress.org/translation/core/4.7.5/sv_SE.zip";s:3:"iso";a:2:{i:1;s:2:"sv";i:2;s:3:"swe";}s:7:"strings";a:1:{s:8:"continue";s:9:"Fortsätt";}}s:3:"szl";a:8:{s:8:"language";s:3:"szl";s:7:"version";s:5:"4.7.2";s:7:"updated";s:19:"2016-09-24 19:58:14";s:12:"english_name";s:8:"Silesian";s:11:"native_name";s:17:"Ślōnskŏ gŏdka";s:7:"package";s:62:"https://downloads.wordpress.org/translation/core/4.7.2/szl.zip";s:3:"iso";a:1:{i:3;s:3:"szl";}s:7:"strings";a:1:{s:8:"continue";s:13:"Kōntynuować";}}s:5:"ta_IN";a:8:{s:8:"language";s:5:"ta_IN";s:7:"version";s:5:"4.7.2";s:7:"updated";s:19:"2017-01-27 03:22:47";s:12:"english_name";s:5:"Tamil";s:11:"native_name";s:15:"தமிழ்";s:7:"package";s:64:"https://downloads.wordpress.org/translation/core/4.7.2/ta_IN.zip";s:3:"iso";a:2:{i:1;s:2:"ta";i:2;s:3:"tam";}s:7:"strings";a:1:{s:8:"continue";s:24:"தொடரவும்";}}s:2:"te";a:8:{s:8:"language";s:2:"te";s:7:"version";s:5:"4.7.2";s:7:"updated";s:19:"2017-01-26 15:47:39";s:12:"english_name";s:6:"Telugu";s:11:"native_name";s:18:"తెలుగు";s:7:"package";s:61:"https://downloads.wordpress.org/translation/core/4.7.2/te.zip";s:3:"iso";a:2:{i:1;s:2:"te";i:2;s:3:"tel";}s:7:"strings";a:1:{s:8:"continue";s:30:"కొనసాగించు";}}s:2:"th";a:8:{s:8:"language";s:2:"th";s:7:"version";s:5:"4.7.2";s:7:"updated";s:19:"2017-01-26 15:48:43";s:12:"english_name";s:4:"Thai";s:11:"native_name";s:9:"ไทย";s:7:"package";s:61:"https://downloads.wordpress.org/translation/core/4.7.2/th.zip";s:3:"iso";a:2:{i:1;s:2:"th";i:2;s:3:"tha";}s:7:"strings";a:1:{s:8:"continue";s:15:"ต่อไป";}}s:2:"tl";a:8:{s:8:"language";s:2:"tl";s:7:"version";s:5:"4.7.2";s:7:"updated";s:19:"2016-12-30 02:38:08";s:12:"english_name";s:7:"Tagalog";s:11:"native_name";s:7:"Tagalog";s:7:"package";s:61:"https://downloads.wordpress.org/translation/core/4.7.2/tl.zip";s:3:"iso";a:2:{i:1;s:2:"tl";i:2;s:3:"tgl";}s:7:"strings";a:1:{s:8:"continue";s:10:"Magpatuloy";}}s:5:"tr_TR";a:8:{s:8:"language";s:5:"tr_TR";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-04-15 09:03:35";s:12:"english_name";s:7:"Turkish";s:11:"native_name";s:8:"Türkçe";s:7:"package";s:64:"https://downloads.wordpress.org/translation/core/4.7.5/tr_TR.zip";s:3:"iso";a:2:{i:1;s:2:"tr";i:2;s:3:"tur";}s:7:"strings";a:1:{s:8:"continue";s:5:"Devam";}}s:5:"tt_RU";a:8:{s:8:"language";s:5:"tt_RU";s:7:"version";s:5:"4.7.2";s:7:"updated";s:19:"2016-11-20 20:20:50";s:12:"english_name";s:5:"Tatar";s:11:"native_name";s:19:"Татар теле";s:7:"package";s:64:"https://downloads.wordpress.org/translation/core/4.7.2/tt_RU.zip";s:3:"iso";a:2:{i:1;s:2:"tt";i:2;s:3:"tat";}s:7:"strings";a:1:{s:8:"continue";s:17:"дәвам итү";}}s:3:"tah";a:8:{s:8:"language";s:3:"tah";s:7:"version";s:5:"4.7.2";s:7:"updated";s:19:"2016-03-06 18:39:39";s:12:"english_name";s:8:"Tahitian";s:11:"native_name";s:10:"Reo Tahiti";s:7:"package";s:62:"https://downloads.wordpress.org/translation/core/4.7.2/tah.zip";s:3:"iso";a:3:{i:1;s:2:"ty";i:2;s:3:"tah";i:3;s:3:"tah";}s:7:"strings";a:1:{s:8:"continue";s:0:"";}}s:5:"ug_CN";a:8:{s:8:"language";s:5:"ug_CN";s:7:"version";s:5:"4.7.2";s:7:"updated";s:19:"2016-12-05 09:23:39";s:12:"english_name";s:6:"Uighur";s:11:"native_name";s:9:"Uyƣurqə";s:7:"package";s:64:"https://downloads.wordpress.org/translation/core/4.7.2/ug_CN.zip";s:3:"iso";a:2:{i:1;s:2:"ug";i:2;s:3:"uig";}s:7:"strings";a:1:{s:8:"continue";s:26:"داۋاملاشتۇرۇش";}}s:2:"uk";a:8:{s:8:"language";s:2:"uk";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-05-17 03:13:31";s:12:"english_name";s:9:"Ukrainian";s:11:"native_name";s:20:"Українська";s:7:"package";s:61:"https://downloads.wordpress.org/translation/core/4.7.5/uk.zip";s:3:"iso";a:2:{i:1;s:2:"uk";i:2;s:3:"ukr";}s:7:"strings";a:1:{s:8:"continue";s:20:"Продовжити";}}s:2:"ur";a:8:{s:8:"language";s:2:"ur";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-03-27 07:08:07";s:12:"english_name";s:4:"Urdu";s:11:"native_name";s:8:"اردو";s:7:"package";s:61:"https://downloads.wordpress.org/translation/core/4.7.5/ur.zip";s:3:"iso";a:2:{i:1;s:2:"ur";i:2;s:3:"urd";}s:7:"strings";a:1:{s:8:"continue";s:19:"جاری رکھیں";}}s:5:"uz_UZ";a:8:{s:8:"language";s:5:"uz_UZ";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-05-13 09:55:38";s:12:"english_name";s:5:"Uzbek";s:11:"native_name";s:11:"O‘zbekcha";s:7:"package";s:64:"https://downloads.wordpress.org/translation/core/4.7.5/uz_UZ.zip";s:3:"iso";a:2:{i:1;s:2:"uz";i:2;s:3:"uzb";}s:7:"strings";a:1:{s:8:"continue";s:11:"Davom etish";}}s:2:"vi";a:8:{s:8:"language";s:2:"vi";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-04-10 15:33:37";s:12:"english_name";s:10:"Vietnamese";s:11:"native_name";s:14:"Tiếng Việt";s:7:"package";s:61:"https://downloads.wordpress.org/translation/core/4.7.5/vi.zip";s:3:"iso";a:2:{i:1;s:2:"vi";i:2;s:3:"vie";}s:7:"strings";a:1:{s:8:"continue";s:12:"Tiếp tục";}}s:5:"zh_TW";a:8:{s:8:"language";s:5:"zh_TW";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-05-08 04:16:08";s:12:"english_name";s:16:"Chinese (Taiwan)";s:11:"native_name";s:12:"繁體中文";s:7:"package";s:64:"https://downloads.wordpress.org/translation/core/4.7.5/zh_TW.zip";s:3:"iso";a:2:{i:1;s:2:"zh";i:2;s:3:"zho";}s:7:"strings";a:1:{s:8:"continue";s:6:"繼續";}}s:5:"zh_HK";a:8:{s:8:"language";s:5:"zh_HK";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-05-23 02:18:07";s:12:"english_name";s:19:"Chinese (Hong Kong)";s:11:"native_name";s:16:"香港中文版	";s:7:"package";s:64:"https://downloads.wordpress.org/translation/core/4.7.5/zh_HK.zip";s:3:"iso";a:2:{i:1;s:2:"zh";i:2;s:3:"zho";}s:7:"strings";a:1:{s:8:"continue";s:6:"繼續";}}s:5:"zh_CN";a:8:{s:8:"language";s:5:"zh_CN";s:7:"version";s:5:"4.7.5";s:7:"updated";s:19:"2017-01-26 15:54:45";s:12:"english_name";s:15:"Chinese (China)";s:11:"native_name";s:12:"简体中文";s:7:"package";s:64:"https://downloads.wordpress.org/translation/core/4.7.5/zh_CN.zip";s:3:"iso";a:2:{i:1;s:2:"zh";i:2;s:3:"zho";}s:7:"strings";a:1:{s:8:"continue";s:6:"继续";}}}', 'no'),
 (306, 'theme_mods_twentyfifteen', 'a:3:{i:0;b:0;s:18:"custom_css_post_id";i:-1;s:16:"sidebars_widgets";a:2:{s:4:"time";i:1495820409;s:4:"data";a:2:{s:19:"wp_inactive_widgets";a:0:{}s:9:"sidebar-1";a:6:{i:0;s:8:"search-2";i:1;s:14:"recent-posts-2";i:2;s:17:"recent-comments-2";i:3;s:10:"archives-2";i:4;s:12:"categories-2";i:5;s:6:"meta-2";}}}}', 'yes'),
 (309, '_transient_twentyfifteen_categories', '1', 'yes'),
-(311, '_site_transient_update_themes', 'O:8:"stdClass":4:{s:12:"last_checked";i:1495857257;s:7:"checked";a:5:{s:11:"simple-shop";s:5:"1.1.3";s:9:"travelify";s:5:"3.0.4";s:13:"twentyfifteen";s:3:"1.7";s:15:"twentyseventeen";s:3:"1.2";s:13:"twentysixteen";s:3:"1.3";}s:8:"response";a:0:{}s:12:"translations";a:0:{}}', 'no'),
+(311, '_site_transient_update_themes', 'O:8:"stdClass":4:{s:12:"last_checked";i:1496042797;s:7:"checked";a:5:{s:11:"simple-shop";s:5:"1.1.3";s:9:"travelify";s:5:"3.0.4";s:13:"twentyfifteen";s:3:"1.7";s:15:"twentyseventeen";s:3:"1.2";s:13:"twentysixteen";s:3:"1.3";}s:8:"response";a:0:{}s:12:"translations";a:0:{}}', 'no'),
 (312, 'theme_mods_travelify', 'a:2:{i:0;b:0;s:18:"custom_css_post_id";i:-1;}', 'yes'),
-(313, '_transient_timeout_travelify_internal_css', '1495945669', 'no'),
-(314, '_transient_travelify_internal_css', '', 'no'),
 (320, 'product_cat_children', 'a:0:{}', 'yes'),
-(350, '_transient_wc_attribute_taxonomies', 'a:16:{i:0;O:8:"stdClass":6:{s:12:"attribute_id";s:2:"11";s:14:"attribute_name";s:7:"battery";s:15:"attribute_label";s:31:"Аккумулятор (мАч)";s:14:"attribute_type";s:4:"text";s:17:"attribute_orderby";s:10:"menu_order";s:16:"attribute_public";s:1:"0";}i:1;O:8:"stdClass":6:{s:12:"attribute_id";s:2:"16";s:14:"attribute_name";s:5:"color";s:15:"attribute_label";s:8:"Цвет";s:14:"attribute_type";s:4:"text";s:17:"attribute_orderby";s:10:"menu_order";s:16:"attribute_public";s:1:"0";}i:2;O:8:"stdClass":6:{s:12:"attribute_id";s:1:"3";s:14:"attribute_name";s:5:"cores";s:15:"attribute_label";s:29:"Количество ядер";s:14:"attribute_type";s:6:"select";s:17:"attribute_orderby";s:10:"menu_order";s:16:"attribute_public";s:1:"0";}i:3;O:8:"stdClass":6:{s:12:"attribute_id";s:1:"8";s:14:"attribute_name";s:8:"countsim";s:15:"attribute_label";s:36:"Количество сим-карт";s:14:"attribute_type";s:6:"select";s:17:"attribute_orderby";s:10:"menu_order";s:16:"attribute_public";s:1:"0";}i:4;O:8:"stdClass":6:{s:12:"attribute_id";s:2:"14";s:14:"attribute_name";s:3:"cpu";s:15:"attribute_label";s:44:"Частота процессора (Мгц)";s:14:"attribute_type";s:4:"text";s:17:"attribute_orderby";s:10:"menu_order";s:16:"attribute_public";s:1:"0";}i:5;O:8:"stdClass":6:{s:12:"attribute_id";s:1:"2";s:14:"attribute_name";s:10:"definition";s:15:"attribute_label";s:31:"Разрешение (пикс)";s:14:"attribute_type";s:4:"text";s:17:"attribute_orderby";s:10:"menu_order";s:16:"attribute_public";s:1:"0";}i:6;O:8:"stdClass":6:{s:12:"attribute_id";s:1:"1";s:14:"attribute_name";s:8:"diagonal";s:15:"attribute_label";s:29:"Диагональ (дюйм)";s:14:"attribute_type";s:4:"text";s:17:"attribute_orderby";s:10:"menu_order";s:16:"attribute_public";s:1:"0";}i:7;O:8:"stdClass":6:{s:12:"attribute_id";s:1:"5";s:14:"attribute_name";s:10:"facecamera";s:15:"attribute_label";s:42:"Фронтальная камера (Мп)";s:14:"attribute_type";s:4:"text";s:17:"attribute_orderby";s:10:"menu_order";s:16:"attribute_public";s:1:"0";}i:8;O:8:"stdClass":6:{s:12:"attribute_id";s:1:"4";s:14:"attribute_name";s:10:"fotocamera";s:15:"attribute_label";s:36:"Основная камера (Мп)";s:14:"attribute_type";s:4:"text";s:17:"attribute_orderby";s:10:"menu_order";s:16:"attribute_public";s:1:"0";}i:9;O:8:"stdClass":6:{s:12:"attribute_id";s:2:"15";s:14:"attribute_name";s:8:"material";s:15:"attribute_label";s:16:"Материал";s:14:"attribute_type";s:6:"select";s:17:"attribute_orderby";s:10:"menu_order";s:16:"attribute_public";s:1:"0";}i:10;O:8:"stdClass":6:{s:12:"attribute_id";s:2:"10";s:14:"attribute_name";s:2:"os";s:15:"attribute_label";s:39:"Операционная система";s:14:"attribute_type";s:6:"select";s:17:"attribute_orderby";s:10:"menu_order";s:16:"attribute_public";s:1:"0";}i:11;O:8:"stdClass":6:{s:12:"attribute_id";s:1:"6";s:14:"attribute_name";s:3:"ram";s:15:"attribute_label";s:42:"Оперативная память (Гб)";s:14:"attribute_type";s:4:"text";s:17:"attribute_orderby";s:10:"menu_order";s:16:"attribute_public";s:1:"0";}i:12;O:8:"stdClass":6:{s:12:"attribute_id";s:1:"7";s:14:"attribute_name";s:3:"rom";s:15:"attribute_label";s:40:"Внутренняя память (Гб)";s:14:"attribute_type";s:4:"text";s:17:"attribute_orderby";s:10:"menu_order";s:16:"attribute_public";s:1:"0";}i:13;O:8:"stdClass":6:{s:12:"attribute_id";s:1:"9";s:14:"attribute_name";s:3:"sim";s:15:"attribute_label";s:30:"Формат сим-карты";s:14:"attribute_type";s:6:"select";s:17:"attribute_orderby";s:10:"menu_order";s:16:"attribute_public";s:1:"0";}i:14;O:8:"stdClass":6:{s:12:"attribute_id";s:2:"13";s:14:"attribute_name";s:8:"talktime";s:15:"attribute_label";s:29:"Время разговора";s:14:"attribute_type";s:4:"text";s:17:"attribute_orderby";s:10:"menu_order";s:16:"attribute_public";s:1:"0";}i:15;O:8:"stdClass":6:{s:12:"attribute_id";s:2:"12";s:14:"attribute_name";s:9:"вес-г";s:15:"attribute_label";s:11:"ВЕС (г)";s:14:"attribute_type";s:4:"text";s:17:"attribute_orderby";s:10:"menu_order";s:16:"attribute_public";s:1:"0";}}', 'yes'),
-(353, '_transient_product_query-transient-version', '1495857951', 'yes'),
-(354, '_transient_product-transient-version', '1495857951', 'yes'),
-(389, '_transient_woocommerce_cache_excluded_uris', 'a:6:{i:0;s:3:"p=6";i:1;s:6:"/cart/";i:2;s:3:"p=7";i:3;s:10:"/checkout/";i:4;s:3:"p=8";i:5;s:12:"/my-account/";}', 'yes'),
-(414, '_site_transient_timeout_theme_roots', '1495859050', 'no'),
-(415, '_site_transient_theme_roots', 'a:5:{s:11:"simple-shop";s:7:"/themes";s:9:"travelify";s:7:"/themes";s:13:"twentyfifteen";s:7:"/themes";s:15:"twentyseventeen";s:7:"/themes";s:13:"twentysixteen";s:7:"/themes";}', 'no'),
-(421, '_transient_timeout_feed_b9388c83948825c1edaef0d856b7b109', '1495900626', 'no'),
-(422, '_transient_timeout_feed_mod_b9388c83948825c1edaef0d856b7b109', '1495900627', 'no'),
-(423, '_transient_feed_mod_b9388c83948825c1edaef0d856b7b109', '1495857427', 'no'),
-(424, '_transient_timeout_dash_f69de0bbfe7eaa113146875f40c02000', '1495900627', 'no'),
-(425, '_transient_dash_f69de0bbfe7eaa113146875f40c02000', '<div class="rss-widget"><p><strong>Ошибка RSS:</strong> WP HTTP Error: cURL error 28: Operation timed out after 10000 milliseconds with 0 bytes received</p></div><div class="rss-widget"><p><strong>Ошибка RSS:</strong> WP HTTP Error: cURL error 28: Operation timed out after 0 milliseconds with 0 out of 0 bytes received</p></div><div class="rss-widget"><ul><li class="dashboard-news-plugin"><span>Популярный плагин:</span> Yoast SEO&nbsp;<a href="plugin-install.php?tab=plugin-information&amp;plugin=wordpress-seo&amp;_wpnonce=055fd15241&amp;TB_iframe=true&amp;width=600&amp;height=800" class="thickbox open-plugin-details-modal" aria-label="Установить Yoast SEO">(Установить)</a></li></ul></div>', 'no'),
-(426, '_site_transient_update_plugins', 'O:8:"stdClass":4:{s:12:"last_checked";i:1495857563;s:8:"response";a:1:{s:19:"akismet/akismet.php";O:8:"stdClass":8:{s:2:"id";s:2:"15";s:4:"slug";s:7:"akismet";s:6:"plugin";s:19:"akismet/akismet.php";s:11:"new_version";s:5:"3.3.2";s:3:"url";s:38:"https://wordpress.org/plugins/akismet/";s:7:"package";s:56:"https://downloads.wordpress.org/plugin/akismet.3.3.2.zip";s:6:"tested";s:5:"4.7.5";s:13:"compatibility";O:8:"stdClass":1:{s:6:"scalar";O:8:"stdClass":1:{s:6:"scalar";b:0;}}}}s:12:"translations";a:0:{}s:9:"no_update";a:2:{s:9:"hello.php";O:8:"stdClass":6:{s:2:"id";s:4:"3564";s:4:"slug";s:11:"hello-dolly";s:6:"plugin";s:9:"hello.php";s:11:"new_version";s:3:"1.6";s:3:"url";s:42:"https://wordpress.org/plugins/hello-dolly/";s:7:"package";s:58:"https://downloads.wordpress.org/plugin/hello-dolly.1.6.zip";}s:27:"woocommerce/woocommerce.php";O:8:"stdClass":7:{s:2:"id";s:5:"25331";s:4:"slug";s:11:"woocommerce";s:6:"plugin";s:27:"woocommerce/woocommerce.php";s:11:"new_version";s:5:"3.0.7";s:3:"url";s:42:"https://wordpress.org/plugins/woocommerce/";s:7:"package";s:60:"https://downloads.wordpress.org/plugin/woocommerce.3.0.7.zip";s:14:"upgrade_notice";s:132:"3.0 is a major update. Make a full site backup, update your theme and extensions, and review update best practices before upgrading.";}}}', 'no'),
-(433, '_transient_timeout_wc_term_counts', '1498449981', 'no'),
-(434, '_transient_wc_term_counts', 'a:3:{i:17;s:0:"";i:18;s:0:"";i:16;s:1:"5";}', 'no'),
-(435, '_transient_timeout_wc_low_stock_count', '1498450082', 'no'),
-(436, '_transient_wc_low_stock_count', '0', 'no'),
-(437, '_transient_timeout_wc_outofstock_count', '1498450082', 'no'),
-(438, '_transient_wc_outofstock_count', '0', 'no');
+(353, '_transient_product_query-transient-version', '1496049329', 'yes'),
+(354, '_transient_product-transient-version', '1496049330', 'yes'),
+(389, '_transient_woocommerce_cache_excluded_uris', 'a:6:{i:0;s:3:"p=6";i:1;s:6:"/cart/";i:2;s:3:"p=7";i:3;s:10:"/checkout/";i:4;s:3:"p=8";i:5;s:12:"/my-account/";}', 'yes');
+INSERT INTO `wp_options` (`option_id`, `option_name`, `option_value`, `autoload`) VALUES
+(440, '_transient_timeout_travelify_internal_css', '1496136527', 'no'),
+(441, '_transient_travelify_internal_css', '', 'no'),
+(446, '_site_transient_timeout_browser_973b0af64fa9ae42ab017fa2edcf5878', '1496581439', 'no'),
+(447, '_site_transient_browser_973b0af64fa9ae42ab017fa2edcf5878', 'a:9:{s:8:"platform";s:7:"Windows";s:4:"name";s:6:"Chrome";s:7:"version";s:13:"58.0.3029.110";s:10:"update_url";s:28:"http://www.google.com/chrome";s:7:"img_src";s:49:"http://s.wordpress.org/images/browsers/chrome.png";s:11:"img_src_ssl";s:48:"https://wordpress.org/images/browsers/chrome.png";s:15:"current_version";s:2:"18";s:7:"upgrade";b:0;s:8:"insecure";b:0;}', 'no'),
+(448, '_transient_timeout_wc_report_sales_by_date', '1496128256', 'no'),
+(449, '_transient_wc_report_sales_by_date', 'a:72:{s:32:"502b3e5787d0deb40ddaef6797a41832";a:0:{}s:32:"b8a434611a69a5732055ea84e20e19be";a:0:{}s:32:"1b7b6dfed52aba40808700fcf2fc9983";a:0:{}s:32:"d2610850cf789949afc613f65f65fe68";N;s:32:"76f71aae3e5cc85f64172a652b668c87";a:0:{}s:32:"321f0c9780c97df6a2868d443f4c6ae8";a:0:{}s:32:"48dd966c0879872dd3e8a04e16ab2374";a:0:{}s:32:"6c1f28ba560a59faa895abfa6d51a33e";a:0:{}s:32:"755c96580492e3409a4eb5bccf624cd1";a:0:{}s:32:"93af9d4b42bc59d9a03b804beba304e3";a:0:{}s:32:"ca1d49f86203bcd0d718c50257f92855";a:0:{}s:32:"07eb0725456442cdb30f80d2777ae1c0";N;s:32:"0736c38ab7c07c7a5cabc3682ef00354";a:0:{}s:32:"3175ac997131ab603eb66eae3b38d8ad";a:0:{}s:32:"e8b629385bf0ee64fc731e22c9796c03";a:0:{}s:32:"da6135e4d52f250467c26d24ba761401";a:0:{}s:32:"64d7be31146c61f0670a447674a7dffd";a:0:{}s:32:"179fab10206e895cc127413d5ce19493";a:0:{}s:32:"c56727e80afa93dcd249e0407ba059c7";a:0:{}s:32:"341a524bb72d2976501990116d1f2908";N;s:32:"f1ab3ca5fd5bfe1044f4dcfbb28f5c87";a:0:{}s:32:"e9853d2de7ce56d52bc4f5ba06bd32fd";a:0:{}s:32:"239f8ad6550691867d10f6f3a7162e92";a:0:{}s:32:"8d683db0e4cedff4a9a66f9ffb3dc8ee";a:0:{}s:32:"14d907aff1905362bf732baf0028cf41";a:0:{}s:32:"4df42812b62adfa5271cca67e5adba68";a:0:{}s:32:"12a04d2c7c68d2ed3f5a2e00f6d81510";a:0:{}s:32:"9927b13ee87b14013b4605f23a062ef3";N;s:32:"e705d96a289791b41bb2aeccc1e148c5";a:0:{}s:32:"d41bd9f04ec01aa82075ed8e9b8c8a8a";a:0:{}s:32:"8ba74237d08c4fdf84e653b5dbddc6c1";a:0:{}s:32:"8218682505b0f9c77db7c1f2319c70c7";a:0:{}s:32:"35f7b1cf77938259cf713cace4c83217";a:0:{}s:32:"01539f94a4c92bc51e466f869c06334d";a:0:{}s:32:"295344e5ef0aaf6d34bd42a0cd9b3b37";a:0:{}s:32:"64a6152a0fa0fe503656b50ac64fe1a5";N;s:32:"e7709071542df3978e05b1950f9f9944";a:0:{}s:32:"43013571fe683a4e282223ff48eb850c";a:0:{}s:32:"3ad275031aecfa7171a39a9bfec6deeb";a:0:{}s:32:"63955f89a550c7e452ca9a1fc0bc6748";a:0:{}s:32:"30790a753a9e28f6ccd7c6f6057f39e3";a:0:{}s:32:"75b42277f38e9490f5ac2bf4b8f94d33";a:0:{}s:32:"9044d7ab50e0f8c976434440573d0b57";a:0:{}s:32:"c2ce6a05dabe571c5ea2987966155c07";N;s:32:"d83291db4ba7e6afd234867b057ba55c";a:0:{}s:32:"df30e17eb58452ddbc51c48c9148d0e6";a:0:{}s:32:"9d8fbb5f0cc110d06ea71dbb72dfaa83";a:0:{}s:32:"d8aaee8385a1d88c4b619a0a3532400b";a:0:{}s:32:"260d48cae07db0c7568f81e01261c386";a:0:{}s:32:"3853b96cf36b7a74b37b86207860257c";a:0:{}s:32:"b515912f6570179fc9f31f53f952bb02";a:0:{}s:32:"09ee11ff2e4097335943f80eb0200724";N;s:32:"8b990a91affa372f6d65ca51ab097f3a";a:0:{}s:32:"34e4936d70ba074fbf892cc2590e9974";a:0:{}s:32:"50aaedda625c25a1d40438f65df9cbff";a:0:{}s:32:"49d540bb36901a9cff5817c117921512";a:0:{}s:32:"4d8d04de81ad13fa21299c675bd8aeb8";a:0:{}s:32:"3121db50deeb00e5758f32c2bea4f311";a:0:{}s:32:"5075a50398a57ee73f563cea8d1982fa";a:0:{}s:32:"d6dfaff8a495a679b7fcb8a021ce604d";N;s:32:"2c4544390cb0b49646f83e5afeba5a89";a:0:{}s:32:"ad873b0b9fd4eb6f45f7fc09983bd18d";a:0:{}s:32:"d9bd4f4994424b42274ad64efb8ad990";a:0:{}s:32:"fa3ba5c4a4992d6d9c51d293f710afa8";a:0:{}s:32:"98795533a45810bc8662161f46e7009b";a:0:{}s:32:"f89e971a45f96ec034ddde4c7f1a603f";a:0:{}s:32:"79a96091596e6cf060439da7ecc062b9";a:0:{}s:32:"51ba8d0ee5faee48ced80e3d97618c15";N;s:32:"abba074c790d86a7606df4cab4453af3";a:0:{}s:32:"d938c0fdfb7154ebd03e794db99be7b7";a:0:{}s:32:"695e56da00727f0aedb245238505e828";a:0:{}s:32:"81ca4d75e3091d933e7bb8f106f3d2b2";a:0:{}}', 'no'),
+(450, '_transient_timeout_wc_admin_report', '1496063041', 'no'),
+(451, '_transient_wc_admin_report', 'a:1:{s:32:"07250eb7845cab8138166d7723a967c8";a:0:{}}', 'no'),
+(452, '_transient_timeout_feed_ac0b00fe65abe10e0c5b588f3ed8c7ca', '1496019849', 'no'),
+(453, '_transient_timeout_feed_mod_ac0b00fe65abe10e0c5b588f3ed8c7ca', '1496019849', 'no'),
+(454, '_transient_feed_mod_ac0b00fe65abe10e0c5b588f3ed8c7ca', '1495976649', 'no'),
+(455, '_transient_timeout_feed_d117b5738fbd35bd8c0391cda1f2b5d9', '1496019852', 'no'),
+(456, '_transient_timeout_feed_mod_d117b5738fbd35bd8c0391cda1f2b5d9', '1496019852', 'no'),
+(457, '_transient_feed_mod_d117b5738fbd35bd8c0391cda1f2b5d9', '1495976652', 'no'),
+(458, '_transient_timeout_feed_b9388c83948825c1edaef0d856b7b109', '1496019859', 'no'),
+(459, '_transient_timeout_feed_mod_b9388c83948825c1edaef0d856b7b109', '1496019859', 'no'),
+(460, '_transient_feed_mod_b9388c83948825c1edaef0d856b7b109', '1495976659', 'no'),
+(461, '_transient_timeout_plugin_slugs', '1496063059', 'no'),
+(462, '_transient_plugin_slugs', 'a:3:{i:0;s:19:"akismet/akismet.php";i:1;s:9:"hello.php";i:2;s:27:"woocommerce/woocommerce.php";}', 'no'),
+(483, '_transient_timeout_wc_related_17', '1496068052', 'no'),
+(484, '_transient_wc_related_17', 'a:4:{i:0;s:2:"11";i:1;s:2:"16";i:2;s:2:"18";i:3;s:2:"23";}', 'no'),
+(537, '_transient_timeout_wc_related_57', '1496079828', 'no'),
+(538, '_transient_wc_related_57', 'a:6:{i:0;s:2:"30";i:1;s:2:"33";i:2;s:2:"38";i:3;s:2:"46";i:4;s:2:"50";i:5;s:2:"55";}', 'no'),
+(547, '_site_transient_update_plugins', 'O:8:"stdClass":4:{s:12:"last_checked";i:1496039159;s:8:"response";a:1:{s:19:"akismet/akismet.php";O:8:"stdClass":8:{s:2:"id";s:21:"w.org/plugins/akismet";s:4:"slug";s:7:"akismet";s:6:"plugin";s:19:"akismet/akismet.php";s:11:"new_version";s:5:"3.3.2";s:3:"url";s:38:"https://wordpress.org/plugins/akismet/";s:7:"package";s:56:"https://downloads.wordpress.org/plugin/akismet.3.3.2.zip";s:6:"tested";s:5:"4.7.4";s:13:"compatibility";O:8:"stdClass":0:{}}}s:12:"translations";a:0:{}s:9:"no_update";a:2:{s:9:"hello.php";O:8:"stdClass":6:{s:2:"id";s:25:"w.org/plugins/hello-dolly";s:4:"slug";s:11:"hello-dolly";s:6:"plugin";s:9:"hello.php";s:11:"new_version";s:3:"1.6";s:3:"url";s:42:"https://wordpress.org/plugins/hello-dolly/";s:7:"package";s:58:"https://downloads.wordpress.org/plugin/hello-dolly.1.6.zip";}s:27:"woocommerce/woocommerce.php";O:8:"stdClass":6:{s:2:"id";s:25:"w.org/plugins/woocommerce";s:4:"slug";s:11:"woocommerce";s:6:"plugin";s:27:"woocommerce/woocommerce.php";s:11:"new_version";s:5:"3.0.7";s:3:"url";s:42:"https://wordpress.org/plugins/woocommerce/";s:7:"package";s:60:"https://downloads.wordpress.org/plugin/woocommerce.3.0.7.zip";}}}', 'no'),
+(559, '_site_transient_timeout_theme_roots', '1496048112', 'no'),
+(560, '_site_transient_theme_roots', 'a:5:{s:11:"simple-shop";s:7:"/themes";s:9:"travelify";s:7:"/themes";s:13:"twentyfifteen";s:7:"/themes";s:15:"twentyseventeen";s:7:"/themes";s:13:"twentysixteen";s:7:"/themes";}', 'no'),
+(564, '_transient_wc_attribute_taxonomies', 'a:20:{i:0;O:8:"stdClass":6:{s:12:"attribute_id";s:2:"11";s:14:"attribute_name";s:7:"battery";s:15:"attribute_label";s:31:"Аккумулятор (мАч)";s:14:"attribute_type";s:4:"text";s:17:"attribute_orderby";s:10:"menu_order";s:16:"attribute_public";s:1:"0";}i:1;O:8:"stdClass":6:{s:12:"attribute_id";s:2:"16";s:14:"attribute_name";s:5:"color";s:15:"attribute_label";s:8:"Цвет";s:14:"attribute_type";s:4:"text";s:17:"attribute_orderby";s:10:"menu_order";s:16:"attribute_public";s:1:"0";}i:2;O:8:"stdClass":6:{s:12:"attribute_id";s:1:"3";s:14:"attribute_name";s:5:"cores";s:15:"attribute_label";s:29:"Количество ядер";s:14:"attribute_type";s:6:"select";s:17:"attribute_orderby";s:10:"menu_order";s:16:"attribute_public";s:1:"0";}i:3;O:8:"stdClass":6:{s:12:"attribute_id";s:1:"8";s:14:"attribute_name";s:8:"countsim";s:15:"attribute_label";s:36:"Количество сим-карт";s:14:"attribute_type";s:6:"select";s:17:"attribute_orderby";s:10:"menu_order";s:16:"attribute_public";s:1:"0";}i:4;O:8:"stdClass":6:{s:12:"attribute_id";s:2:"14";s:14:"attribute_name";s:3:"cpu";s:15:"attribute_label";s:44:"Частота процессора (Мгц)";s:14:"attribute_type";s:4:"text";s:17:"attribute_orderby";s:10:"menu_order";s:16:"attribute_public";s:1:"0";}i:5;O:8:"stdClass":6:{s:12:"attribute_id";s:1:"2";s:14:"attribute_name";s:10:"definition";s:15:"attribute_label";s:31:"Разрешение (пикс)";s:14:"attribute_type";s:4:"text";s:17:"attribute_orderby";s:10:"menu_order";s:16:"attribute_public";s:1:"0";}i:6;O:8:"stdClass":6:{s:12:"attribute_id";s:1:"1";s:14:"attribute_name";s:8:"diagonal";s:15:"attribute_label";s:29:"Диагональ (дюйм)";s:14:"attribute_type";s:4:"text";s:17:"attribute_orderby";s:10:"menu_order";s:16:"attribute_public";s:1:"0";}i:7;O:8:"stdClass":6:{s:12:"attribute_id";s:1:"5";s:14:"attribute_name";s:10:"facecamera";s:15:"attribute_label";s:42:"Фронтальная камера (Мп)";s:14:"attribute_type";s:4:"text";s:17:"attribute_orderby";s:10:"menu_order";s:16:"attribute_public";s:1:"0";}i:8;O:8:"stdClass":6:{s:12:"attribute_id";s:1:"4";s:14:"attribute_name";s:10:"fotocamera";s:15:"attribute_label";s:36:"Основная камера (Мп)";s:14:"attribute_type";s:4:"text";s:17:"attribute_orderby";s:10:"menu_order";s:16:"attribute_public";s:1:"0";}i:9;O:8:"stdClass":6:{s:12:"attribute_id";s:2:"15";s:14:"attribute_name";s:8:"material";s:15:"attribute_label";s:16:"Материал";s:14:"attribute_type";s:6:"select";s:17:"attribute_orderby";s:10:"menu_order";s:16:"attribute_public";s:1:"0";}i:10;O:8:"stdClass":6:{s:12:"attribute_id";s:2:"10";s:14:"attribute_name";s:2:"os";s:15:"attribute_label";s:39:"Операционная система";s:14:"attribute_type";s:6:"select";s:17:"attribute_orderby";s:10:"menu_order";s:16:"attribute_public";s:1:"0";}i:11;O:8:"stdClass":6:{s:12:"attribute_id";s:1:"6";s:14:"attribute_name";s:3:"ram";s:15:"attribute_label";s:42:"Оперативная память (Гб)";s:14:"attribute_type";s:4:"text";s:17:"attribute_orderby";s:10:"menu_order";s:16:"attribute_public";s:1:"0";}i:12;O:8:"stdClass":6:{s:12:"attribute_id";s:1:"7";s:14:"attribute_name";s:3:"rom";s:15:"attribute_label";s:40:"Внутренняя память (Гб)";s:14:"attribute_type";s:4:"text";s:17:"attribute_orderby";s:10:"menu_order";s:16:"attribute_public";s:1:"0";}i:13;O:8:"stdClass":6:{s:12:"attribute_id";s:1:"9";s:14:"attribute_name";s:3:"sim";s:15:"attribute_label";s:30:"Формат сим-карты";s:14:"attribute_type";s:6:"select";s:17:"attribute_orderby";s:10:"menu_order";s:16:"attribute_public";s:1:"0";}i:14;O:8:"stdClass":6:{s:12:"attribute_id";s:2:"19";s:14:"attribute_name";s:3:"ssd";s:15:"attribute_label";s:3:"SSD";s:14:"attribute_type";s:4:"text";s:17:"attribute_orderby";s:10:"menu_order";s:16:"attribute_public";s:1:"0";}i:15;O:8:"stdClass":6:{s:12:"attribute_id";s:2:"13";s:14:"attribute_name";s:8:"talktime";s:15:"attribute_label";s:29:"Время разговора";s:14:"attribute_type";s:4:"text";s:17:"attribute_orderby";s:10:"menu_order";s:16:"attribute_public";s:1:"0";}i:16;O:8:"stdClass":6:{s:12:"attribute_id";s:2:"12";s:14:"attribute_name";s:9:"вес-г";s:15:"attribute_label";s:11:"ВЕС (г)";s:14:"attribute_type";s:4:"text";s:17:"attribute_orderby";s:10:"menu_order";s:16:"attribute_public";s:1:"0";}i:17;O:8:"stdClass":6:{s:12:"attribute_id";s:2:"22";s:14:"attribute_name";s:20:"видеокарта";s:15:"attribute_label";s:20:"Видеокарта";s:14:"attribute_type";s:4:"text";s:17:"attribute_orderby";s:10:"menu_order";s:16:"attribute_public";s:1:"0";}i:18;O:8:"stdClass":6:{s:12:"attribute_id";s:2:"18";s:14:"attribute_name";s:23:"жесткий-диск";s:15:"attribute_label";s:23:"Жесткий диск";s:14:"attribute_type";s:4:"text";s:17:"attribute_orderby";s:10:"menu_order";s:16:"attribute_public";s:1:"0";}i:19;O:8:"stdClass":6:{s:12:"attribute_id";s:2:"21";s:14:"attribute_name";s:18:"процессор";s:15:"attribute_label";s:18:"Процессор";s:14:"attribute_type";s:4:"text";s:17:"attribute_orderby";s:10:"menu_order";s:16:"attribute_public";s:1:"0";}}', 'yes'),
+(567, '_transient_timeout_wc_term_counts', '1498641341', 'no'),
+(568, '_transient_wc_term_counts', 'a:3:{i:17;s:1:"8";i:18;s:0:"";i:16;s:1:"5";}', 'no'),
+(569, '_transient_timeout_wc_related_60', '1496135779', 'no'),
+(570, '_transient_wc_related_60', 'a:7:{i:0;s:2:"30";i:1;s:2:"33";i:2;s:2:"38";i:3;s:2:"46";i:4;s:2:"50";i:5;s:2:"55";i:6;s:2:"57";}', 'no');
 
 -- --------------------------------------------------------
 
@@ -393,11 +415,14 @@ INSERT INTO `wp_options` (`option_id`, `option_name`, `option_value`, `autoload`
 --
 
 CREATE TABLE IF NOT EXISTS `wp_postmeta` (
-  `meta_id` bigint(20) unsigned NOT NULL,
+  `meta_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `post_id` bigint(20) unsigned NOT NULL DEFAULT '0',
   `meta_key` varchar(255) DEFAULT NULL,
-  `meta_value` longtext
-) ENGINE=InnoDB AUTO_INCREMENT=207 DEFAULT CHARSET=utf8;
+  `meta_value` longtext,
+  PRIMARY KEY (`meta_id`),
+  KEY `post_id` (`post_id`),
+  KEY `meta_key` (`meta_key`(191))
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=622 ;
 
 --
 -- Дамп данных таблицы `wp_postmeta`
@@ -607,7 +632,423 @@ INSERT INTO `wp_postmeta` (`meta_id`, `post_id`, `meta_key`, `meta_value`) VALUE
 (203, 23, '_product_version', '3.0.7'),
 (204, 23, '_price', '41000'),
 (205, 23, '_edit_lock', '1495857836:1'),
-(206, 23, '_edit_last', '1');
+(206, 23, '_edit_last', '1'),
+(207, 25, '_wc_review_count', '0'),
+(208, 25, '_wc_rating_count', 'a:0:{}'),
+(209, 25, '_wc_average_rating', '0'),
+(210, 26, '_wc_review_count', '0'),
+(211, 26, '_wc_rating_count', 'a:0:{}'),
+(212, 26, '_wc_average_rating', '0'),
+(213, 26, '_edit_last', '1'),
+(214, 26, '_edit_lock', '1495983979:1'),
+(215, 27, '_wp_attached_file', '2017/05/2.jpg'),
+(216, 27, '_wp_attachment_metadata', 'a:5:{s:5:"width";i:715;s:6:"height";i:650;s:4:"file";s:13:"2017/05/2.jpg";s:5:"sizes";a:9:{s:9:"thumbnail";a:4:{s:4:"file";s:13:"2-150x150.jpg";s:5:"width";i:150;s:6:"height";i:150;s:9:"mime-type";s:10:"image/jpeg";}s:6:"medium";a:4:{s:4:"file";s:13:"2-300x273.jpg";s:5:"width";i:300;s:6:"height";i:273;s:9:"mime-type";s:10:"image/jpeg";}s:14:"shop_thumbnail";a:4:{s:4:"file";s:13:"2-180x180.jpg";s:5:"width";i:180;s:6:"height";i:180;s:9:"mime-type";s:10:"image/jpeg";}s:12:"shop_catalog";a:4:{s:4:"file";s:13:"2-300x300.jpg";s:5:"width";i:300;s:6:"height";i:300;s:9:"mime-type";s:10:"image/jpeg";}s:11:"shop_single";a:4:{s:4:"file";s:13:"2-600x600.jpg";s:5:"width";i:600;s:6:"height";i:600;s:9:"mime-type";s:10:"image/jpeg";}s:8:"featured";a:4:{s:4:"file";s:13:"2-670x300.jpg";s:5:"width";i:670;s:6:"height";i:300;s:9:"mime-type";s:10:"image/jpeg";}s:15:"featured-medium";a:4:{s:4:"file";s:13:"2-230x230.jpg";s:5:"width";i:230;s:6:"height";i:230;s:9:"mime-type";s:10:"image/jpeg";}s:6:"slider";a:4:{s:4:"file";s:13:"2-715x460.jpg";s:5:"width";i:715;s:6:"height";i:460;s:9:"mime-type";s:10:"image/jpeg";}s:7:"gallery";a:4:{s:4:"file";s:13:"2-474x342.jpg";s:5:"width";i:474;s:6:"height";i:342;s:9:"mime-type";s:10:"image/jpeg";}}s:10:"image_meta";a:12:{s:8:"aperture";s:1:"0";s:6:"credit";s:0:"";s:6:"camera";s:0:"";s:7:"caption";s:0:"";s:17:"created_timestamp";s:1:"0";s:9:"copyright";s:0:"";s:12:"focal_length";s:1:"0";s:3:"iso";s:1:"0";s:13:"shutter_speed";s:1:"0";s:5:"title";s:0:"";s:11:"orientation";s:1:"0";s:8:"keywords";a:0:{}}}'),
+(217, 28, '_wp_attached_file', '2017/05/3.jpg'),
+(218, 28, '_wp_attachment_metadata', 'a:5:{s:5:"width";i:720;s:6:"height";i:650;s:4:"file";s:13:"2017/05/3.jpg";s:5:"sizes";a:9:{s:9:"thumbnail";a:4:{s:4:"file";s:13:"3-150x150.jpg";s:5:"width";i:150;s:6:"height";i:150;s:9:"mime-type";s:10:"image/jpeg";}s:6:"medium";a:4:{s:4:"file";s:13:"3-300x271.jpg";s:5:"width";i:300;s:6:"height";i:271;s:9:"mime-type";s:10:"image/jpeg";}s:14:"shop_thumbnail";a:4:{s:4:"file";s:13:"3-180x180.jpg";s:5:"width";i:180;s:6:"height";i:180;s:9:"mime-type";s:10:"image/jpeg";}s:12:"shop_catalog";a:4:{s:4:"file";s:13:"3-300x300.jpg";s:5:"width";i:300;s:6:"height";i:300;s:9:"mime-type";s:10:"image/jpeg";}s:11:"shop_single";a:4:{s:4:"file";s:13:"3-600x600.jpg";s:5:"width";i:600;s:6:"height";i:600;s:9:"mime-type";s:10:"image/jpeg";}s:8:"featured";a:4:{s:4:"file";s:13:"3-670x300.jpg";s:5:"width";i:670;s:6:"height";i:300;s:9:"mime-type";s:10:"image/jpeg";}s:15:"featured-medium";a:4:{s:4:"file";s:13:"3-230x230.jpg";s:5:"width";i:230;s:6:"height";i:230;s:9:"mime-type";s:10:"image/jpeg";}s:6:"slider";a:4:{s:4:"file";s:13:"3-720x460.jpg";s:5:"width";i:720;s:6:"height";i:460;s:9:"mime-type";s:10:"image/jpeg";}s:7:"gallery";a:4:{s:4:"file";s:13:"3-474x342.jpg";s:5:"width";i:474;s:6:"height";i:342;s:9:"mime-type";s:10:"image/jpeg";}}s:10:"image_meta";a:12:{s:8:"aperture";s:1:"0";s:6:"credit";s:0:"";s:6:"camera";s:0:"";s:7:"caption";s:0:"";s:17:"created_timestamp";s:1:"0";s:9:"copyright";s:0:"";s:12:"focal_length";s:1:"0";s:3:"iso";s:1:"0";s:13:"shutter_speed";s:1:"0";s:5:"title";s:0:"";s:11:"orientation";s:1:"0";s:8:"keywords";a:0:{}}}'),
+(219, 29, '_wp_attached_file', '2017/05/1.jpg'),
+(220, 29, '_wp_attachment_metadata', 'a:5:{s:5:"width";i:647;s:6:"height";i:650;s:4:"file";s:13:"2017/05/1.jpg";s:5:"sizes";a:9:{s:9:"thumbnail";a:4:{s:4:"file";s:13:"1-150x150.jpg";s:5:"width";i:150;s:6:"height";i:150;s:9:"mime-type";s:10:"image/jpeg";}s:6:"medium";a:4:{s:4:"file";s:13:"1-300x300.jpg";s:5:"width";i:300;s:6:"height";i:300;s:9:"mime-type";s:10:"image/jpeg";}s:14:"shop_thumbnail";a:4:{s:4:"file";s:13:"1-180x180.jpg";s:5:"width";i:180;s:6:"height";i:180;s:9:"mime-type";s:10:"image/jpeg";}s:12:"shop_catalog";a:4:{s:4:"file";s:13:"1-300x300.jpg";s:5:"width";i:300;s:6:"height";i:300;s:9:"mime-type";s:10:"image/jpeg";}s:11:"shop_single";a:4:{s:4:"file";s:13:"1-600x600.jpg";s:5:"width";i:600;s:6:"height";i:600;s:9:"mime-type";s:10:"image/jpeg";}s:8:"featured";a:4:{s:4:"file";s:13:"1-647x300.jpg";s:5:"width";i:647;s:6:"height";i:300;s:9:"mime-type";s:10:"image/jpeg";}s:15:"featured-medium";a:4:{s:4:"file";s:13:"1-230x230.jpg";s:5:"width";i:230;s:6:"height";i:230;s:9:"mime-type";s:10:"image/jpeg";}s:6:"slider";a:4:{s:4:"file";s:13:"1-647x460.jpg";s:5:"width";i:647;s:6:"height";i:460;s:9:"mime-type";s:10:"image/jpeg";}s:7:"gallery";a:4:{s:4:"file";s:13:"1-474x342.jpg";s:5:"width";i:474;s:6:"height";i:342;s:9:"mime-type";s:10:"image/jpeg";}}s:10:"image_meta";a:12:{s:8:"aperture";s:1:"0";s:6:"credit";s:0:"";s:6:"camera";s:0:"";s:7:"caption";s:0:"";s:17:"created_timestamp";s:1:"0";s:9:"copyright";s:0:"";s:12:"focal_length";s:1:"0";s:3:"iso";s:1:"0";s:13:"shutter_speed";s:1:"0";s:5:"title";s:0:"";s:11:"orientation";s:1:"0";s:8:"keywords";a:0:{}}}'),
+(221, 26, '_sku', ''),
+(222, 26, '_regular_price', ''),
+(223, 26, '_sale_price', ''),
+(224, 26, '_sale_price_dates_from', ''),
+(225, 26, '_sale_price_dates_to', ''),
+(226, 26, 'total_sales', '0'),
+(227, 26, '_tax_status', 'taxable'),
+(228, 26, '_tax_class', ''),
+(229, 26, '_manage_stock', 'no'),
+(230, 26, '_backorders', 'no'),
+(231, 26, '_sold_individually', 'no'),
+(232, 26, '_weight', ''),
+(233, 26, '_length', ''),
+(234, 26, '_width', ''),
+(235, 26, '_height', ''),
+(236, 26, '_upsell_ids', 'a:0:{}'),
+(237, 26, '_crosssell_ids', 'a:0:{}'),
+(238, 26, '_purchase_note', ''),
+(239, 26, '_default_attributes', 'a:0:{}'),
+(240, 26, '_virtual', 'no'),
+(241, 26, '_downloadable', 'no'),
+(242, 26, '_product_image_gallery', '29,28,27'),
+(243, 26, '_download_limit', '-1'),
+(244, 26, '_download_expiry', '-1'),
+(245, 26, '_stock', NULL),
+(246, 26, '_stock_status', 'instock'),
+(247, 26, '_product_attributes', 'a:6:{s:5:"pa_os";a:6:{s:4:"name";s:5:"pa_os";s:5:"value";s:0:"";s:8:"position";i:0;s:10:"is_visible";i:1;s:12:"is_variation";i:0;s:11:"is_taxonomy";i:1;}s:57:"pa_%d0%bf%d1%80%d0%be%d1%86%d0%b5%d1%81%d1%81%d0%be%d1%80";a:6:{s:4:"name";s:21:"pa_процессор";s:5:"value";s:0:"";s:8:"position";i:1;s:10:"is_visible";i:1;s:12:"is_variation";i:0;s:11:"is_taxonomy";i:1;}s:8:"pa_cores";a:6:{s:4:"name";s:8:"pa_cores";s:5:"value";s:0:"";s:8:"position";i:2;s:10:"is_visible";i:1;s:12:"is_variation";i:0;s:11:"is_taxonomy";i:1;}s:6:"pa_cpu";a:6:{s:4:"name";s:6:"pa_cpu";s:5:"value";s:0:"";s:8:"position";i:3;s:10:"is_visible";i:1;s:12:"is_variation";i:0;s:11:"is_taxonomy";i:1;}s:70:"pa_%d0%b6%d0%b5%d1%81%d1%82%d0%ba%d0%b8%d0%b9-%d0%b4%d0%b8%d1%81%d0%ba";a:6:{s:4:"name";s:26:"pa_жесткий-диск";s:5:"value";s:0:"";s:8:"position";i:4;s:10:"is_visible";i:1;s:12:"is_variation";i:0;s:11:"is_taxonomy";i:1;}s:6:"pa_ram";a:6:{s:4:"name";s:6:"pa_ram";s:5:"value";s:0:"";s:8:"position";i:5;s:10:"is_visible";i:1;s:12:"is_variation";i:0;s:11:"is_taxonomy";i:1;}}'),
+(248, 26, '_product_version', '3.0.7'),
+(249, 26, '_price', ''),
+(250, 30, '_wc_review_count', '0'),
+(251, 30, '_wc_rating_count', 'a:0:{}'),
+(252, 30, '_wc_average_rating', '0'),
+(253, 30, '_edit_last', '1'),
+(254, 30, '_edit_lock', '1496049199:1'),
+(255, 30, '_sku', ''),
+(256, 30, '_regular_price', '87000'),
+(257, 30, '_sale_price', '86000'),
+(258, 30, '_sale_price_dates_from', ''),
+(259, 30, '_sale_price_dates_to', ''),
+(260, 30, 'total_sales', '0'),
+(261, 30, '_tax_status', 'taxable'),
+(262, 30, '_tax_class', ''),
+(263, 30, '_manage_stock', 'no'),
+(264, 30, '_backorders', 'no'),
+(265, 30, '_sold_individually', 'no'),
+(266, 30, '_weight', ''),
+(267, 30, '_length', '376.1'),
+(268, 30, '_width', '169.92'),
+(269, 30, '_height', '433.19'),
+(270, 30, '_upsell_ids', 'a:0:{}'),
+(271, 30, '_crosssell_ids', 'a:0:{}'),
+(272, 30, '_purchase_note', ''),
+(273, 30, '_default_attributes', 'a:0:{}'),
+(274, 30, '_virtual', 'no'),
+(275, 30, '_downloadable', 'no'),
+(276, 30, '_product_image_gallery', '29,28,27'),
+(277, 30, '_download_limit', '-1'),
+(278, 30, '_download_expiry', '-1'),
+(279, 30, '_stock', NULL),
+(280, 30, '_stock_status', 'instock'),
+(281, 30, '_product_attributes', 'a:7:{s:5:"pa_os";a:6:{s:4:"name";s:5:"pa_os";s:5:"value";s:0:"";s:8:"position";i:0;s:10:"is_visible";i:1;s:12:"is_variation";i:0;s:11:"is_taxonomy";i:1;}s:57:"pa_%d0%bf%d1%80%d0%be%d1%86%d0%b5%d1%81%d1%81%d0%be%d1%80";a:6:{s:4:"name";s:21:"pa_процессор";s:5:"value";s:0:"";s:8:"position";i:1;s:10:"is_visible";i:1;s:12:"is_variation";i:0;s:11:"is_taxonomy";i:1;}s:8:"pa_cores";a:6:{s:4:"name";s:8:"pa_cores";s:5:"value";s:0:"";s:8:"position";i:2;s:10:"is_visible";i:1;s:12:"is_variation";i:0;s:11:"is_taxonomy";i:1;}s:6:"pa_cpu";a:6:{s:4:"name";s:6:"pa_cpu";s:5:"value";s:0:"";s:8:"position";i:3;s:10:"is_visible";i:1;s:12:"is_variation";i:0;s:11:"is_taxonomy";i:1;}s:6:"pa_ram";a:6:{s:4:"name";s:6:"pa_ram";s:5:"value";s:0:"";s:8:"position";i:4;s:10:"is_visible";i:1;s:12:"is_variation";i:0;s:11:"is_taxonomy";i:1;}s:70:"pa_%d0%b6%d0%b5%d1%81%d1%82%d0%ba%d0%b8%d0%b9-%d0%b4%d0%b8%d1%81%d0%ba";a:6:{s:4:"name";s:26:"pa_жесткий-диск";s:5:"value";s:0:"";s:8:"position";i:5;s:10:"is_visible";i:1;s:12:"is_variation";i:0;s:11:"is_taxonomy";i:1;}s:63:"pa_%d0%b2%d0%b8%d0%b4%d0%b5%d0%be%d0%ba%d0%b0%d1%80%d1%82%d0%b0";a:6:{s:4:"name";s:23:"pa_видеокарта";s:5:"value";s:0:"";s:8:"position";i:6;s:10:"is_visible";i:1;s:12:"is_variation";i:0;s:11:"is_taxonomy";i:1;}}'),
+(282, 30, '_product_version', '3.0.7'),
+(283, 30, '_price', '86000'),
+(284, 30, '_thumbnail_id', '29'),
+(285, 33, '_wc_review_count', '0'),
+(286, 33, '_wc_rating_count', 'a:0:{}'),
+(287, 33, '_wc_average_rating', '0'),
+(288, 33, '_edit_last', '1'),
+(289, 33, '_edit_lock', '1496049120:1'),
+(290, 34, '_wp_attached_file', '2017/05/1-1.jpg'),
+(291, 34, '_wp_attachment_metadata', 'a:5:{s:5:"width";i:305;s:6:"height";i:650;s:4:"file";s:15:"2017/05/1-1.jpg";s:5:"sizes";a:9:{s:9:"thumbnail";a:4:{s:4:"file";s:15:"1-1-150x150.jpg";s:5:"width";i:150;s:6:"height";i:150;s:9:"mime-type";s:10:"image/jpeg";}s:6:"medium";a:4:{s:4:"file";s:15:"1-1-141x300.jpg";s:5:"width";i:141;s:6:"height";i:300;s:9:"mime-type";s:10:"image/jpeg";}s:14:"shop_thumbnail";a:4:{s:4:"file";s:15:"1-1-180x180.jpg";s:5:"width";i:180;s:6:"height";i:180;s:9:"mime-type";s:10:"image/jpeg";}s:12:"shop_catalog";a:4:{s:4:"file";s:15:"1-1-300x300.jpg";s:5:"width";i:300;s:6:"height";i:300;s:9:"mime-type";s:10:"image/jpeg";}s:11:"shop_single";a:4:{s:4:"file";s:15:"1-1-305x600.jpg";s:5:"width";i:305;s:6:"height";i:600;s:9:"mime-type";s:10:"image/jpeg";}s:8:"featured";a:4:{s:4:"file";s:15:"1-1-305x300.jpg";s:5:"width";i:305;s:6:"height";i:300;s:9:"mime-type";s:10:"image/jpeg";}s:15:"featured-medium";a:4:{s:4:"file";s:15:"1-1-230x230.jpg";s:5:"width";i:230;s:6:"height";i:230;s:9:"mime-type";s:10:"image/jpeg";}s:6:"slider";a:4:{s:4:"file";s:15:"1-1-305x460.jpg";s:5:"width";i:305;s:6:"height";i:460;s:9:"mime-type";s:10:"image/jpeg";}s:7:"gallery";a:4:{s:4:"file";s:15:"1-1-305x342.jpg";s:5:"width";i:305;s:6:"height";i:342;s:9:"mime-type";s:10:"image/jpeg";}}s:10:"image_meta";a:12:{s:8:"aperture";s:1:"0";s:6:"credit";s:0:"";s:6:"camera";s:0:"";s:7:"caption";s:0:"";s:17:"created_timestamp";s:1:"0";s:9:"copyright";s:0:"";s:12:"focal_length";s:1:"0";s:3:"iso";s:1:"0";s:13:"shutter_speed";s:1:"0";s:5:"title";s:0:"";s:11:"orientation";s:1:"0";s:8:"keywords";a:0:{}}}'),
+(292, 35, '_wp_attached_file', '2017/05/2-1.jpg'),
+(293, 35, '_wp_attachment_metadata', 'a:5:{s:5:"width";i:800;s:6:"height";i:602;s:4:"file";s:15:"2017/05/2-1.jpg";s:5:"sizes";a:10:{s:9:"thumbnail";a:4:{s:4:"file";s:15:"2-1-150x150.jpg";s:5:"width";i:150;s:6:"height";i:150;s:9:"mime-type";s:10:"image/jpeg";}s:6:"medium";a:4:{s:4:"file";s:15:"2-1-300x226.jpg";s:5:"width";i:300;s:6:"height";i:226;s:9:"mime-type";s:10:"image/jpeg";}s:12:"medium_large";a:4:{s:4:"file";s:15:"2-1-768x578.jpg";s:5:"width";i:768;s:6:"height";i:578;s:9:"mime-type";s:10:"image/jpeg";}s:14:"shop_thumbnail";a:4:{s:4:"file";s:15:"2-1-180x180.jpg";s:5:"width";i:180;s:6:"height";i:180;s:9:"mime-type";s:10:"image/jpeg";}s:12:"shop_catalog";a:4:{s:4:"file";s:15:"2-1-300x300.jpg";s:5:"width";i:300;s:6:"height";i:300;s:9:"mime-type";s:10:"image/jpeg";}s:11:"shop_single";a:4:{s:4:"file";s:15:"2-1-600x600.jpg";s:5:"width";i:600;s:6:"height";i:600;s:9:"mime-type";s:10:"image/jpeg";}s:8:"featured";a:4:{s:4:"file";s:15:"2-1-670x300.jpg";s:5:"width";i:670;s:6:"height";i:300;s:9:"mime-type";s:10:"image/jpeg";}s:15:"featured-medium";a:4:{s:4:"file";s:15:"2-1-230x230.jpg";s:5:"width";i:230;s:6:"height";i:230;s:9:"mime-type";s:10:"image/jpeg";}s:6:"slider";a:4:{s:4:"file";s:15:"2-1-800x460.jpg";s:5:"width";i:800;s:6:"height";i:460;s:9:"mime-type";s:10:"image/jpeg";}s:7:"gallery";a:4:{s:4:"file";s:15:"2-1-474x342.jpg";s:5:"width";i:474;s:6:"height";i:342;s:9:"mime-type";s:10:"image/jpeg";}}s:10:"image_meta";a:12:{s:8:"aperture";s:1:"0";s:6:"credit";s:0:"";s:6:"camera";s:0:"";s:7:"caption";s:0:"";s:17:"created_timestamp";s:1:"0";s:9:"copyright";s:0:"";s:12:"focal_length";s:1:"0";s:3:"iso";s:1:"0";s:13:"shutter_speed";s:1:"0";s:5:"title";s:0:"";s:11:"orientation";s:1:"0";s:8:"keywords";a:0:{}}}'),
+(294, 36, '_wp_attached_file', '2017/05/3-1.jpg'),
+(295, 36, '_wp_attachment_metadata', 'a:5:{s:5:"width";i:315;s:6:"height";i:650;s:4:"file";s:15:"2017/05/3-1.jpg";s:5:"sizes";a:9:{s:9:"thumbnail";a:4:{s:4:"file";s:15:"3-1-150x150.jpg";s:5:"width";i:150;s:6:"height";i:150;s:9:"mime-type";s:10:"image/jpeg";}s:6:"medium";a:4:{s:4:"file";s:15:"3-1-145x300.jpg";s:5:"width";i:145;s:6:"height";i:300;s:9:"mime-type";s:10:"image/jpeg";}s:14:"shop_thumbnail";a:4:{s:4:"file";s:15:"3-1-180x180.jpg";s:5:"width";i:180;s:6:"height";i:180;s:9:"mime-type";s:10:"image/jpeg";}s:12:"shop_catalog";a:4:{s:4:"file";s:15:"3-1-300x300.jpg";s:5:"width";i:300;s:6:"height";i:300;s:9:"mime-type";s:10:"image/jpeg";}s:11:"shop_single";a:4:{s:4:"file";s:15:"3-1-315x600.jpg";s:5:"width";i:315;s:6:"height";i:600;s:9:"mime-type";s:10:"image/jpeg";}s:8:"featured";a:4:{s:4:"file";s:15:"3-1-315x300.jpg";s:5:"width";i:315;s:6:"height";i:300;s:9:"mime-type";s:10:"image/jpeg";}s:15:"featured-medium";a:4:{s:4:"file";s:15:"3-1-230x230.jpg";s:5:"width";i:230;s:6:"height";i:230;s:9:"mime-type";s:10:"image/jpeg";}s:6:"slider";a:4:{s:4:"file";s:15:"3-1-315x460.jpg";s:5:"width";i:315;s:6:"height";i:460;s:9:"mime-type";s:10:"image/jpeg";}s:7:"gallery";a:4:{s:4:"file";s:15:"3-1-315x342.jpg";s:5:"width";i:315;s:6:"height";i:342;s:9:"mime-type";s:10:"image/jpeg";}}s:10:"image_meta";a:12:{s:8:"aperture";s:1:"0";s:6:"credit";s:0:"";s:6:"camera";s:0:"";s:7:"caption";s:0:"";s:17:"created_timestamp";s:1:"0";s:9:"copyright";s:0:"";s:12:"focal_length";s:1:"0";s:3:"iso";s:1:"0";s:13:"shutter_speed";s:1:"0";s:5:"title";s:0:"";s:11:"orientation";s:1:"0";s:8:"keywords";a:0:{}}}'),
+(296, 33, '_sku', ''),
+(297, 33, '_regular_price', '10000'),
+(298, 33, '_sale_price', ''),
+(299, 33, '_sale_price_dates_from', ''),
+(300, 33, '_sale_price_dates_to', ''),
+(301, 33, 'total_sales', '0'),
+(302, 33, '_tax_status', 'taxable'),
+(303, 33, '_tax_class', ''),
+(304, 33, '_manage_stock', 'no'),
+(305, 33, '_backorders', 'no'),
+(306, 33, '_sold_individually', 'no'),
+(307, 33, '_weight', ''),
+(308, 33, '_length', '354'),
+(309, 33, '_width', '100'),
+(310, 33, '_height', '265'),
+(311, 33, '_upsell_ids', 'a:0:{}'),
+(312, 33, '_crosssell_ids', 'a:0:{}'),
+(313, 33, '_purchase_note', ''),
+(314, 33, '_default_attributes', 'a:0:{}'),
+(315, 33, '_virtual', 'no'),
+(316, 33, '_downloadable', 'no'),
+(317, 33, '_product_image_gallery', '34,35,36'),
+(318, 33, '_download_limit', '-1'),
+(319, 33, '_download_expiry', '-1'),
+(320, 33, '_stock', NULL),
+(321, 33, '_stock_status', 'instock'),
+(322, 33, '_product_attributes', 'a:7:{s:5:"pa_os";a:6:{s:4:"name";s:5:"pa_os";s:5:"value";s:0:"";s:8:"position";i:0;s:10:"is_visible";i:1;s:12:"is_variation";i:0;s:11:"is_taxonomy";i:1;}s:57:"pa_%d0%bf%d1%80%d0%be%d1%86%d0%b5%d1%81%d1%81%d0%be%d1%80";a:6:{s:4:"name";s:21:"pa_процессор";s:5:"value";s:0:"";s:8:"position";i:1;s:10:"is_visible";i:1;s:12:"is_variation";i:0;s:11:"is_taxonomy";i:1;}s:8:"pa_cores";a:6:{s:4:"name";s:8:"pa_cores";s:5:"value";s:0:"";s:8:"position";i:2;s:10:"is_visible";i:1;s:12:"is_variation";i:0;s:11:"is_taxonomy";i:1;}s:6:"pa_cpu";a:6:{s:4:"name";s:6:"pa_cpu";s:5:"value";s:0:"";s:8:"position";i:3;s:10:"is_visible";i:1;s:12:"is_variation";i:0;s:11:"is_taxonomy";i:1;}s:6:"pa_ram";a:6:{s:4:"name";s:6:"pa_ram";s:5:"value";s:0:"";s:8:"position";i:4;s:10:"is_visible";i:1;s:12:"is_variation";i:0;s:11:"is_taxonomy";i:1;}s:70:"pa_%d0%b6%d0%b5%d1%81%d1%82%d0%ba%d0%b8%d0%b9-%d0%b4%d0%b8%d1%81%d0%ba";a:6:{s:4:"name";s:26:"pa_жесткий-диск";s:5:"value";s:0:"";s:8:"position";i:5;s:10:"is_visible";i:1;s:12:"is_variation";i:0;s:11:"is_taxonomy";i:1;}s:63:"pa_%d0%b2%d0%b8%d0%b4%d0%b5%d0%be%d0%ba%d0%b0%d1%80%d1%82%d0%b0";a:6:{s:4:"name";s:23:"pa_видеокарта";s:5:"value";s:0:"";s:8:"position";i:6;s:10:"is_visible";i:1;s:12:"is_variation";i:0;s:11:"is_taxonomy";i:1;}}'),
+(323, 33, '_product_version', '3.0.7'),
+(324, 33, '_price', '10000'),
+(325, 33, '_thumbnail_id', '34'),
+(326, 38, '_wc_review_count', '0'),
+(327, 38, '_wc_rating_count', 'a:0:{}'),
+(328, 38, '_wc_average_rating', '0'),
+(329, 38, '_edit_last', '1'),
+(330, 38, '_edit_lock', '1496049104:1'),
+(331, 39, '_wp_attached_file', '2017/05/1-2.jpg'),
+(332, 39, '_wp_attachment_metadata', 'a:5:{s:5:"width";i:305;s:6:"height";i:650;s:4:"file";s:15:"2017/05/1-2.jpg";s:5:"sizes";a:9:{s:9:"thumbnail";a:4:{s:4:"file";s:15:"1-2-150x150.jpg";s:5:"width";i:150;s:6:"height";i:150;s:9:"mime-type";s:10:"image/jpeg";}s:6:"medium";a:4:{s:4:"file";s:15:"1-2-141x300.jpg";s:5:"width";i:141;s:6:"height";i:300;s:9:"mime-type";s:10:"image/jpeg";}s:14:"shop_thumbnail";a:4:{s:4:"file";s:15:"1-2-180x180.jpg";s:5:"width";i:180;s:6:"height";i:180;s:9:"mime-type";s:10:"image/jpeg";}s:12:"shop_catalog";a:4:{s:4:"file";s:15:"1-2-300x300.jpg";s:5:"width";i:300;s:6:"height";i:300;s:9:"mime-type";s:10:"image/jpeg";}s:11:"shop_single";a:4:{s:4:"file";s:15:"1-2-305x600.jpg";s:5:"width";i:305;s:6:"height";i:600;s:9:"mime-type";s:10:"image/jpeg";}s:8:"featured";a:4:{s:4:"file";s:15:"1-2-305x300.jpg";s:5:"width";i:305;s:6:"height";i:300;s:9:"mime-type";s:10:"image/jpeg";}s:15:"featured-medium";a:4:{s:4:"file";s:15:"1-2-230x230.jpg";s:5:"width";i:230;s:6:"height";i:230;s:9:"mime-type";s:10:"image/jpeg";}s:6:"slider";a:4:{s:4:"file";s:15:"1-2-305x460.jpg";s:5:"width";i:305;s:6:"height";i:460;s:9:"mime-type";s:10:"image/jpeg";}s:7:"gallery";a:4:{s:4:"file";s:15:"1-2-305x342.jpg";s:5:"width";i:305;s:6:"height";i:342;s:9:"mime-type";s:10:"image/jpeg";}}s:10:"image_meta";a:12:{s:8:"aperture";s:1:"0";s:6:"credit";s:0:"";s:6:"camera";s:0:"";s:7:"caption";s:0:"";s:17:"created_timestamp";s:1:"0";s:9:"copyright";s:0:"";s:12:"focal_length";s:1:"0";s:3:"iso";s:1:"0";s:13:"shutter_speed";s:1:"0";s:5:"title";s:0:"";s:11:"orientation";s:1:"0";s:8:"keywords";a:0:{}}}'),
+(333, 40, '_wp_attached_file', '2017/05/2-2.jpg');
+INSERT INTO `wp_postmeta` (`meta_id`, `post_id`, `meta_key`, `meta_value`) VALUES
+(334, 40, '_wp_attachment_metadata', 'a:5:{s:5:"width";i:800;s:6:"height";i:602;s:4:"file";s:15:"2017/05/2-2.jpg";s:5:"sizes";a:10:{s:9:"thumbnail";a:4:{s:4:"file";s:15:"2-2-150x150.jpg";s:5:"width";i:150;s:6:"height";i:150;s:9:"mime-type";s:10:"image/jpeg";}s:6:"medium";a:4:{s:4:"file";s:15:"2-2-300x226.jpg";s:5:"width";i:300;s:6:"height";i:226;s:9:"mime-type";s:10:"image/jpeg";}s:12:"medium_large";a:4:{s:4:"file";s:15:"2-2-768x578.jpg";s:5:"width";i:768;s:6:"height";i:578;s:9:"mime-type";s:10:"image/jpeg";}s:14:"shop_thumbnail";a:4:{s:4:"file";s:15:"2-2-180x180.jpg";s:5:"width";i:180;s:6:"height";i:180;s:9:"mime-type";s:10:"image/jpeg";}s:12:"shop_catalog";a:4:{s:4:"file";s:15:"2-2-300x300.jpg";s:5:"width";i:300;s:6:"height";i:300;s:9:"mime-type";s:10:"image/jpeg";}s:11:"shop_single";a:4:{s:4:"file";s:15:"2-2-600x600.jpg";s:5:"width";i:600;s:6:"height";i:600;s:9:"mime-type";s:10:"image/jpeg";}s:8:"featured";a:4:{s:4:"file";s:15:"2-2-670x300.jpg";s:5:"width";i:670;s:6:"height";i:300;s:9:"mime-type";s:10:"image/jpeg";}s:15:"featured-medium";a:4:{s:4:"file";s:15:"2-2-230x230.jpg";s:5:"width";i:230;s:6:"height";i:230;s:9:"mime-type";s:10:"image/jpeg";}s:6:"slider";a:4:{s:4:"file";s:15:"2-2-800x460.jpg";s:5:"width";i:800;s:6:"height";i:460;s:9:"mime-type";s:10:"image/jpeg";}s:7:"gallery";a:4:{s:4:"file";s:15:"2-2-474x342.jpg";s:5:"width";i:474;s:6:"height";i:342;s:9:"mime-type";s:10:"image/jpeg";}}s:10:"image_meta";a:12:{s:8:"aperture";s:1:"0";s:6:"credit";s:0:"";s:6:"camera";s:0:"";s:7:"caption";s:0:"";s:17:"created_timestamp";s:1:"0";s:9:"copyright";s:0:"";s:12:"focal_length";s:1:"0";s:3:"iso";s:1:"0";s:13:"shutter_speed";s:1:"0";s:5:"title";s:0:"";s:11:"orientation";s:1:"0";s:8:"keywords";a:0:{}}}'),
+(335, 41, '_wp_attached_file', '2017/05/3-2.jpg'),
+(336, 41, '_wp_attachment_metadata', 'a:5:{s:5:"width";i:315;s:6:"height";i:650;s:4:"file";s:15:"2017/05/3-2.jpg";s:5:"sizes";a:9:{s:9:"thumbnail";a:4:{s:4:"file";s:15:"3-2-150x150.jpg";s:5:"width";i:150;s:6:"height";i:150;s:9:"mime-type";s:10:"image/jpeg";}s:6:"medium";a:4:{s:4:"file";s:15:"3-2-145x300.jpg";s:5:"width";i:145;s:6:"height";i:300;s:9:"mime-type";s:10:"image/jpeg";}s:14:"shop_thumbnail";a:4:{s:4:"file";s:15:"3-2-180x180.jpg";s:5:"width";i:180;s:6:"height";i:180;s:9:"mime-type";s:10:"image/jpeg";}s:12:"shop_catalog";a:4:{s:4:"file";s:15:"3-2-300x300.jpg";s:5:"width";i:300;s:6:"height";i:300;s:9:"mime-type";s:10:"image/jpeg";}s:11:"shop_single";a:4:{s:4:"file";s:15:"3-2-315x600.jpg";s:5:"width";i:315;s:6:"height";i:600;s:9:"mime-type";s:10:"image/jpeg";}s:8:"featured";a:4:{s:4:"file";s:15:"3-2-315x300.jpg";s:5:"width";i:315;s:6:"height";i:300;s:9:"mime-type";s:10:"image/jpeg";}s:15:"featured-medium";a:4:{s:4:"file";s:15:"3-2-230x230.jpg";s:5:"width";i:230;s:6:"height";i:230;s:9:"mime-type";s:10:"image/jpeg";}s:6:"slider";a:4:{s:4:"file";s:15:"3-2-315x460.jpg";s:5:"width";i:315;s:6:"height";i:460;s:9:"mime-type";s:10:"image/jpeg";}s:7:"gallery";a:4:{s:4:"file";s:15:"3-2-315x342.jpg";s:5:"width";i:315;s:6:"height";i:342;s:9:"mime-type";s:10:"image/jpeg";}}s:10:"image_meta";a:12:{s:8:"aperture";s:1:"0";s:6:"credit";s:0:"";s:6:"camera";s:0:"";s:7:"caption";s:0:"";s:17:"created_timestamp";s:1:"0";s:9:"copyright";s:0:"";s:12:"focal_length";s:1:"0";s:3:"iso";s:1:"0";s:13:"shutter_speed";s:1:"0";s:5:"title";s:0:"";s:11:"orientation";s:1:"0";s:8:"keywords";a:0:{}}}'),
+(337, 42, '_wp_attached_file', '2017/05/1-3.jpg'),
+(338, 42, '_wp_attachment_metadata', 'a:5:{s:5:"width";i:415;s:6:"height";i:650;s:4:"file";s:15:"2017/05/1-3.jpg";s:5:"sizes";a:9:{s:9:"thumbnail";a:4:{s:4:"file";s:15:"1-3-150x150.jpg";s:5:"width";i:150;s:6:"height";i:150;s:9:"mime-type";s:10:"image/jpeg";}s:6:"medium";a:4:{s:4:"file";s:15:"1-3-192x300.jpg";s:5:"width";i:192;s:6:"height";i:300;s:9:"mime-type";s:10:"image/jpeg";}s:14:"shop_thumbnail";a:4:{s:4:"file";s:15:"1-3-180x180.jpg";s:5:"width";i:180;s:6:"height";i:180;s:9:"mime-type";s:10:"image/jpeg";}s:12:"shop_catalog";a:4:{s:4:"file";s:15:"1-3-300x300.jpg";s:5:"width";i:300;s:6:"height";i:300;s:9:"mime-type";s:10:"image/jpeg";}s:11:"shop_single";a:4:{s:4:"file";s:15:"1-3-415x600.jpg";s:5:"width";i:415;s:6:"height";i:600;s:9:"mime-type";s:10:"image/jpeg";}s:8:"featured";a:4:{s:4:"file";s:15:"1-3-415x300.jpg";s:5:"width";i:415;s:6:"height";i:300;s:9:"mime-type";s:10:"image/jpeg";}s:15:"featured-medium";a:4:{s:4:"file";s:15:"1-3-230x230.jpg";s:5:"width";i:230;s:6:"height";i:230;s:9:"mime-type";s:10:"image/jpeg";}s:6:"slider";a:4:{s:4:"file";s:15:"1-3-415x460.jpg";s:5:"width";i:415;s:6:"height";i:460;s:9:"mime-type";s:10:"image/jpeg";}s:7:"gallery";a:4:{s:4:"file";s:15:"1-3-415x342.jpg";s:5:"width";i:415;s:6:"height";i:342;s:9:"mime-type";s:10:"image/jpeg";}}s:10:"image_meta";a:12:{s:8:"aperture";s:1:"0";s:6:"credit";s:0:"";s:6:"camera";s:0:"";s:7:"caption";s:0:"";s:17:"created_timestamp";s:1:"0";s:9:"copyright";s:0:"";s:12:"focal_length";s:1:"0";s:3:"iso";s:1:"0";s:13:"shutter_speed";s:1:"0";s:5:"title";s:0:"";s:11:"orientation";s:1:"0";s:8:"keywords";a:0:{}}}'),
+(339, 43, '_wp_attached_file', '2017/05/2-3.jpg'),
+(340, 43, '_wp_attachment_metadata', 'a:5:{s:5:"width";i:218;s:6:"height";i:650;s:4:"file";s:15:"2017/05/2-3.jpg";s:5:"sizes";a:9:{s:9:"thumbnail";a:4:{s:4:"file";s:15:"2-3-150x150.jpg";s:5:"width";i:150;s:6:"height";i:150;s:9:"mime-type";s:10:"image/jpeg";}s:6:"medium";a:4:{s:4:"file";s:15:"2-3-101x300.jpg";s:5:"width";i:101;s:6:"height";i:300;s:9:"mime-type";s:10:"image/jpeg";}s:14:"shop_thumbnail";a:4:{s:4:"file";s:15:"2-3-180x180.jpg";s:5:"width";i:180;s:6:"height";i:180;s:9:"mime-type";s:10:"image/jpeg";}s:12:"shop_catalog";a:4:{s:4:"file";s:15:"2-3-218x300.jpg";s:5:"width";i:218;s:6:"height";i:300;s:9:"mime-type";s:10:"image/jpeg";}s:11:"shop_single";a:4:{s:4:"file";s:15:"2-3-218x600.jpg";s:5:"width";i:218;s:6:"height";i:600;s:9:"mime-type";s:10:"image/jpeg";}s:8:"featured";a:4:{s:4:"file";s:15:"2-3-218x300.jpg";s:5:"width";i:218;s:6:"height";i:300;s:9:"mime-type";s:10:"image/jpeg";}s:15:"featured-medium";a:4:{s:4:"file";s:15:"2-3-218x230.jpg";s:5:"width";i:218;s:6:"height";i:230;s:9:"mime-type";s:10:"image/jpeg";}s:6:"slider";a:4:{s:4:"file";s:15:"2-3-218x460.jpg";s:5:"width";i:218;s:6:"height";i:460;s:9:"mime-type";s:10:"image/jpeg";}s:7:"gallery";a:4:{s:4:"file";s:15:"2-3-218x342.jpg";s:5:"width";i:218;s:6:"height";i:342;s:9:"mime-type";s:10:"image/jpeg";}}s:10:"image_meta";a:12:{s:8:"aperture";s:1:"0";s:6:"credit";s:0:"";s:6:"camera";s:0:"";s:7:"caption";s:0:"";s:17:"created_timestamp";s:1:"0";s:9:"copyright";s:0:"";s:12:"focal_length";s:1:"0";s:3:"iso";s:1:"0";s:13:"shutter_speed";s:1:"0";s:5:"title";s:0:"";s:11:"orientation";s:1:"0";s:8:"keywords";a:0:{}}}'),
+(341, 44, '_wp_attached_file', '2017/05/3-3.jpg'),
+(342, 44, '_wp_attachment_metadata', 'a:5:{s:5:"width";i:463;s:6:"height";i:650;s:4:"file";s:15:"2017/05/3-3.jpg";s:5:"sizes";a:9:{s:9:"thumbnail";a:4:{s:4:"file";s:15:"3-3-150x150.jpg";s:5:"width";i:150;s:6:"height";i:150;s:9:"mime-type";s:10:"image/jpeg";}s:6:"medium";a:4:{s:4:"file";s:15:"3-3-214x300.jpg";s:5:"width";i:214;s:6:"height";i:300;s:9:"mime-type";s:10:"image/jpeg";}s:14:"shop_thumbnail";a:4:{s:4:"file";s:15:"3-3-180x180.jpg";s:5:"width";i:180;s:6:"height";i:180;s:9:"mime-type";s:10:"image/jpeg";}s:12:"shop_catalog";a:4:{s:4:"file";s:15:"3-3-300x300.jpg";s:5:"width";i:300;s:6:"height";i:300;s:9:"mime-type";s:10:"image/jpeg";}s:11:"shop_single";a:4:{s:4:"file";s:15:"3-3-463x600.jpg";s:5:"width";i:463;s:6:"height";i:600;s:9:"mime-type";s:10:"image/jpeg";}s:8:"featured";a:4:{s:4:"file";s:15:"3-3-463x300.jpg";s:5:"width";i:463;s:6:"height";i:300;s:9:"mime-type";s:10:"image/jpeg";}s:15:"featured-medium";a:4:{s:4:"file";s:15:"3-3-230x230.jpg";s:5:"width";i:230;s:6:"height";i:230;s:9:"mime-type";s:10:"image/jpeg";}s:6:"slider";a:4:{s:4:"file";s:15:"3-3-463x460.jpg";s:5:"width";i:463;s:6:"height";i:460;s:9:"mime-type";s:10:"image/jpeg";}s:7:"gallery";a:4:{s:4:"file";s:15:"3-3-463x342.jpg";s:5:"width";i:463;s:6:"height";i:342;s:9:"mime-type";s:10:"image/jpeg";}}s:10:"image_meta";a:12:{s:8:"aperture";s:1:"0";s:6:"credit";s:0:"";s:6:"camera";s:0:"";s:7:"caption";s:0:"";s:17:"created_timestamp";s:1:"0";s:9:"copyright";s:0:"";s:12:"focal_length";s:1:"0";s:3:"iso";s:1:"0";s:13:"shutter_speed";s:1:"0";s:5:"title";s:0:"";s:11:"orientation";s:1:"0";s:8:"keywords";a:0:{}}}'),
+(343, 38, '_sku', ''),
+(344, 38, '_regular_price', '96000'),
+(345, 38, '_sale_price', '93000'),
+(346, 38, '_sale_price_dates_from', ''),
+(347, 38, '_sale_price_dates_to', ''),
+(348, 38, 'total_sales', '0'),
+(349, 38, '_tax_status', 'taxable'),
+(350, 38, '_tax_class', ''),
+(351, 38, '_manage_stock', 'no'),
+(352, 38, '_backorders', 'no'),
+(353, 38, '_sold_individually', 'no'),
+(354, 38, '_weight', ''),
+(355, 38, '_length', '299'),
+(356, 38, '_width', '88'),
+(357, 38, '_height', '2813'),
+(358, 38, '_upsell_ids', 'a:0:{}'),
+(359, 38, '_crosssell_ids', 'a:0:{}'),
+(360, 38, '_purchase_note', ''),
+(361, 38, '_default_attributes', 'a:0:{}'),
+(362, 38, '_virtual', 'no'),
+(363, 38, '_downloadable', 'no'),
+(364, 38, '_product_image_gallery', '42,43,44'),
+(365, 38, '_download_limit', '-1'),
+(366, 38, '_download_expiry', '-1'),
+(367, 38, '_stock', NULL),
+(368, 38, '_stock_status', 'instock'),
+(369, 38, '_product_attributes', 'a:7:{s:5:"pa_os";a:6:{s:4:"name";s:5:"pa_os";s:5:"value";s:0:"";s:8:"position";i:0;s:10:"is_visible";i:1;s:12:"is_variation";i:0;s:11:"is_taxonomy";i:1;}s:57:"pa_%d0%bf%d1%80%d0%be%d1%86%d0%b5%d1%81%d1%81%d0%be%d1%80";a:6:{s:4:"name";s:21:"pa_процессор";s:5:"value";s:0:"";s:8:"position";i:1;s:10:"is_visible";i:1;s:12:"is_variation";i:0;s:11:"is_taxonomy";i:1;}s:8:"pa_cores";a:6:{s:4:"name";s:8:"pa_cores";s:5:"value";s:0:"";s:8:"position";i:2;s:10:"is_visible";i:1;s:12:"is_variation";i:0;s:11:"is_taxonomy";i:1;}s:6:"pa_cpu";a:6:{s:4:"name";s:6:"pa_cpu";s:5:"value";s:0:"";s:8:"position";i:3;s:10:"is_visible";i:1;s:12:"is_variation";i:0;s:11:"is_taxonomy";i:1;}s:6:"pa_ram";a:6:{s:4:"name";s:6:"pa_ram";s:5:"value";s:0:"";s:8:"position";i:4;s:10:"is_visible";i:1;s:12:"is_variation";i:0;s:11:"is_taxonomy";i:1;}s:70:"pa_%d0%b6%d0%b5%d1%81%d1%82%d0%ba%d0%b8%d0%b9-%d0%b4%d0%b8%d1%81%d0%ba";a:6:{s:4:"name";s:26:"pa_жесткий-диск";s:5:"value";s:0:"";s:8:"position";i:5;s:10:"is_visible";i:1;s:12:"is_variation";i:0;s:11:"is_taxonomy";i:1;}s:63:"pa_%d0%b2%d0%b8%d0%b4%d0%b5%d0%be%d0%ba%d0%b0%d1%80%d1%82%d0%b0";a:6:{s:4:"name";s:23:"pa_видеокарта";s:5:"value";s:0:"";s:8:"position";i:6;s:10:"is_visible";i:1;s:12:"is_variation";i:0;s:11:"is_taxonomy";i:1;}}'),
+(370, 38, '_product_version', '3.0.7'),
+(371, 38, '_price', '93000'),
+(372, 38, '_thumbnail_id', '42'),
+(373, 26, '_thumbnail_id', '29'),
+(374, 26, '_wp_trash_meta_status', 'publish'),
+(375, 26, '_wp_trash_meta_time', '1495984205'),
+(376, 26, '_wp_desired_post_slug', '%d0%bf%d0%ba-msi-aegis'),
+(377, 45, '_wc_review_count', '0'),
+(378, 45, '_wc_rating_count', 'a:0:{}'),
+(379, 45, '_wc_average_rating', '0'),
+(380, 46, '_wc_review_count', '0'),
+(381, 46, '_wc_rating_count', 'a:0:{}'),
+(382, 46, '_wc_average_rating', '0'),
+(383, 46, '_edit_last', '1'),
+(384, 46, '_edit_lock', '1496049088:1'),
+(385, 46, '_sku', ''),
+(386, 46, '_regular_price', '32000'),
+(387, 46, '_sale_price', ''),
+(388, 46, '_sale_price_dates_from', ''),
+(389, 46, '_sale_price_dates_to', ''),
+(390, 46, 'total_sales', '0'),
+(391, 46, '_tax_status', 'taxable'),
+(392, 46, '_tax_class', ''),
+(393, 46, '_manage_stock', 'no'),
+(394, 46, '_backorders', 'no'),
+(395, 46, '_sold_individually', 'no'),
+(396, 46, '_weight', ''),
+(397, 46, '_length', '178'),
+(398, 46, '_width', '36'),
+(399, 46, '_height', ''),
+(400, 46, '_upsell_ids', 'a:0:{}'),
+(401, 46, '_crosssell_ids', 'a:0:{}'),
+(402, 46, '_purchase_note', ''),
+(403, 46, '_default_attributes', 'a:0:{}'),
+(404, 46, '_virtual', 'no'),
+(405, 46, '_downloadable', 'no'),
+(406, 46, '_product_image_gallery', '47,48,49'),
+(407, 46, '_download_limit', '-1'),
+(408, 46, '_download_expiry', '-1'),
+(409, 46, '_stock', NULL),
+(410, 46, '_stock_status', 'instock'),
+(411, 46, '_product_attributes', 'a:7:{s:5:"pa_os";a:6:{s:4:"name";s:5:"pa_os";s:5:"value";s:0:"";s:8:"position";i:0;s:10:"is_visible";i:1;s:12:"is_variation";i:0;s:11:"is_taxonomy";i:1;}s:57:"pa_%d0%bf%d1%80%d0%be%d1%86%d0%b5%d1%81%d1%81%d0%be%d1%80";a:6:{s:4:"name";s:21:"pa_процессор";s:5:"value";s:0:"";s:8:"position";i:1;s:10:"is_visible";i:1;s:12:"is_variation";i:0;s:11:"is_taxonomy";i:1;}s:8:"pa_cores";a:6:{s:4:"name";s:8:"pa_cores";s:5:"value";s:0:"";s:8:"position";i:2;s:10:"is_visible";i:1;s:12:"is_variation";i:0;s:11:"is_taxonomy";i:1;}s:6:"pa_cpu";a:6:{s:4:"name";s:6:"pa_cpu";s:5:"value";s:0:"";s:8:"position";i:3;s:10:"is_visible";i:1;s:12:"is_variation";i:0;s:11:"is_taxonomy";i:1;}s:6:"pa_ram";a:6:{s:4:"name";s:6:"pa_ram";s:5:"value";s:0:"";s:8:"position";i:4;s:10:"is_visible";i:1;s:12:"is_variation";i:0;s:11:"is_taxonomy";i:1;}s:6:"pa_ssd";a:6:{s:4:"name";s:6:"pa_ssd";s:5:"value";s:0:"";s:8:"position";i:5;s:10:"is_visible";i:1;s:12:"is_variation";i:0;s:11:"is_taxonomy";i:1;}s:63:"pa_%d0%b2%d0%b8%d0%b4%d0%b5%d0%be%d0%ba%d0%b0%d1%80%d1%82%d0%b0";a:6:{s:4:"name";s:23:"pa_видеокарта";s:5:"value";s:0:"";s:8:"position";i:6;s:10:"is_visible";i:1;s:12:"is_variation";i:0;s:11:"is_taxonomy";i:1;}}'),
+(412, 46, '_product_version', '3.0.7'),
+(413, 46, '_price', '32000'),
+(414, 47, '_wp_attached_file', '2017/05/2-4.jpg'),
+(415, 47, '_wp_attachment_metadata', 'a:5:{s:5:"width";i:215;s:6:"height";i:650;s:4:"file";s:15:"2017/05/2-4.jpg";s:5:"sizes";a:9:{s:9:"thumbnail";a:4:{s:4:"file";s:15:"2-4-150x150.jpg";s:5:"width";i:150;s:6:"height";i:150;s:9:"mime-type";s:10:"image/jpeg";}s:6:"medium";a:4:{s:4:"file";s:14:"2-4-99x300.jpg";s:5:"width";i:99;s:6:"height";i:300;s:9:"mime-type";s:10:"image/jpeg";}s:14:"shop_thumbnail";a:4:{s:4:"file";s:15:"2-4-180x180.jpg";s:5:"width";i:180;s:6:"height";i:180;s:9:"mime-type";s:10:"image/jpeg";}s:12:"shop_catalog";a:4:{s:4:"file";s:15:"2-4-215x300.jpg";s:5:"width";i:215;s:6:"height";i:300;s:9:"mime-type";s:10:"image/jpeg";}s:11:"shop_single";a:4:{s:4:"file";s:15:"2-4-215x600.jpg";s:5:"width";i:215;s:6:"height";i:600;s:9:"mime-type";s:10:"image/jpeg";}s:8:"featured";a:4:{s:4:"file";s:15:"2-4-215x300.jpg";s:5:"width";i:215;s:6:"height";i:300;s:9:"mime-type";s:10:"image/jpeg";}s:15:"featured-medium";a:4:{s:4:"file";s:15:"2-4-215x230.jpg";s:5:"width";i:215;s:6:"height";i:230;s:9:"mime-type";s:10:"image/jpeg";}s:6:"slider";a:4:{s:4:"file";s:15:"2-4-215x460.jpg";s:5:"width";i:215;s:6:"height";i:460;s:9:"mime-type";s:10:"image/jpeg";}s:7:"gallery";a:4:{s:4:"file";s:15:"2-4-215x342.jpg";s:5:"width";i:215;s:6:"height";i:342;s:9:"mime-type";s:10:"image/jpeg";}}s:10:"image_meta";a:12:{s:8:"aperture";s:1:"0";s:6:"credit";s:0:"";s:6:"camera";s:0:"";s:7:"caption";s:0:"";s:17:"created_timestamp";s:1:"0";s:9:"copyright";s:0:"";s:12:"focal_length";s:1:"0";s:3:"iso";s:1:"0";s:13:"shutter_speed";s:1:"0";s:5:"title";s:0:"";s:11:"orientation";s:1:"0";s:8:"keywords";a:0:{}}}'),
+(416, 48, '_wp_attached_file', '2017/05/3-4.jpg'),
+(417, 48, '_wp_attachment_metadata', 'a:5:{s:5:"width";i:338;s:6:"height";i:650;s:4:"file";s:15:"2017/05/3-4.jpg";s:5:"sizes";a:9:{s:9:"thumbnail";a:4:{s:4:"file";s:15:"3-4-150x150.jpg";s:5:"width";i:150;s:6:"height";i:150;s:9:"mime-type";s:10:"image/jpeg";}s:6:"medium";a:4:{s:4:"file";s:15:"3-4-156x300.jpg";s:5:"width";i:156;s:6:"height";i:300;s:9:"mime-type";s:10:"image/jpeg";}s:14:"shop_thumbnail";a:4:{s:4:"file";s:15:"3-4-180x180.jpg";s:5:"width";i:180;s:6:"height";i:180;s:9:"mime-type";s:10:"image/jpeg";}s:12:"shop_catalog";a:4:{s:4:"file";s:15:"3-4-300x300.jpg";s:5:"width";i:300;s:6:"height";i:300;s:9:"mime-type";s:10:"image/jpeg";}s:11:"shop_single";a:4:{s:4:"file";s:15:"3-4-338x600.jpg";s:5:"width";i:338;s:6:"height";i:600;s:9:"mime-type";s:10:"image/jpeg";}s:8:"featured";a:4:{s:4:"file";s:15:"3-4-338x300.jpg";s:5:"width";i:338;s:6:"height";i:300;s:9:"mime-type";s:10:"image/jpeg";}s:15:"featured-medium";a:4:{s:4:"file";s:15:"3-4-230x230.jpg";s:5:"width";i:230;s:6:"height";i:230;s:9:"mime-type";s:10:"image/jpeg";}s:6:"slider";a:4:{s:4:"file";s:15:"3-4-338x460.jpg";s:5:"width";i:338;s:6:"height";i:460;s:9:"mime-type";s:10:"image/jpeg";}s:7:"gallery";a:4:{s:4:"file";s:15:"3-4-338x342.jpg";s:5:"width";i:338;s:6:"height";i:342;s:9:"mime-type";s:10:"image/jpeg";}}s:10:"image_meta";a:12:{s:8:"aperture";s:1:"0";s:6:"credit";s:0:"";s:6:"camera";s:0:"";s:7:"caption";s:0:"";s:17:"created_timestamp";s:1:"0";s:9:"copyright";s:0:"";s:12:"focal_length";s:1:"0";s:3:"iso";s:1:"0";s:13:"shutter_speed";s:1:"0";s:5:"title";s:0:"";s:11:"orientation";s:1:"0";s:8:"keywords";a:0:{}}}'),
+(418, 49, '_wp_attached_file', '2017/05/1-4.jpg'),
+(419, 49, '_wp_attachment_metadata', 'a:5:{s:5:"width";i:338;s:6:"height";i:650;s:4:"file";s:15:"2017/05/1-4.jpg";s:5:"sizes";a:9:{s:9:"thumbnail";a:4:{s:4:"file";s:15:"1-4-150x150.jpg";s:5:"width";i:150;s:6:"height";i:150;s:9:"mime-type";s:10:"image/jpeg";}s:6:"medium";a:4:{s:4:"file";s:15:"1-4-156x300.jpg";s:5:"width";i:156;s:6:"height";i:300;s:9:"mime-type";s:10:"image/jpeg";}s:14:"shop_thumbnail";a:4:{s:4:"file";s:15:"1-4-180x180.jpg";s:5:"width";i:180;s:6:"height";i:180;s:9:"mime-type";s:10:"image/jpeg";}s:12:"shop_catalog";a:4:{s:4:"file";s:15:"1-4-300x300.jpg";s:5:"width";i:300;s:6:"height";i:300;s:9:"mime-type";s:10:"image/jpeg";}s:11:"shop_single";a:4:{s:4:"file";s:15:"1-4-338x600.jpg";s:5:"width";i:338;s:6:"height";i:600;s:9:"mime-type";s:10:"image/jpeg";}s:8:"featured";a:4:{s:4:"file";s:15:"1-4-338x300.jpg";s:5:"width";i:338;s:6:"height";i:300;s:9:"mime-type";s:10:"image/jpeg";}s:15:"featured-medium";a:4:{s:4:"file";s:15:"1-4-230x230.jpg";s:5:"width";i:230;s:6:"height";i:230;s:9:"mime-type";s:10:"image/jpeg";}s:6:"slider";a:4:{s:4:"file";s:15:"1-4-338x460.jpg";s:5:"width";i:338;s:6:"height";i:460;s:9:"mime-type";s:10:"image/jpeg";}s:7:"gallery";a:4:{s:4:"file";s:15:"1-4-338x342.jpg";s:5:"width";i:338;s:6:"height";i:342;s:9:"mime-type";s:10:"image/jpeg";}}s:10:"image_meta";a:12:{s:8:"aperture";s:1:"0";s:6:"credit";s:0:"";s:6:"camera";s:0:"";s:7:"caption";s:0:"";s:17:"created_timestamp";s:1:"0";s:9:"copyright";s:0:"";s:12:"focal_length";s:1:"0";s:3:"iso";s:1:"0";s:13:"shutter_speed";s:1:"0";s:5:"title";s:0:"";s:11:"orientation";s:1:"0";s:8:"keywords";a:0:{}}}'),
+(420, 46, '_thumbnail_id', '48'),
+(421, 50, '_wc_review_count', '0'),
+(422, 50, '_wc_rating_count', 'a:0:{}'),
+(423, 50, '_wc_average_rating', '0'),
+(424, 50, '_edit_last', '1'),
+(425, 50, '_edit_lock', '1496049065:1'),
+(426, 51, '_wp_attached_file', '2017/05/1-5.jpg'),
+(427, 51, '_wp_attachment_metadata', 'a:5:{s:5:"width";i:676;s:6:"height";i:650;s:4:"file";s:15:"2017/05/1-5.jpg";s:5:"sizes";a:9:{s:9:"thumbnail";a:4:{s:4:"file";s:15:"1-5-150x150.jpg";s:5:"width";i:150;s:6:"height";i:150;s:9:"mime-type";s:10:"image/jpeg";}s:6:"medium";a:4:{s:4:"file";s:15:"1-5-300x288.jpg";s:5:"width";i:300;s:6:"height";i:288;s:9:"mime-type";s:10:"image/jpeg";}s:14:"shop_thumbnail";a:4:{s:4:"file";s:15:"1-5-180x180.jpg";s:5:"width";i:180;s:6:"height";i:180;s:9:"mime-type";s:10:"image/jpeg";}s:12:"shop_catalog";a:4:{s:4:"file";s:15:"1-5-300x300.jpg";s:5:"width";i:300;s:6:"height";i:300;s:9:"mime-type";s:10:"image/jpeg";}s:11:"shop_single";a:4:{s:4:"file";s:15:"1-5-600x600.jpg";s:5:"width";i:600;s:6:"height";i:600;s:9:"mime-type";s:10:"image/jpeg";}s:8:"featured";a:4:{s:4:"file";s:15:"1-5-670x300.jpg";s:5:"width";i:670;s:6:"height";i:300;s:9:"mime-type";s:10:"image/jpeg";}s:15:"featured-medium";a:4:{s:4:"file";s:15:"1-5-230x230.jpg";s:5:"width";i:230;s:6:"height";i:230;s:9:"mime-type";s:10:"image/jpeg";}s:6:"slider";a:4:{s:4:"file";s:15:"1-5-676x460.jpg";s:5:"width";i:676;s:6:"height";i:460;s:9:"mime-type";s:10:"image/jpeg";}s:7:"gallery";a:4:{s:4:"file";s:15:"1-5-474x342.jpg";s:5:"width";i:474;s:6:"height";i:342;s:9:"mime-type";s:10:"image/jpeg";}}s:10:"image_meta";a:12:{s:8:"aperture";s:1:"0";s:6:"credit";s:0:"";s:6:"camera";s:0:"";s:7:"caption";s:0:"";s:17:"created_timestamp";s:1:"0";s:9:"copyright";s:0:"";s:12:"focal_length";s:1:"0";s:3:"iso";s:1:"0";s:13:"shutter_speed";s:1:"0";s:5:"title";s:0:"";s:11:"orientation";s:1:"0";s:8:"keywords";a:0:{}}}'),
+(428, 52, '_wp_attached_file', '2017/05/2-5.jpg'),
+(429, 52, '_wp_attachment_metadata', 'a:5:{s:5:"width";i:488;s:6:"height";i:650;s:4:"file";s:15:"2017/05/2-5.jpg";s:5:"sizes";a:9:{s:9:"thumbnail";a:4:{s:4:"file";s:15:"2-5-150x150.jpg";s:5:"width";i:150;s:6:"height";i:150;s:9:"mime-type";s:10:"image/jpeg";}s:6:"medium";a:4:{s:4:"file";s:15:"2-5-225x300.jpg";s:5:"width";i:225;s:6:"height";i:300;s:9:"mime-type";s:10:"image/jpeg";}s:14:"shop_thumbnail";a:4:{s:4:"file";s:15:"2-5-180x180.jpg";s:5:"width";i:180;s:6:"height";i:180;s:9:"mime-type";s:10:"image/jpeg";}s:12:"shop_catalog";a:4:{s:4:"file";s:15:"2-5-300x300.jpg";s:5:"width";i:300;s:6:"height";i:300;s:9:"mime-type";s:10:"image/jpeg";}s:11:"shop_single";a:4:{s:4:"file";s:15:"2-5-488x600.jpg";s:5:"width";i:488;s:6:"height";i:600;s:9:"mime-type";s:10:"image/jpeg";}s:8:"featured";a:4:{s:4:"file";s:15:"2-5-488x300.jpg";s:5:"width";i:488;s:6:"height";i:300;s:9:"mime-type";s:10:"image/jpeg";}s:15:"featured-medium";a:4:{s:4:"file";s:15:"2-5-230x230.jpg";s:5:"width";i:230;s:6:"height";i:230;s:9:"mime-type";s:10:"image/jpeg";}s:6:"slider";a:4:{s:4:"file";s:15:"2-5-488x460.jpg";s:5:"width";i:488;s:6:"height";i:460;s:9:"mime-type";s:10:"image/jpeg";}s:7:"gallery";a:4:{s:4:"file";s:15:"2-5-474x342.jpg";s:5:"width";i:474;s:6:"height";i:342;s:9:"mime-type";s:10:"image/jpeg";}}s:10:"image_meta";a:12:{s:8:"aperture";s:1:"0";s:6:"credit";s:0:"";s:6:"camera";s:0:"";s:7:"caption";s:0:"";s:17:"created_timestamp";s:1:"0";s:9:"copyright";s:0:"";s:12:"focal_length";s:1:"0";s:3:"iso";s:1:"0";s:13:"shutter_speed";s:1:"0";s:5:"title";s:0:"";s:11:"orientation";s:1:"0";s:8:"keywords";a:0:{}}}'),
+(430, 53, '_wp_attached_file', '2017/05/3-5.jpg'),
+(431, 53, '_wp_attachment_metadata', 'a:5:{s:5:"width";i:488;s:6:"height";i:650;s:4:"file";s:15:"2017/05/3-5.jpg";s:5:"sizes";a:9:{s:9:"thumbnail";a:4:{s:4:"file";s:15:"3-5-150x150.jpg";s:5:"width";i:150;s:6:"height";i:150;s:9:"mime-type";s:10:"image/jpeg";}s:6:"medium";a:4:{s:4:"file";s:15:"3-5-225x300.jpg";s:5:"width";i:225;s:6:"height";i:300;s:9:"mime-type";s:10:"image/jpeg";}s:14:"shop_thumbnail";a:4:{s:4:"file";s:15:"3-5-180x180.jpg";s:5:"width";i:180;s:6:"height";i:180;s:9:"mime-type";s:10:"image/jpeg";}s:12:"shop_catalog";a:4:{s:4:"file";s:15:"3-5-300x300.jpg";s:5:"width";i:300;s:6:"height";i:300;s:9:"mime-type";s:10:"image/jpeg";}s:11:"shop_single";a:4:{s:4:"file";s:15:"3-5-488x600.jpg";s:5:"width";i:488;s:6:"height";i:600;s:9:"mime-type";s:10:"image/jpeg";}s:8:"featured";a:4:{s:4:"file";s:15:"3-5-488x300.jpg";s:5:"width";i:488;s:6:"height";i:300;s:9:"mime-type";s:10:"image/jpeg";}s:15:"featured-medium";a:4:{s:4:"file";s:15:"3-5-230x230.jpg";s:5:"width";i:230;s:6:"height";i:230;s:9:"mime-type";s:10:"image/jpeg";}s:6:"slider";a:4:{s:4:"file";s:15:"3-5-488x460.jpg";s:5:"width";i:488;s:6:"height";i:460;s:9:"mime-type";s:10:"image/jpeg";}s:7:"gallery";a:4:{s:4:"file";s:15:"3-5-474x342.jpg";s:5:"width";i:474;s:6:"height";i:342;s:9:"mime-type";s:10:"image/jpeg";}}s:10:"image_meta";a:12:{s:8:"aperture";s:1:"0";s:6:"credit";s:0:"";s:6:"camera";s:0:"";s:7:"caption";s:0:"";s:17:"created_timestamp";s:1:"0";s:9:"copyright";s:0:"";s:12:"focal_length";s:1:"0";s:3:"iso";s:1:"0";s:13:"shutter_speed";s:1:"0";s:5:"title";s:0:"";s:11:"orientation";s:1:"0";s:8:"keywords";a:0:{}}}'),
+(432, 50, '_sku', ''),
+(433, 50, '_regular_price', '38000'),
+(434, 50, '_sale_price', ''),
+(435, 50, '_sale_price_dates_from', ''),
+(436, 50, '_sale_price_dates_to', ''),
+(437, 50, 'total_sales', '0'),
+(438, 50, '_tax_status', 'taxable'),
+(439, 50, '_tax_class', ''),
+(440, 50, '_manage_stock', 'no'),
+(441, 50, '_backorders', 'no'),
+(442, 50, '_sold_individually', 'no'),
+(443, 50, '_weight', ''),
+(444, 50, '_length', '410'),
+(445, 50, '_width', '360'),
+(446, 50, '_height', '160'),
+(447, 50, '_upsell_ids', 'a:0:{}'),
+(448, 50, '_crosssell_ids', 'a:0:{}'),
+(449, 50, '_purchase_note', ''),
+(450, 50, '_default_attributes', 'a:0:{}'),
+(451, 50, '_virtual', 'no'),
+(452, 50, '_downloadable', 'no'),
+(453, 50, '_product_image_gallery', '51,52,53'),
+(454, 50, '_download_limit', '-1'),
+(455, 50, '_download_expiry', '-1'),
+(456, 50, '_stock', NULL),
+(457, 50, '_stock_status', 'instock'),
+(458, 50, '_product_attributes', 'a:7:{s:5:"pa_os";a:6:{s:4:"name";s:5:"pa_os";s:5:"value";s:0:"";s:8:"position";i:0;s:10:"is_visible";i:1;s:12:"is_variation";i:0;s:11:"is_taxonomy";i:1;}s:57:"pa_%d0%bf%d1%80%d0%be%d1%86%d0%b5%d1%81%d1%81%d0%be%d1%80";a:6:{s:4:"name";s:21:"pa_процессор";s:5:"value";s:0:"";s:8:"position";i:1;s:10:"is_visible";i:1;s:12:"is_variation";i:0;s:11:"is_taxonomy";i:1;}s:8:"pa_cores";a:6:{s:4:"name";s:8:"pa_cores";s:5:"value";s:0:"";s:8:"position";i:2;s:10:"is_visible";i:1;s:12:"is_variation";i:0;s:11:"is_taxonomy";i:1;}s:6:"pa_cpu";a:6:{s:4:"name";s:6:"pa_cpu";s:5:"value";s:0:"";s:8:"position";i:3;s:10:"is_visible";i:1;s:12:"is_variation";i:0;s:11:"is_taxonomy";i:1;}s:6:"pa_ram";a:6:{s:4:"name";s:6:"pa_ram";s:5:"value";s:0:"";s:8:"position";i:4;s:10:"is_visible";i:1;s:12:"is_variation";i:0;s:11:"is_taxonomy";i:1;}s:70:"pa_%d0%b6%d0%b5%d1%81%d1%82%d0%ba%d0%b8%d0%b9-%d0%b4%d0%b8%d1%81%d0%ba";a:6:{s:4:"name";s:26:"pa_жесткий-диск";s:5:"value";s:0:"";s:8:"position";i:5;s:10:"is_visible";i:1;s:12:"is_variation";i:0;s:11:"is_taxonomy";i:1;}s:63:"pa_%d0%b2%d0%b8%d0%b4%d0%b5%d0%be%d0%ba%d0%b0%d1%80%d1%82%d0%b0";a:6:{s:4:"name";s:23:"pa_видеокарта";s:5:"value";s:0:"";s:8:"position";i:6;s:10:"is_visible";i:1;s:12:"is_variation";i:0;s:11:"is_taxonomy";i:1;}}'),
+(459, 50, '_product_version', '3.0.7'),
+(460, 50, '_price', '38000'),
+(461, 50, '_thumbnail_id', '52'),
+(462, 55, '_wc_review_count', '0'),
+(463, 55, '_wc_rating_count', 'a:0:{}'),
+(464, 55, '_wc_average_rating', '0'),
+(465, 55, '_edit_last', '1'),
+(466, 55, '_edit_lock', '1496048915:1'),
+(467, 56, '_wp_attached_file', '2017/05/4.jpg'),
+(468, 56, '_wp_attachment_metadata', 'a:5:{s:5:"width";i:402;s:6:"height";i:650;s:4:"file";s:13:"2017/05/4.jpg";s:5:"sizes";a:9:{s:9:"thumbnail";a:4:{s:4:"file";s:13:"4-150x150.jpg";s:5:"width";i:150;s:6:"height";i:150;s:9:"mime-type";s:10:"image/jpeg";}s:6:"medium";a:4:{s:4:"file";s:13:"4-186x300.jpg";s:5:"width";i:186;s:6:"height";i:300;s:9:"mime-type";s:10:"image/jpeg";}s:14:"shop_thumbnail";a:4:{s:4:"file";s:13:"4-180x180.jpg";s:5:"width";i:180;s:6:"height";i:180;s:9:"mime-type";s:10:"image/jpeg";}s:12:"shop_catalog";a:4:{s:4:"file";s:13:"4-300x300.jpg";s:5:"width";i:300;s:6:"height";i:300;s:9:"mime-type";s:10:"image/jpeg";}s:11:"shop_single";a:4:{s:4:"file";s:13:"4-402x600.jpg";s:5:"width";i:402;s:6:"height";i:600;s:9:"mime-type";s:10:"image/jpeg";}s:8:"featured";a:4:{s:4:"file";s:13:"4-402x300.jpg";s:5:"width";i:402;s:6:"height";i:300;s:9:"mime-type";s:10:"image/jpeg";}s:15:"featured-medium";a:4:{s:4:"file";s:13:"4-230x230.jpg";s:5:"width";i:230;s:6:"height";i:230;s:9:"mime-type";s:10:"image/jpeg";}s:6:"slider";a:4:{s:4:"file";s:13:"4-402x460.jpg";s:5:"width";i:402;s:6:"height";i:460;s:9:"mime-type";s:10:"image/jpeg";}s:7:"gallery";a:4:{s:4:"file";s:13:"4-402x342.jpg";s:5:"width";i:402;s:6:"height";i:342;s:9:"mime-type";s:10:"image/jpeg";}}s:10:"image_meta";a:12:{s:8:"aperture";s:1:"0";s:6:"credit";s:0:"";s:6:"camera";s:0:"";s:7:"caption";s:0:"";s:17:"created_timestamp";s:1:"0";s:9:"copyright";s:0:"";s:12:"focal_length";s:1:"0";s:3:"iso";s:1:"0";s:13:"shutter_speed";s:1:"0";s:5:"title";s:0:"";s:11:"orientation";s:1:"0";s:8:"keywords";a:0:{}}}'),
+(469, 55, '_sku', ''),
+(470, 55, '_regular_price', '77000'),
+(471, 55, '_sale_price', ''),
+(472, 55, '_sale_price_dates_from', ''),
+(473, 55, '_sale_price_dates_to', ''),
+(474, 55, 'total_sales', '0'),
+(475, 55, '_tax_status', 'taxable'),
+(476, 55, '_tax_class', ''),
+(477, 55, '_manage_stock', 'no'),
+(478, 55, '_backorders', 'no'),
+(479, 55, '_sold_individually', 'no'),
+(480, 55, '_weight', ''),
+(481, 55, '_length', '394.5'),
+(482, 55, '_width', '102'),
+(483, 55, '_height', '338'),
+(484, 55, '_upsell_ids', 'a:0:{}'),
+(485, 55, '_crosssell_ids', 'a:0:{}'),
+(486, 55, '_purchase_note', ''),
+(487, 55, '_default_attributes', 'a:0:{}'),
+(488, 55, '_virtual', 'no'),
+(489, 55, '_downloadable', 'no'),
+(490, 55, '_product_image_gallery', '56'),
+(491, 55, '_download_limit', '-1'),
+(492, 55, '_download_expiry', '-1'),
+(493, 55, '_stock', NULL),
+(494, 55, '_stock_status', 'instock'),
+(495, 55, '_product_attributes', 'a:7:{s:5:"pa_os";a:6:{s:4:"name";s:5:"pa_os";s:5:"value";s:0:"";s:8:"position";i:3;s:10:"is_visible";i:1;s:12:"is_variation";i:0;s:11:"is_taxonomy";i:1;}s:57:"pa_%d0%bf%d1%80%d0%be%d1%86%d0%b5%d1%81%d1%81%d0%be%d1%80";a:6:{s:4:"name";s:21:"pa_процессор";s:5:"value";s:0:"";s:8:"position";i:5;s:10:"is_visible";i:1;s:12:"is_variation";i:0;s:11:"is_taxonomy";i:1;}s:8:"pa_cores";a:6:{s:4:"name";s:8:"pa_cores";s:5:"value";s:0:"";s:8:"position";i:6;s:10:"is_visible";i:1;s:12:"is_variation";i:0;s:11:"is_taxonomy";i:1;}s:6:"pa_cpu";a:6:{s:4:"name";s:6:"pa_cpu";s:5:"value";s:0:"";s:8:"position";i:7;s:10:"is_visible";i:1;s:12:"is_variation";i:0;s:11:"is_taxonomy";i:1;}s:6:"pa_ram";a:6:{s:4:"name";s:6:"pa_ram";s:5:"value";s:0:"";s:8:"position";i:8;s:10:"is_visible";i:1;s:12:"is_variation";i:0;s:11:"is_taxonomy";i:1;}s:70:"pa_%d0%b6%d0%b5%d1%81%d1%82%d0%ba%d0%b8%d0%b9-%d0%b4%d0%b8%d1%81%d0%ba";a:6:{s:4:"name";s:26:"pa_жесткий-диск";s:5:"value";s:0:"";s:8:"position";i:9;s:10:"is_visible";i:1;s:12:"is_variation";i:0;s:11:"is_taxonomy";i:1;}s:63:"pa_%d0%b2%d0%b8%d0%b4%d0%b5%d0%be%d0%ba%d0%b0%d1%80%d1%82%d0%b0";a:6:{s:4:"name";s:23:"pa_видеокарта";s:5:"value";s:0:"";s:8:"position";i:10;s:10:"is_visible";i:1;s:12:"is_variation";i:0;s:11:"is_taxonomy";i:1;}}'),
+(496, 55, '_product_version', '3.0.7'),
+(497, 55, '_price', '77000'),
+(498, 55, '_thumbnail_id', '56'),
+(499, 57, '_wc_review_count', '0'),
+(500, 57, '_wc_rating_count', 'a:0:{}'),
+(501, 57, '_wc_average_rating', '0'),
+(502, 57, '_edit_last', '1'),
+(503, 57, '_edit_lock', '1496048881:1'),
+(504, 57, '_sku', ''),
+(505, 57, '_regular_price', '95000'),
+(506, 57, '_sale_price', ''),
+(507, 57, '_sale_price_dates_from', ''),
+(508, 57, '_sale_price_dates_to', ''),
+(509, 57, 'total_sales', '0'),
+(510, 57, '_tax_status', 'taxable'),
+(511, 57, '_tax_class', ''),
+(512, 57, '_manage_stock', 'no'),
+(513, 57, '_backorders', 'no'),
+(514, 57, '_sold_individually', 'no'),
+(515, 57, '_weight', ''),
+(516, 57, '_length', '433'),
+(517, 57, '_width', '170'),
+(518, 57, '_height', '376'),
+(519, 57, '_upsell_ids', 'a:0:{}'),
+(520, 57, '_crosssell_ids', 'a:0:{}'),
+(521, 57, '_purchase_note', ''),
+(522, 57, '_default_attributes', 'a:0:{}'),
+(523, 57, '_virtual', 'no'),
+(524, 57, '_downloadable', 'no'),
+(525, 57, '_product_image_gallery', '29,28,27'),
+(526, 57, '_download_limit', '-1'),
+(527, 57, '_download_expiry', '-1'),
+(528, 57, '_stock', NULL),
+(529, 57, '_stock_status', 'instock'),
+(530, 57, '_product_attributes', 'a:7:{s:5:"pa_os";a:6:{s:4:"name";s:5:"pa_os";s:5:"value";s:0:"";s:8:"position";i:0;s:10:"is_visible";i:1;s:12:"is_variation";i:0;s:11:"is_taxonomy";i:1;}s:57:"pa_%d0%bf%d1%80%d0%be%d1%86%d0%b5%d1%81%d1%81%d0%be%d1%80";a:6:{s:4:"name";s:21:"pa_процессор";s:5:"value";s:0:"";s:8:"position";i:1;s:10:"is_visible";i:1;s:12:"is_variation";i:0;s:11:"is_taxonomy";i:1;}s:6:"pa_cpu";a:6:{s:4:"name";s:6:"pa_cpu";s:5:"value";s:0:"";s:8:"position";i:2;s:10:"is_visible";i:1;s:12:"is_variation";i:0;s:11:"is_taxonomy";i:1;}s:6:"pa_ram";a:6:{s:4:"name";s:6:"pa_ram";s:5:"value";s:0:"";s:8:"position";i:3;s:10:"is_visible";i:1;s:12:"is_variation";i:0;s:11:"is_taxonomy";i:1;}s:70:"pa_%d0%b6%d0%b5%d1%81%d1%82%d0%ba%d0%b8%d0%b9-%d0%b4%d0%b8%d1%81%d0%ba";a:6:{s:4:"name";s:26:"pa_жесткий-диск";s:5:"value";s:0:"";s:8:"position";i:4;s:10:"is_visible";i:1;s:12:"is_variation";i:0;s:11:"is_taxonomy";i:1;}s:6:"pa_ssd";a:6:{s:4:"name";s:6:"pa_ssd";s:5:"value";s:0:"";s:8:"position";i:5;s:10:"is_visible";i:1;s:12:"is_variation";i:0;s:11:"is_taxonomy";i:1;}s:63:"pa_%d0%b2%d0%b8%d0%b4%d0%b5%d0%be%d0%ba%d0%b0%d1%80%d1%82%d0%b0";a:6:{s:4:"name";s:23:"pa_видеокарта";s:5:"value";s:0:"";s:8:"position";i:6;s:10:"is_visible";i:1;s:12:"is_variation";i:0;s:11:"is_taxonomy";i:1;}}'),
+(531, 57, '_product_version', '3.0.7'),
+(532, 57, '_price', '95000'),
+(533, 57, '_thumbnail_id', '29'),
+(534, 59, '_edit_last', '1'),
+(535, 59, '_edit_lock', '1495993638:1'),
+(536, 60, '_wc_review_count', '0'),
+(537, 60, '_wc_rating_count', 'a:0:{}'),
+(538, 60, '_wc_average_rating', '0'),
+(539, 60, '_edit_last', '1'),
+(540, 60, '_edit_lock', '1496048868:1'),
+(541, 60, '_sku', ''),
+(542, 60, '_regular_price', '92000'),
+(543, 60, '_sale_price', ''),
+(544, 60, '_sale_price_dates_from', ''),
+(545, 60, '_sale_price_dates_to', ''),
+(546, 60, 'total_sales', '0'),
+(547, 60, '_tax_status', 'taxable'),
+(548, 60, '_tax_class', ''),
+(549, 60, '_manage_stock', 'no'),
+(550, 60, '_backorders', 'no'),
+(551, 60, '_sold_individually', 'no'),
+(552, 60, '_weight', ''),
+(553, 60, '_length', '472.52'),
+(554, 60, '_width', '212'),
+(555, 60, '_height', '360.5'),
+(556, 60, '_upsell_ids', 'a:0:{}'),
+(557, 60, '_crosssell_ids', 'a:0:{}'),
+(558, 60, '_purchase_note', ''),
+(559, 60, '_default_attributes', 'a:0:{}'),
+(560, 60, '_virtual', 'no'),
+(561, 60, '_downloadable', 'no'),
+(562, 60, '_product_image_gallery', '61,62,63'),
+(563, 60, '_download_limit', '-1'),
+(564, 60, '_download_expiry', '-1'),
+(565, 60, '_stock', NULL),
+(566, 60, '_stock_status', 'instock'),
+(567, 60, '_product_attributes', 'a:7:{s:5:"pa_os";a:6:{s:4:"name";s:5:"pa_os";s:5:"value";s:0:"";s:8:"position";i:0;s:10:"is_visible";i:1;s:12:"is_variation";i:0;s:11:"is_taxonomy";i:1;}s:57:"pa_%d0%bf%d1%80%d0%be%d1%86%d0%b5%d1%81%d1%81%d0%be%d1%80";a:6:{s:4:"name";s:21:"pa_процессор";s:5:"value";s:0:"";s:8:"position";i:1;s:10:"is_visible";i:1;s:12:"is_variation";i:0;s:11:"is_taxonomy";i:1;}s:8:"pa_cores";a:6:{s:4:"name";s:8:"pa_cores";s:5:"value";s:0:"";s:8:"position";i:2;s:10:"is_visible";i:1;s:12:"is_variation";i:0;s:11:"is_taxonomy";i:1;}s:6:"pa_cpu";a:6:{s:4:"name";s:6:"pa_cpu";s:5:"value";s:0:"";s:8:"position";i:3;s:10:"is_visible";i:1;s:12:"is_variation";i:0;s:11:"is_taxonomy";i:1;}s:6:"pa_ram";a:6:{s:4:"name";s:6:"pa_ram";s:5:"value";s:0:"";s:8:"position";i:4;s:10:"is_visible";i:1;s:12:"is_variation";i:0;s:11:"is_taxonomy";i:1;}s:6:"pa_ssd";a:6:{s:4:"name";s:6:"pa_ssd";s:5:"value";s:0:"";s:8:"position";i:5;s:10:"is_visible";i:1;s:12:"is_variation";i:0;s:11:"is_taxonomy";i:1;}s:63:"pa_%d0%b2%d0%b8%d0%b4%d0%b5%d0%be%d0%ba%d0%b0%d1%80%d1%82%d0%b0";a:6:{s:4:"name";s:23:"pa_видеокарта";s:5:"value";s:0:"";s:8:"position";i:6;s:10:"is_visible";i:1;s:12:"is_variation";i:0;s:11:"is_taxonomy";i:1;}}'),
+(568, 60, '_product_version', '3.0.7'),
+(569, 60, '_price', '92000'),
+(570, 61, '_wp_attached_file', '2017/05/1-6.jpg'),
+(571, 61, '_wp_attachment_metadata', 'a:5:{s:5:"width";i:382;s:6:"height";i:650;s:4:"file";s:15:"2017/05/1-6.jpg";s:5:"sizes";a:9:{s:9:"thumbnail";a:4:{s:4:"file";s:15:"1-6-150x150.jpg";s:5:"width";i:150;s:6:"height";i:150;s:9:"mime-type";s:10:"image/jpeg";}s:6:"medium";a:4:{s:4:"file";s:15:"1-6-176x300.jpg";s:5:"width";i:176;s:6:"height";i:300;s:9:"mime-type";s:10:"image/jpeg";}s:14:"shop_thumbnail";a:4:{s:4:"file";s:15:"1-6-180x180.jpg";s:5:"width";i:180;s:6:"height";i:180;s:9:"mime-type";s:10:"image/jpeg";}s:12:"shop_catalog";a:4:{s:4:"file";s:15:"1-6-300x300.jpg";s:5:"width";i:300;s:6:"height";i:300;s:9:"mime-type";s:10:"image/jpeg";}s:11:"shop_single";a:4:{s:4:"file";s:15:"1-6-382x600.jpg";s:5:"width";i:382;s:6:"height";i:600;s:9:"mime-type";s:10:"image/jpeg";}s:8:"featured";a:4:{s:4:"file";s:15:"1-6-382x300.jpg";s:5:"width";i:382;s:6:"height";i:300;s:9:"mime-type";s:10:"image/jpeg";}s:15:"featured-medium";a:4:{s:4:"file";s:15:"1-6-230x230.jpg";s:5:"width";i:230;s:6:"height";i:230;s:9:"mime-type";s:10:"image/jpeg";}s:6:"slider";a:4:{s:4:"file";s:15:"1-6-382x460.jpg";s:5:"width";i:382;s:6:"height";i:460;s:9:"mime-type";s:10:"image/jpeg";}s:7:"gallery";a:4:{s:4:"file";s:15:"1-6-382x342.jpg";s:5:"width";i:382;s:6:"height";i:342;s:9:"mime-type";s:10:"image/jpeg";}}s:10:"image_meta";a:12:{s:8:"aperture";s:1:"0";s:6:"credit";s:0:"";s:6:"camera";s:0:"";s:7:"caption";s:0:"";s:17:"created_timestamp";s:1:"0";s:9:"copyright";s:0:"";s:12:"focal_length";s:1:"0";s:3:"iso";s:1:"0";s:13:"shutter_speed";s:1:"0";s:5:"title";s:0:"";s:11:"orientation";s:1:"0";s:8:"keywords";a:0:{}}}'),
+(572, 62, '_wp_attached_file', '2017/05/2-6.jpg'),
+(573, 62, '_wp_attachment_metadata', 'a:5:{s:5:"width";i:294;s:6:"height";i:650;s:4:"file";s:15:"2017/05/2-6.jpg";s:5:"sizes";a:9:{s:9:"thumbnail";a:4:{s:4:"file";s:15:"2-6-150x150.jpg";s:5:"width";i:150;s:6:"height";i:150;s:9:"mime-type";s:10:"image/jpeg";}s:6:"medium";a:4:{s:4:"file";s:15:"2-6-136x300.jpg";s:5:"width";i:136;s:6:"height";i:300;s:9:"mime-type";s:10:"image/jpeg";}s:14:"shop_thumbnail";a:4:{s:4:"file";s:15:"2-6-180x180.jpg";s:5:"width";i:180;s:6:"height";i:180;s:9:"mime-type";s:10:"image/jpeg";}s:12:"shop_catalog";a:4:{s:4:"file";s:15:"2-6-294x300.jpg";s:5:"width";i:294;s:6:"height";i:300;s:9:"mime-type";s:10:"image/jpeg";}s:11:"shop_single";a:4:{s:4:"file";s:15:"2-6-294x600.jpg";s:5:"width";i:294;s:6:"height";i:600;s:9:"mime-type";s:10:"image/jpeg";}s:8:"featured";a:4:{s:4:"file";s:15:"2-6-294x300.jpg";s:5:"width";i:294;s:6:"height";i:300;s:9:"mime-type";s:10:"image/jpeg";}s:15:"featured-medium";a:4:{s:4:"file";s:15:"2-6-230x230.jpg";s:5:"width";i:230;s:6:"height";i:230;s:9:"mime-type";s:10:"image/jpeg";}s:6:"slider";a:4:{s:4:"file";s:15:"2-6-294x460.jpg";s:5:"width";i:294;s:6:"height";i:460;s:9:"mime-type";s:10:"image/jpeg";}s:7:"gallery";a:4:{s:4:"file";s:15:"2-6-294x342.jpg";s:5:"width";i:294;s:6:"height";i:342;s:9:"mime-type";s:10:"image/jpeg";}}s:10:"image_meta";a:12:{s:8:"aperture";s:1:"0";s:6:"credit";s:0:"";s:6:"camera";s:0:"";s:7:"caption";s:0:"";s:17:"created_timestamp";s:1:"0";s:9:"copyright";s:0:"";s:12:"focal_length";s:1:"0";s:3:"iso";s:1:"0";s:13:"shutter_speed";s:1:"0";s:5:"title";s:0:"";s:11:"orientation";s:1:"0";s:8:"keywords";a:0:{}}}'),
+(574, 63, '_wp_attached_file', '2017/05/3-6.jpg'),
+(575, 63, '_wp_attachment_metadata', 'a:5:{s:5:"width";i:552;s:6:"height";i:650;s:4:"file";s:15:"2017/05/3-6.jpg";s:5:"sizes";a:9:{s:9:"thumbnail";a:4:{s:4:"file";s:15:"3-6-150x150.jpg";s:5:"width";i:150;s:6:"height";i:150;s:9:"mime-type";s:10:"image/jpeg";}s:6:"medium";a:4:{s:4:"file";s:15:"3-6-255x300.jpg";s:5:"width";i:255;s:6:"height";i:300;s:9:"mime-type";s:10:"image/jpeg";}s:14:"shop_thumbnail";a:4:{s:4:"file";s:15:"3-6-180x180.jpg";s:5:"width";i:180;s:6:"height";i:180;s:9:"mime-type";s:10:"image/jpeg";}s:12:"shop_catalog";a:4:{s:4:"file";s:15:"3-6-300x300.jpg";s:5:"width";i:300;s:6:"height";i:300;s:9:"mime-type";s:10:"image/jpeg";}s:11:"shop_single";a:4:{s:4:"file";s:15:"3-6-552x600.jpg";s:5:"width";i:552;s:6:"height";i:600;s:9:"mime-type";s:10:"image/jpeg";}s:8:"featured";a:4:{s:4:"file";s:15:"3-6-552x300.jpg";s:5:"width";i:552;s:6:"height";i:300;s:9:"mime-type";s:10:"image/jpeg";}s:15:"featured-medium";a:4:{s:4:"file";s:15:"3-6-230x230.jpg";s:5:"width";i:230;s:6:"height";i:230;s:9:"mime-type";s:10:"image/jpeg";}s:6:"slider";a:4:{s:4:"file";s:15:"3-6-552x460.jpg";s:5:"width";i:552;s:6:"height";i:460;s:9:"mime-type";s:10:"image/jpeg";}s:7:"gallery";a:4:{s:4:"file";s:15:"3-6-474x342.jpg";s:5:"width";i:474;s:6:"height";i:342;s:9:"mime-type";s:10:"image/jpeg";}}s:10:"image_meta";a:12:{s:8:"aperture";s:1:"0";s:6:"credit";s:0:"";s:6:"camera";s:0:"";s:7:"caption";s:0:"";s:17:"created_timestamp";s:1:"0";s:9:"copyright";s:0:"";s:12:"focal_length";s:1:"0";s:3:"iso";s:1:"0";s:13:"shutter_speed";s:1:"0";s:5:"title";s:0:"";s:11:"orientation";s:1:"0";s:8:"keywords";a:0:{}}}'),
+(576, 60, '_thumbnail_id', '61'),
+(577, 64, '_menu_item_type', 'custom'),
+(578, 64, '_menu_item_menu_item_parent', '0'),
+(579, 64, '_menu_item_object_id', '64'),
+(580, 64, '_menu_item_object', 'custom'),
+(581, 64, '_menu_item_target', ''),
+(582, 64, '_menu_item_classes', 'a:1:{i:0;s:0:"";}'),
+(583, 64, '_menu_item_xfn', ''),
+(584, 64, '_menu_item_url', 'http://localhost/OverPc/'),
+(585, 64, '_menu_item_orphaned', '1496046320'),
+(586, 65, '_menu_item_type', 'post_type'),
+(587, 65, '_menu_item_menu_item_parent', '0'),
+(588, 65, '_menu_item_object_id', '6'),
+(589, 65, '_menu_item_object', 'page'),
+(590, 65, '_menu_item_target', ''),
+(591, 65, '_menu_item_classes', 'a:1:{i:0;s:0:"";}'),
+(592, 65, '_menu_item_xfn', ''),
+(593, 65, '_menu_item_url', ''),
+(594, 65, '_menu_item_orphaned', '1496046320'),
+(595, 66, '_menu_item_type', 'post_type'),
+(596, 66, '_menu_item_menu_item_parent', '0'),
+(597, 66, '_menu_item_object_id', '5'),
+(598, 66, '_menu_item_object', 'page'),
+(599, 66, '_menu_item_target', ''),
+(600, 66, '_menu_item_classes', 'a:1:{i:0;s:0:"";}'),
+(601, 66, '_menu_item_xfn', ''),
+(602, 66, '_menu_item_url', ''),
+(603, 66, '_menu_item_orphaned', '1496046320'),
+(604, 67, '_menu_item_type', 'post_type'),
+(605, 67, '_menu_item_menu_item_parent', '0'),
+(606, 67, '_menu_item_object_id', '8'),
+(607, 67, '_menu_item_object', 'page'),
+(608, 67, '_menu_item_target', ''),
+(609, 67, '_menu_item_classes', 'a:1:{i:0;s:0:"";}'),
+(610, 67, '_menu_item_xfn', ''),
+(611, 67, '_menu_item_url', ''),
+(612, 67, '_menu_item_orphaned', '1496046320'),
+(613, 68, '_menu_item_type', 'post_type'),
+(614, 68, '_menu_item_menu_item_parent', '0'),
+(615, 68, '_menu_item_object_id', '7'),
+(616, 68, '_menu_item_object', 'page'),
+(617, 68, '_menu_item_target', ''),
+(618, 68, '_menu_item_classes', 'a:1:{i:0;s:0:"";}'),
+(619, 68, '_menu_item_xfn', ''),
+(620, 68, '_menu_item_url', ''),
+(621, 68, '_menu_item_orphaned', '1496046320');
 
 -- --------------------------------------------------------
 
@@ -616,7 +1057,7 @@ INSERT INTO `wp_postmeta` (`meta_id`, `post_id`, `meta_key`, `meta_value`) VALUE
 --
 
 CREATE TABLE IF NOT EXISTS `wp_posts` (
-  `ID` bigint(20) unsigned NOT NULL,
+  `ID` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `post_author` bigint(20) unsigned NOT NULL DEFAULT '0',
   `post_date` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `post_date_gmt` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
@@ -638,8 +1079,13 @@ CREATE TABLE IF NOT EXISTS `wp_posts` (
   `menu_order` int(11) NOT NULL DEFAULT '0',
   `post_type` varchar(20) NOT NULL DEFAULT 'post',
   `post_mime_type` varchar(100) NOT NULL DEFAULT '',
-  `comment_count` bigint(20) NOT NULL DEFAULT '0'
-) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8;
+  `comment_count` bigint(20) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`),
+  KEY `post_name` (`post_name`(191)),
+  KEY `type_status_date` (`post_type`,`post_status`,`post_date`,`ID`),
+  KEY `post_parent` (`post_parent`),
+  KEY `post_author` (`post_author`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=70 ;
 
 --
 -- Дамп данных таблицы `wp_posts`
@@ -667,7 +1113,48 @@ INSERT INTO `wp_posts` (`ID`, `post_author`, `post_date`, `post_date_gmt`, `post
 (20, 1, '2017-05-26 22:07:55', '2017-05-26 19:07:55', '', '30026282b1', '', 'inherit', 'open', 'closed', '', '30026282b1', '', '', '2017-05-26 22:07:55', '2017-05-26 19:07:55', '', 18, 'http://localhost/OverPc/wp-content/uploads/2017/05/30026282b1.jpg', 0, 'attachment', 'image/jpeg', 0),
 (21, 1, '2017-05-26 22:07:56', '2017-05-26 19:07:56', '', '30026282b2', '', 'inherit', 'open', 'closed', '', '30026282b2', '', '', '2017-05-26 22:07:56', '2017-05-26 19:07:56', '', 18, 'http://localhost/OverPc/wp-content/uploads/2017/05/30026282b2.jpg', 0, 'attachment', 'image/jpeg', 0),
 (22, 1, '2017-05-26 22:07:57', '2017-05-26 19:07:57', '', '30026282b3', '', 'inherit', 'open', 'closed', '', '30026282b3', '', '', '2017-05-26 22:07:57', '2017-05-26 19:07:57', '', 18, 'http://localhost/OverPc/wp-content/uploads/2017/05/30026282b3.jpg', 0, 'attachment', 'image/jpeg', 0),
-(23, 1, '2017-05-27 07:04:11', '2017-05-27 04:04:11', 'ЕДИНСТВЕННАЯ НОВОСТЬ - ВСЁ ПО-НОВОМУ\r\n\r\nЕдва начав пользоваться iPhone 6s, вы сразу почувствуете, насколько всё изменилось. Технология 3D Touch открывает потрясающие новые возможности - достаточно одного нажатия. А функция Live Photos позволяет буквально оживить ваши воспоминания. И это только начало. Присмотритесь к iPhone 6s внимательнее, и вы увидите инновации на всех уровнях.\r\n\r\nВЫДАЮЩИЙСЯ ДИЗАЙН. НОВЫЙ ШАГ ВПЕРЁД\r\n\r\nИнновации не всегда очевидны, но, присмотревшись к iPhone 6s внимательнее, вы увидите фундаментальные перемены. Корпус изготовлен из нового сплава на основе алюминия серии 7 000, который применяется в аэрокосмической отрасли. Стекло дисплея iPhone 6s прочнее любого другого стекла для смартфона. И теперь доступно новое цветовое решение: к серебристому, золотому и цвету "серый космос" добавился корпус "розовое золото".', 'Apple iPhone 6s 32GB Space Gray', 'Присмотритесь к iPhone 6s внимательнее, и вы увидите инновации на всех уровнях.', 'publish', 'closed', 'closed', '', 'apple-iphone-6s-32gb-space-gray', '', '', '2017-05-27 07:05:50', '2017-05-27 04:05:50', '', 0, 'http://localhost/OverPc/?post_type=product&#038;p=23', 0, 'product', '', 0);
+(23, 1, '2017-05-27 07:04:11', '2017-05-27 04:04:11', 'ЕДИНСТВЕННАЯ НОВОСТЬ - ВСЁ ПО-НОВОМУ\r\n\r\nЕдва начав пользоваться iPhone 6s, вы сразу почувствуете, насколько всё изменилось. Технология 3D Touch открывает потрясающие новые возможности - достаточно одного нажатия. А функция Live Photos позволяет буквально оживить ваши воспоминания. И это только начало. Присмотритесь к iPhone 6s внимательнее, и вы увидите инновации на всех уровнях.\r\n\r\nВЫДАЮЩИЙСЯ ДИЗАЙН. НОВЫЙ ШАГ ВПЕРЁД\r\n\r\nИнновации не всегда очевидны, но, присмотревшись к iPhone 6s внимательнее, вы увидите фундаментальные перемены. Корпус изготовлен из нового сплава на основе алюминия серии 7 000, который применяется в аэрокосмической отрасли. Стекло дисплея iPhone 6s прочнее любого другого стекла для смартфона. И теперь доступно новое цветовое решение: к серебристому, золотому и цвету "серый космос" добавился корпус "розовое золото".', 'Apple iPhone 6s 32GB Space Gray', 'Присмотритесь к iPhone 6s внимательнее, и вы увидите инновации на всех уровнях.', 'publish', 'closed', 'closed', '', 'apple-iphone-6s-32gb-space-gray', '', '', '2017-05-27 07:05:50', '2017-05-27 04:05:50', '', 0, 'http://localhost/OverPc/?post_type=product&#038;p=23', 0, 'product', '', 0),
+(24, 1, '2017-05-28 15:55:53', '0000-00-00 00:00:00', '', 'Черновик', '', 'auto-draft', 'open', 'open', '', '', '', '', '2017-05-28 15:55:53', '0000-00-00 00:00:00', '', 0, 'http://localhost/OverPc/?p=24', 0, 'post', '', 0),
+(25, 1, '2017-05-28 16:04:10', '0000-00-00 00:00:00', '', 'AUTO-DRAFT', '', 'auto-draft', 'open', 'closed', '', '', '', '', '2017-05-28 16:04:10', '0000-00-00 00:00:00', '', 0, 'http://localhost/OverPc/?post_type=product&p=25', 0, 'product', '', 0),
+(26, 1, '2017-05-28 18:08:30', '2017-05-28 15:08:30', 'MSI Aegis 214RU MT – это компактный десктоп, построенный на производительных комплектующих. Для создания Aegis были отобраны только самые лучшие компоненты. Производительность системного блока обеспечивают процессор Core i5 6400, 8 Гб ОЗУ DDR4 и видеокарта GeForce GTX 1060 с 6 Гб быстрой памяти на борту, а также SSD-накопитель. Десктоп оснащен компонентами стандарта Military Class, обладающие высочайшей стабильностью, мощью и производительностью для обеспечения бесперебойной работы. Набор интерфейсов определяет широкий выбор периферии для данного решения. Кроме стандартного проводного подключения к интернету имеется поддержка Wi-Fi. MSI Aegis 214RU MT имеет широкий спектр применения, хотя ориентирован в большей степени на игровые приложения. При желании компьютер можно взять с собой, он оборудован ручкой для переноски. Большим плюсом является дизайн серии Aegis, позволяющий выделить системный блок среди прочих и способный украсить ваш интерьер.', 'ПК MSI Aegis', 'MSI Aegis 214RU MT – это компактный десктоп, построенный на производительных комплектующих.', 'trash', 'closed', 'closed', '', '%d0%bf%d0%ba-msi-aegis__trashed', '', '', '2017-05-28 18:10:05', '2017-05-28 15:10:05', '', 0, 'http://localhost/OverPc/?post_type=product&#038;p=26', 0, 'product', '', 0),
+(27, 1, '2017-05-28 17:00:45', '2017-05-28 14:00:45', '', '2', '', 'inherit', 'open', 'closed', '', '2', '', '', '2017-05-28 17:00:45', '2017-05-28 14:00:45', '', 26, 'http://localhost/OverPc/wp-content/uploads/2017/05/2.jpg', 0, 'attachment', 'image/jpeg', 0),
+(28, 1, '2017-05-28 17:00:47', '2017-05-28 14:00:47', '', '3', '', 'inherit', 'open', 'closed', '', '3', '', '', '2017-05-28 17:00:47', '2017-05-28 14:00:47', '', 26, 'http://localhost/OverPc/wp-content/uploads/2017/05/3.jpg', 0, 'attachment', 'image/jpeg', 0),
+(29, 1, '2017-05-28 17:00:49', '2017-05-28 14:00:49', '', '1', '', 'inherit', 'open', 'closed', '', '1', '', '', '2017-05-28 17:00:49', '2017-05-28 14:00:49', '', 26, 'http://localhost/OverPc/wp-content/uploads/2017/05/1.jpg', 0, 'attachment', 'image/jpeg', 0),
+(30, 1, '2017-05-28 17:23:48', '2017-05-28 14:23:48', 'MSI Aegis 214RU MT – это компактный десктоп, построенный на производительных комплектующих. Для создания Aegis были отобраны только самые лучшие компоненты. Производительность системного блока обеспечивают процессор Core i5 6400, 8 Гб ОЗУ DDR4 и видеокарта GeForce GTX 1060 с 6 Гб быстрой памяти на борту, а также SSD-накопитель. Десктоп оснащен компонентами стандарта Military Class, обладающие высочайшей стабильностью, мощью и производительностью для обеспечения бесперебойной работы. Набор интерфейсов определяет широкий выбор периферии для данного решения. Кроме стандартного проводного подключения к интернету имеется поддержка Wi-Fi. MSI Aegis 214RU MT имеет широкий спектр применения, хотя ориентирован в большей степени на игровые приложения. При желании компьютер можно взять с собой, он оборудован ручкой для переноски. Большим плюсом является дизайн серии Aegis, позволяющий выделить системный блок среди прочих и способный украсить ваш интерьер.', 'ПК MSI Aegis 214RU MT', 'MSI Aegis 214RU MT – это компактный десктоп, построенный на производительных комплектующих.', 'publish', 'open', 'closed', '', '%d0%bf%d0%ba-msi-aegis-214ru-mt', '', '', '2017-05-29 12:15:30', '2017-05-29 09:15:30', '', 0, 'http://localhost/OverPc/?post_type=product&#038;p=30', 0, 'product', '', 0),
+(33, 1, '2017-05-28 17:44:12', '2017-05-28 14:44:12', 'ПК Acer Extensa EX2610G отличается многофункциональностью и компактным корпусом, он идеально подходит для малого бизнеса и индивидуальных пользователей. В процессе изготовления представленной модели использовались только экологичные материалы. Техника работает под управлением процессора Intel. При обработке графики в работу вступает интегрированный чип Intel HD Graphics. 2 ГБ оперативной памяти типа DDR3 позволяют сохранить высокую производительность при работе с несколькими программами.', 'ПК Acer Extensa', 'ПК Acer Extensa EX2610G отличается многофункциональностью и компактным корпусом, он идеально подходит для малого бизнеса и индивидуальных пользователей.', 'publish', 'open', 'closed', '', '%d0%bf%d0%ba-acer-extensa-ex2610g', '', '', '2017-05-28 18:12:53', '2017-05-28 15:12:53', '', 0, 'http://localhost/OverPc/?post_type=product&#038;p=33', 0, 'product', '', 0),
+(34, 1, '2017-05-28 17:38:38', '2017-05-28 14:38:38', '', '1', '', 'inherit', 'open', 'closed', '', '1-2', '', '', '2017-05-28 17:38:38', '2017-05-28 14:38:38', '', 33, 'http://localhost/OverPc/wp-content/uploads/2017/05/1-1.jpg', 0, 'attachment', 'image/jpeg', 0),
+(35, 1, '2017-05-28 17:38:40', '2017-05-28 14:38:40', '', '2', '', 'inherit', 'open', 'closed', '', '2-2', '', '', '2017-05-28 17:38:40', '2017-05-28 14:38:40', '', 33, 'http://localhost/OverPc/wp-content/uploads/2017/05/2-1.jpg', 0, 'attachment', 'image/jpeg', 0),
+(36, 1, '2017-05-28 17:38:43', '2017-05-28 14:38:43', '', '3', '', 'inherit', 'open', 'closed', '', '3-2', '', '', '2017-05-28 17:38:43', '2017-05-28 14:38:43', '', 33, 'http://localhost/OverPc/wp-content/uploads/2017/05/3-1.jpg', 0, 'attachment', 'image/jpeg', 0),
+(38, 1, '2017-05-28 17:59:13', '2017-05-28 14:59:13', 'Системный блок Asus ROG GR8II-T055Z - это сочетание мощных комплектующих и компактного корпуса. Особенностью данного системного блока являются консольные габариты - его легко взять с собой куда угодно, например, на LAN-вечеринку. Кенсингтонский замок обеспечит безопасность компьютера. Процессор Core i7 седьмого поколения, 16 Гб ОЗУ типа DDR4, производительная видеокарта и диск SSD на 256 Гб в паре терабайтным винчестером гарантируют исполнение поставленных перед компьютером задач на высоком уровне. Многоуровневая настраиваемая подсветка Aura Sync RGB LED lighting и привлекательная внешность системного блока сделают его неплохим элементом интерьера.', 'ПК ASUS ROG GR8II', 'Системный блок Asus ROG GR8II-T055Z - это сочетание мощных комплектующих и компактного корпуса.', 'publish', 'open', 'closed', '', '%d0%bf%d0%ba-asus-rog-gr8ii-t055z', '', '', '2017-05-28 18:10:42', '2017-05-28 15:10:42', '', 0, 'http://localhost/OverPc/?post_type=product&#038;p=38', 0, 'product', '', 0),
+(39, 1, '2017-05-28 17:52:38', '2017-05-28 14:52:38', '', '1', '', 'inherit', 'open', 'closed', '', '1-3', '', '', '2017-05-28 17:52:38', '2017-05-28 14:52:38', '', 38, 'http://localhost/OverPc/wp-content/uploads/2017/05/1-2.jpg', 0, 'attachment', 'image/jpeg', 0),
+(40, 1, '2017-05-28 17:52:40', '2017-05-28 14:52:40', '', '2', '', 'inherit', 'open', 'closed', '', '2-3', '', '', '2017-05-28 17:52:40', '2017-05-28 14:52:40', '', 38, 'http://localhost/OverPc/wp-content/uploads/2017/05/2-2.jpg', 0, 'attachment', 'image/jpeg', 0),
+(41, 1, '2017-05-28 17:52:42', '2017-05-28 14:52:42', '', '3', '', 'inherit', 'open', 'closed', '', '3-3', '', '', '2017-05-28 17:52:42', '2017-05-28 14:52:42', '', 38, 'http://localhost/OverPc/wp-content/uploads/2017/05/3-2.jpg', 0, 'attachment', 'image/jpeg', 0),
+(42, 1, '2017-05-28 17:53:20', '2017-05-28 14:53:20', '', '1', '', 'inherit', 'open', 'closed', '', '1-4', '', '', '2017-05-28 17:53:20', '2017-05-28 14:53:20', '', 38, 'http://localhost/OverPc/wp-content/uploads/2017/05/1-3.jpg', 0, 'attachment', 'image/jpeg', 0),
+(43, 1, '2017-05-28 17:53:22', '2017-05-28 14:53:22', '', '2', '', 'inherit', 'open', 'closed', '', '2-4', '', '', '2017-05-28 17:53:22', '2017-05-28 14:53:22', '', 38, 'http://localhost/OverPc/wp-content/uploads/2017/05/2-3.jpg', 0, 'attachment', 'image/jpeg', 0),
+(44, 1, '2017-05-28 17:53:24', '2017-05-28 14:53:24', '', '3', '', 'inherit', 'open', 'closed', '', '3-4', '', '', '2017-05-28 17:53:24', '2017-05-28 14:53:24', '', 38, 'http://localhost/OverPc/wp-content/uploads/2017/05/3-3.jpg', 0, 'attachment', 'image/jpeg', 0),
+(45, 1, '2017-05-28 18:12:15', '0000-00-00 00:00:00', '', 'AUTO-DRAFT', '', 'auto-draft', 'open', 'closed', '', '', '', '', '2017-05-28 18:12:15', '0000-00-00 00:00:00', '', 0, 'http://localhost/OverPc/?post_type=product&p=45', 0, 'product', '', 0),
+(46, 1, '2017-05-28 19:57:47', '2017-05-28 16:57:47', 'Этот сверхкомпактный и энергоэффективный настольный компьютер Dell Optiplex 3040 обеспечит максимальную производительность и не займет много места. Возможности подключения через порты DisplayPort и HDMI обеспечивают еще больше экранного пространства для ваших задач.', 'ПК Dell Optiplex', 'Этот сверхкомпактный и энергоэффективный настольный компьютер Dell Optiplex 3040 обеспечит максимальную производительность и не займет много места.', 'publish', 'open', 'closed', '', '%d0%bf%d0%ba-dell-optiplex', '', '', '2017-05-28 19:57:48', '2017-05-28 16:57:48', '', 0, 'http://localhost/OverPc/?post_type=product&#038;p=46', 0, 'product', '', 0),
+(47, 1, '2017-05-28 18:28:17', '2017-05-28 15:28:17', '', '2', '', 'inherit', 'open', 'closed', '', '2-5', '', '', '2017-05-28 18:28:17', '2017-05-28 15:28:17', '', 46, 'http://localhost/OverPc/wp-content/uploads/2017/05/2-4.jpg', 0, 'attachment', 'image/jpeg', 0),
+(48, 1, '2017-05-28 18:28:19', '2017-05-28 15:28:19', '', '3', '', 'inherit', 'open', 'closed', '', '3-5', '', '', '2017-05-28 18:28:19', '2017-05-28 15:28:19', '', 46, 'http://localhost/OverPc/wp-content/uploads/2017/05/3-4.jpg', 0, 'attachment', 'image/jpeg', 0),
+(49, 1, '2017-05-28 18:28:20', '2017-05-28 15:28:20', '', '1', '', 'inherit', 'open', 'closed', '', '1-5', '', '', '2017-05-28 18:28:20', '2017-05-28 15:28:20', '', 46, 'http://localhost/OverPc/wp-content/uploads/2017/05/1-4.jpg', 0, 'attachment', 'image/jpeg', 0),
+(50, 1, '2017-05-28 20:17:38', '2017-05-28 17:17:38', 'Системный блок Lenovo IdeaCentre 300-20ISH – компьютер, который идеально подходит для игр и для просмотра качественного видео. Сочетание процессора Intel Core i5 с большим объемом оперативной памяти позволяет устройству работать с профессиональными и мультимедийными приложениями в режиме многозадачности, не создавая при этом сильных задержек. Порты USB 3.0 обеспечивают мгновенный обмен данными с внешними винчестерами, флешками и прочими гаджетами. Кроме того, они могут использоваться для ускоренной подзарядки мобильных девайсов.', 'ПК Lenovo 300-20ISH', 'Системный блок Lenovo IdeaCentre 300-20ISH – компьютер, который идеально подходит для игр и для просмотра качественного видео.', 'publish', 'open', 'closed', '', '%d0%bf%d0%ba-lenovo-300-20ish', '', '', '2017-05-29 12:13:16', '2017-05-29 09:13:16', '', 0, 'http://localhost/OverPc/?post_type=product&#038;p=50', 0, 'product', '', 0),
+(51, 1, '2017-05-28 20:15:33', '2017-05-28 17:15:33', '', '1', '', 'inherit', 'open', 'closed', '', '1-6', '', '', '2017-05-28 20:15:33', '2017-05-28 17:15:33', '', 50, 'http://localhost/OverPc/wp-content/uploads/2017/05/1-5.jpg', 0, 'attachment', 'image/jpeg', 0),
+(52, 1, '2017-05-28 20:15:36', '2017-05-28 17:15:36', '', '2', '', 'inherit', 'open', 'closed', '', '2-6', '', '', '2017-05-28 20:15:36', '2017-05-28 17:15:36', '', 50, 'http://localhost/OverPc/wp-content/uploads/2017/05/2-5.jpg', 0, 'attachment', 'image/jpeg', 0),
+(53, 1, '2017-05-28 20:15:39', '2017-05-28 17:15:39', '', '3', '', 'inherit', 'open', 'closed', '', '3-6', '', '', '2017-05-28 20:15:39', '2017-05-28 17:15:39', '', 50, 'http://localhost/OverPc/wp-content/uploads/2017/05/3-5.jpg', 0, 'attachment', 'image/jpeg', 0),
+(55, 1, '2017-05-28 20:30:26', '2017-05-28 17:30:26', 'ThinkStation P310 обеспечивает непревзойденное удобство использования. Предлагая широкий спектр преимуществ (от возможности обслуживания ПК без использования инструментов до встроенных рукояток и модульного дизайна), P310 обеспечивает максимальный уровень производительности и полнофункциональную масштабируемость. Все это — в компактном корпусе малого форм-фактора (SFF) объемом 12 литров.Удобство доступа к комплектующим позволяет сотрудникам ИТ-службы с легкостью модернизировать оборудование. К тому же, благодаря элегантной и функциональной конструкции, P310 можно без труда поднимать и переносить. Процессор Intel Xeon и видеокарта NVIDIA Quadro обеспечивают высокий уровень производительности для решения критически важных задач. P310 обладает достаточной вычислительной мощью для финансовых операций, проектирования, архитектурных разработок и работы с приложениями медицинских учреждений и научных центров. В то же время этот компьютер отличает большой объем дискового хранилища.', 'ПК Lenovo ThinkStation', 'ThinkStation P310 обеспечивает непревзойденное удобство использования. Предлагая широкий спектр преимуществ (от возможности обслуживания ПК без использования инструментов до встроенных рукояток и модульного дизайна), P310 обеспечивает максимальный уровень производительности и полнофункциональную масштабируемость.', 'publish', 'open', 'closed', '', '%d0%bf%d0%ba-lenovo-thinkstation', '', '', '2017-05-29 11:46:09', '2017-05-29 08:46:09', '', 0, 'http://localhost/OverPc/?post_type=product&#038;p=55', 0, 'product', '', 0),
+(56, 1, '2017-05-28 20:24:24', '2017-05-28 17:24:24', '', '4', '', 'inherit', 'open', 'closed', '', '4', '', '', '2017-05-28 20:24:24', '2017-05-28 17:24:24', '', 55, 'http://localhost/OverPc/wp-content/uploads/2017/05/4.jpg', 0, 'attachment', 'image/jpeg', 0),
+(57, 1, '2017-05-28 20:42:34', '2017-05-28 17:42:34', 'Бесподобная производительность и экстраординарный дизайн — визитная карточка персонального компьютера MSI Aegis 3 VR7RC-027RU. Эта серьёзная машина предназначена тем, кто ценит только самое лучшее в гейминге. Ее вооружение — самая продвинутая видеокарта, самые качественные аудиотехнологии, лучшая архитектура охлаждения и безграничные игровые возможности. MSI Aegis 3 VR7RC-027RU — это всё самое лучшее, что можно встретить в настоящем игровом ПК.', 'ПК MSI Aegis 3', 'Бесподобная производительность и экстраординарный дизайн — визитная карточка персонального компьютера MSI Aegis 3 VR7RC-027RU.', 'publish', 'open', 'closed', '', '%d0%bf%d0%ba-msi-aegis-3', '', '', '2017-05-28 20:42:35', '2017-05-28 17:42:35', '', 0, 'http://localhost/OverPc/?post_type=product&#038;p=57', 0, 'product', '', 0),
+(59, 1, '2017-05-28 20:47:18', '0000-00-00 00:00:00', '', 'ПК Alienware Aurora', '', 'draft', 'open', 'open', '', '', '', '', '2017-05-28 20:47:18', '2017-05-28 17:47:18', '', 0, 'http://localhost/OverPc/?p=59', 0, 'post', '', 0),
+(60, 1, '2017-05-28 21:17:38', '2017-05-28 18:17:38', 'Компактный ПК Alienware Aurora [R5-0392] в корпусе форм-фактора Midi-Tower с поддержкой двух графических плат предназначен для виртуальной реальности, поддерживает систему жидкостного охлаждения и возможность доступа внутрь корпуса без помощи инструментов. При разработке компьютера Aurora за основу была взята эффективная система регулирования температуры компьютера Area-51, которая обеспечивает оптимальный приток воздуха со стороны передней и правой панелей и работу вытяжного вентилятора в верхней части с целью максимального обдува и охлаждения внутренних компонентов.', 'Alienware Aurora', 'Компактный ПК Alienware Aurora [R5-0392] в корпусе форм-фактора Midi-Tower с поддержкой двух графических плат предназначен для виртуальной реальности, поддерживает систему жидкостного охлаждения и возможность доступа внутрь корпуса без помощи инструментов.', 'publish', 'open', 'closed', '', 'alienware-aurora', '', '', '2017-05-28 21:17:39', '2017-05-28 18:17:39', '', 0, 'http://localhost/OverPc/?post_type=product&#038;p=60', 0, 'product', '', 0),
+(61, 1, '2017-05-28 21:13:23', '2017-05-28 18:13:23', '', '1', '', 'inherit', 'open', 'closed', '', '1-7', '', '', '2017-05-28 21:13:23', '2017-05-28 18:13:23', '', 60, 'http://localhost/OverPc/wp-content/uploads/2017/05/1-6.jpg', 0, 'attachment', 'image/jpeg', 0),
+(62, 1, '2017-05-28 21:13:25', '2017-05-28 18:13:25', '', '2', '', 'inherit', 'open', 'closed', '', '2-7', '', '', '2017-05-28 21:13:25', '2017-05-28 18:13:25', '', 60, 'http://localhost/OverPc/wp-content/uploads/2017/05/2-6.jpg', 0, 'attachment', 'image/jpeg', 0),
+(63, 1, '2017-05-28 21:13:26', '2017-05-28 18:13:26', '', '3', '', 'inherit', 'open', 'closed', '', '3-7', '', '', '2017-05-28 21:13:26', '2017-05-28 18:13:26', '', 60, 'http://localhost/OverPc/wp-content/uploads/2017/05/3-6.jpg', 0, 'attachment', 'image/jpeg', 0),
+(64, 1, '2017-05-29 11:25:20', '0000-00-00 00:00:00', '', 'Главная', '', 'draft', 'closed', 'closed', '', '', '', '', '2017-05-29 11:25:20', '0000-00-00 00:00:00', '', 0, 'http://localhost/OverPc/?p=64', 1, 'nav_menu_item', '', 0),
+(65, 1, '2017-05-29 11:25:20', '0000-00-00 00:00:00', ' ', '', '', 'draft', 'closed', 'closed', '', '', '', '', '2017-05-29 11:25:20', '0000-00-00 00:00:00', '', 0, 'http://localhost/OverPc/?p=65', 1, 'nav_menu_item', '', 0),
+(66, 1, '2017-05-29 11:25:20', '0000-00-00 00:00:00', ' ', '', '', 'draft', 'closed', 'closed', '', '', '', '', '2017-05-29 11:25:20', '0000-00-00 00:00:00', '', 0, 'http://localhost/OverPc/?p=66', 1, 'nav_menu_item', '', 0),
+(67, 1, '2017-05-29 11:25:20', '0000-00-00 00:00:00', ' ', '', '', 'draft', 'closed', 'closed', '', '', '', '', '2017-05-29 11:25:20', '0000-00-00 00:00:00', '', 0, 'http://localhost/OverPc/?p=67', 1, 'nav_menu_item', '', 0),
+(68, 1, '2017-05-29 11:25:20', '0000-00-00 00:00:00', ' ', '', '', 'draft', 'closed', 'closed', '', '', '', '', '2017-05-29 11:25:20', '0000-00-00 00:00:00', '', 0, 'http://localhost/OverPc/?p=68', 1, 'nav_menu_item', '', 0),
+(69, 1, '2017-05-29 12:13:45', '2017-05-29 09:13:45', 'Этот сверхкомпактный и энергоэффективный настольный компьютер Dell Optiplex 3040 обеспечит максимальную производительность и не займет много места. Возможности подключения через порты DisplayPort и HDMI обеспечивают еще больше экранного пространства для ваших задач.', 'ПК Dell Optiplex', 'Этот сверхкомпактный и энергоэффективный настольный компьютер Dell Optiplex 3040 обеспечит максимальную производительность и не займет много места.', 'inherit', 'closed', 'closed', '', '46-autosave-v1', '', '', '2017-05-29 12:13:45', '2017-05-29 09:13:45', '', 46, 'http://localhost/OverPc/2017/05/29/46-autosave-v1/', 0, 'revision', '', 0);
 
 -- --------------------------------------------------------
 
@@ -676,11 +1163,14 @@ INSERT INTO `wp_posts` (`ID`, `post_author`, `post_date`, `post_date_gmt`, `post
 --
 
 CREATE TABLE IF NOT EXISTS `wp_termmeta` (
-  `meta_id` bigint(20) unsigned NOT NULL,
+  `meta_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `term_id` bigint(20) unsigned NOT NULL DEFAULT '0',
   `meta_key` varchar(255) DEFAULT NULL,
-  `meta_value` longtext
-) ENGINE=InnoDB AUTO_INCREMENT=44 DEFAULT CHARSET=utf8;
+  `meta_value` longtext,
+  PRIMARY KEY (`meta_id`),
+  KEY `term_id` (`term_id`),
+  KEY `meta_key` (`meta_key`(191))
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=84 ;
 
 --
 -- Дамп данных таблицы `wp_termmeta`
@@ -726,7 +1216,44 @@ INSERT INTO `wp_termmeta` (`meta_id`, `term_id`, `meta_key`, `meta_value`) VALUE
 (40, 46, 'order_pa_rom', '0'),
 (41, 47, 'order_pa_rom', '0'),
 (42, 48, 'order_pa_color', '0'),
-(43, 16, 'product_count_product_cat', '5');
+(43, 16, 'product_count_product_cat', '5'),
+(44, 49, 'order_pa_os', '0'),
+(45, 50, 'order_pa_os', '0'),
+(46, 51, 'order_pa_os', '0'),
+(47, 52, 'order_pa_процессор', '0'),
+(48, 53, 'order_pa_cpu', '0'),
+(49, 54, 'order_pa_жесткий-диск', '0'),
+(50, 55, 'order_pa_ram', '0'),
+(51, 56, 'order_pa_видеокарта', '0'),
+(52, 17, 'product_count_product_cat', '8'),
+(53, 57, 'order_pa_процессор', '0'),
+(54, 58, 'order_pa_cpu', '0'),
+(55, 59, 'order_pa_ram', '0'),
+(56, 60, 'order_pa_жесткий-диск', '0'),
+(57, 61, 'order_pa_видеокарта', '0'),
+(58, 62, 'order_pa_процессор', '0'),
+(59, 63, 'order_pa_cpu', '0'),
+(60, 64, 'order_pa_ram', '0'),
+(61, 65, 'order_pa_процессор', '0'),
+(62, 66, 'order_pa_cpu', '0'),
+(63, 67, 'order_pa_ram', '0'),
+(64, 68, 'order_pa_ssd', '0'),
+(65, 69, 'order_pa_видеокарта', '0'),
+(66, 70, 'order_pa_процессор', '0'),
+(67, 71, 'order_pa_жесткий-диск', '0'),
+(68, 72, 'order_pa_видеокарта', '0'),
+(69, 73, 'order_pa_процессор', '0'),
+(70, 74, 'order_pa_cpu', '0'),
+(71, 75, 'order_pa_видеокарта', '0'),
+(72, 76, 'order_pa_процессор', '0'),
+(73, 77, 'order_pa_cpu', '0'),
+(74, 78, 'order_pa_ssd', '0'),
+(75, 79, 'order_pa_видеокарта', '0'),
+(76, 80, 'order_pa_процессор', '0'),
+(77, 81, 'order_pa_ssd', '0'),
+(78, 82, 'order_pa_видеокарта', '0'),
+(79, 83, 'order_pa_видеокарта', '0'),
+(83, 87, 'order_pa_процессор', '0');
 
 -- --------------------------------------------------------
 
@@ -735,11 +1262,14 @@ INSERT INTO `wp_termmeta` (`meta_id`, `term_id`, `meta_key`, `meta_value`) VALUE
 --
 
 CREATE TABLE IF NOT EXISTS `wp_terms` (
-  `term_id` bigint(20) unsigned NOT NULL,
+  `term_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(200) NOT NULL DEFAULT '',
   `slug` varchar(200) NOT NULL DEFAULT '',
-  `term_group` bigint(10) NOT NULL DEFAULT '0'
-) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=utf8;
+  `term_group` bigint(10) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`term_id`),
+  KEY `slug` (`slug`(191)),
+  KEY `name` (`name`(191))
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=88 ;
 
 --
 -- Дамп данных таблицы `wp_terms`
@@ -792,7 +1322,43 @@ INSERT INTO `wp_terms` (`term_id`, `name`, `slug`, `term_group`) VALUES
 (45, '143', '143', 0),
 (46, '64', '64', 0),
 (47, '16', '16', 0),
-(48, 'Серый космос', '%d1%81%d0%b5%d1%80%d1%8b%d0%b9-%d0%ba%d0%be%d1%81%d0%bc%d0%be%d1%81', 0);
+(48, 'Серый космос', '%d1%81%d0%b5%d1%80%d1%8b%d0%b9-%d0%ba%d0%be%d1%81%d0%bc%d0%be%d1%81', 0),
+(49, 'Windows', 'windows', 0),
+(50, 'Linux', 'linux', 0),
+(51, 'Нет', '%d0%bd%d0%b5%d1%82', 0),
+(52, 'Core i5 6400', 'core-i5-6400', 0),
+(53, '2700', '2700', 0),
+(54, '1 ТБ', '1-%d1%82%d0%b1', 0),
+(55, '8', '8', 0),
+(56, 'GeForce GTX 1060', 'geforce-gtx-1060', 0),
+(57, 'intel Celeron J3060D', 'intel-celeron-j3060d', 0),
+(58, '1600', '1600', 0),
+(59, '2', '2', 0),
+(60, '500 ГБ', '500-%d0%b3%d0%b1', 0),
+(61, 'Intel® HD Graphics 400', 'intel-hd-graphics-400', 0),
+(62, 'intel Core i7 7700', 'intel-core-i7-7700', 0),
+(63, '3600', '3600', 0),
+(64, '16', '16', 0),
+(65, 'intel Core i3 6100', 'intel-core-i3-6100', 0),
+(66, '3700', '3700', 0),
+(67, '4', '4', 0),
+(68, '128 ГБ', '128-%d0%b3%d0%b1', 0),
+(69, 'Intel HD 530', 'intel-hd-530', 0),
+(70, 'Intel Core i5 6400', 'intel-core-i5-6400', 0),
+(71, '1000', '1000', 0),
+(72, 'GeForce GTX 750 Ti', 'geforce-gtx-750-ti', 0),
+(73, 'intel Xeon E3 1230 v5', 'intel-xeon-e3-1230-v5', 0),
+(74, '3400', '3400', 0),
+(75, 'Nvidia Quadro К420', 'nvidia-quadro-%d0%ba420', 0),
+(76, 'intel Core i5 7400', 'intel-core-i5-7400', 0),
+(77, '3000', '3000', 0),
+(78, '256 ГБ', '256-%d0%b3%d0%b1', 0),
+(79, 'Nvidia GeForce GTX 1060', 'nvidia-geforce-gtx-1060', 0),
+(80, 'intel Core i7 6700', 'intel-core-i7-6700', 0),
+(81, '512 ГБ', '512-%d0%b3%d0%b1', 0),
+(82, 'Nvidia GeForce GTX 1070', 'nvidia-geforce-gtx-1070', 0),
+(83, 'Nvidia GeForce GTX 750 Ti', 'nvidia-geforce-gtx-750-ti', 0),
+(87, 'intel Xeon E3 1230', 'intel-xeon-e3-1230', 0);
 
 -- --------------------------------------------------------
 
@@ -803,7 +1369,9 @@ INSERT INTO `wp_terms` (`term_id`, `name`, `slug`, `term_group`) VALUES
 CREATE TABLE IF NOT EXISTS `wp_term_relationships` (
   `object_id` bigint(20) unsigned NOT NULL DEFAULT '0',
   `term_taxonomy_id` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `term_order` int(11) NOT NULL DEFAULT '0'
+  `term_order` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`object_id`,`term_taxonomy_id`),
+  KEY `term_taxonomy_id` (`term_taxonomy_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -896,7 +1464,87 @@ INSERT INTO `wp_term_relationships` (`object_id`, `term_taxonomy_id`, `term_orde
 (23, 43, 0),
 (23, 44, 0),
 (23, 45, 0),
-(23, 48, 0);
+(23, 48, 0),
+(26, 2, 0),
+(26, 22, 0),
+(26, 49, 0),
+(26, 52, 0),
+(26, 53, 0),
+(26, 54, 0),
+(26, 55, 0),
+(30, 2, 0),
+(30, 17, 0),
+(30, 22, 0),
+(30, 49, 0),
+(30, 53, 0),
+(30, 54, 0),
+(30, 55, 0),
+(30, 70, 0),
+(30, 79, 0),
+(33, 2, 0),
+(33, 17, 0),
+(33, 20, 0),
+(33, 51, 0),
+(33, 57, 0),
+(33, 58, 0),
+(33, 59, 0),
+(33, 60, 0),
+(33, 61, 0),
+(38, 2, 0),
+(38, 17, 0),
+(38, 22, 0),
+(38, 49, 0),
+(38, 54, 0),
+(38, 62, 0),
+(38, 63, 0),
+(38, 64, 0),
+(38, 79, 0),
+(46, 2, 0),
+(46, 17, 0),
+(46, 20, 0),
+(46, 50, 0),
+(46, 65, 0),
+(46, 66, 0),
+(46, 67, 0),
+(46, 68, 0),
+(46, 69, 0),
+(50, 2, 0),
+(50, 17, 0),
+(50, 22, 0),
+(50, 51, 0),
+(50, 53, 0),
+(50, 55, 0),
+(50, 70, 0),
+(50, 71, 0),
+(50, 83, 0),
+(55, 2, 0),
+(55, 17, 0),
+(55, 22, 0),
+(55, 49, 0),
+(55, 55, 0),
+(55, 60, 0),
+(55, 74, 0),
+(55, 75, 0),
+(55, 87, 0),
+(57, 2, 0),
+(57, 17, 0),
+(57, 49, 0),
+(57, 54, 0),
+(57, 55, 0),
+(57, 76, 0),
+(57, 77, 0),
+(57, 78, 0),
+(57, 79, 0),
+(59, 1, 0),
+(60, 2, 0),
+(60, 17, 0),
+(60, 22, 0),
+(60, 49, 0),
+(60, 64, 0),
+(60, 74, 0),
+(60, 80, 0),
+(60, 81, 0),
+(60, 82, 0);
 
 -- --------------------------------------------------------
 
@@ -905,13 +1553,16 @@ INSERT INTO `wp_term_relationships` (`object_id`, `term_taxonomy_id`, `term_orde
 --
 
 CREATE TABLE IF NOT EXISTS `wp_term_taxonomy` (
-  `term_taxonomy_id` bigint(20) unsigned NOT NULL,
+  `term_taxonomy_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `term_id` bigint(20) unsigned NOT NULL DEFAULT '0',
   `taxonomy` varchar(32) NOT NULL DEFAULT '',
   `description` longtext NOT NULL,
   `parent` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `count` bigint(20) NOT NULL DEFAULT '0'
-) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=utf8;
+  `count` bigint(20) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`term_taxonomy_id`),
+  UNIQUE KEY `term_id_taxonomy` (`term_id`,`taxonomy`),
+  KEY `taxonomy` (`taxonomy`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=88 ;
 
 --
 -- Дамп данных таблицы `wp_term_taxonomy`
@@ -919,7 +1570,7 @@ CREATE TABLE IF NOT EXISTS `wp_term_taxonomy` (
 
 INSERT INTO `wp_term_taxonomy` (`term_taxonomy_id`, `term_id`, `taxonomy`, `description`, `parent`, `count`) VALUES
 (1, 1, 'category', '', 0, 1),
-(2, 2, 'product_type', '', 0, 5),
+(2, 2, 'product_type', '', 0, 13),
 (3, 3, 'product_type', '', 0, 0),
 (4, 4, 'product_type', '', 0, 0),
 (5, 5, 'product_type', '', 0, 0),
@@ -933,12 +1584,12 @@ INSERT INTO `wp_term_taxonomy` (`term_taxonomy_id`, `term_id`, `taxonomy`, `desc
 (13, 13, 'product_visibility', '', 0, 0),
 (14, 14, 'product_visibility', '', 0, 0),
 (16, 16, 'product_cat', '', 0, 5),
-(17, 17, 'product_cat', '', 0, 0),
+(17, 17, 'product_cat', '', 0, 8),
 (18, 18, 'product_cat', '', 0, 0),
 (19, 19, 'pa_cores', '', 0, 0),
-(20, 20, 'pa_cores', '', 0, 5),
+(20, 20, 'pa_cores', '', 0, 7),
 (21, 21, 'pa_cores', '', 0, 0),
-(22, 22, 'pa_cores', '', 0, 0),
+(22, 22, 'pa_cores', '', 0, 5),
 (23, 23, 'pa_cores', '', 0, 0),
 (24, 24, 'pa_cores', '', 0, 0),
 (25, 25, 'pa_countsim', '', 0, 5),
@@ -964,7 +1615,43 @@ INSERT INTO `wp_term_taxonomy` (`term_taxonomy_id`, `term_id`, `taxonomy`, `desc
 (45, 45, 'pa_вес-г', '', 0, 5),
 (46, 46, 'pa_rom', '', 0, 1),
 (47, 47, 'pa_rom', '', 0, 2),
-(48, 48, 'pa_color', '', 0, 2);
+(48, 48, 'pa_color', '', 0, 2),
+(49, 49, 'pa_os', '', 0, 5),
+(50, 50, 'pa_os', '', 0, 1),
+(51, 51, 'pa_os', '', 0, 2),
+(52, 52, 'pa_процессор', '', 0, 0),
+(53, 53, 'pa_cpu', '', 0, 2),
+(54, 54, 'pa_жесткий-диск', '', 0, 3),
+(55, 55, 'pa_ram', '', 0, 4),
+(56, 56, 'pa_видеокарта', '', 0, 0),
+(57, 57, 'pa_процессор', '', 0, 1),
+(58, 58, 'pa_cpu', '', 0, 1),
+(59, 59, 'pa_ram', '', 0, 1),
+(60, 60, 'pa_жесткий-диск', '', 0, 2),
+(61, 61, 'pa_видеокарта', '', 0, 1),
+(62, 62, 'pa_процессор', '', 0, 1),
+(63, 63, 'pa_cpu', '', 0, 1),
+(64, 64, 'pa_ram', '', 0, 2),
+(65, 65, 'pa_процессор', '', 0, 1),
+(66, 66, 'pa_cpu', '', 0, 1),
+(67, 67, 'pa_ram', '', 0, 1),
+(68, 68, 'pa_ssd', '', 0, 1),
+(69, 69, 'pa_видеокарта', '', 0, 1),
+(70, 70, 'pa_процессор', '', 0, 2),
+(71, 71, 'pa_жесткий-диск', '', 0, 1),
+(72, 72, 'pa_видеокарта', '', 0, 0),
+(73, 73, 'pa_процессор', '', 0, 0),
+(74, 74, 'pa_cpu', '', 0, 2),
+(75, 75, 'pa_видеокарта', '', 0, 1),
+(76, 76, 'pa_процессор', '', 0, 1),
+(77, 77, 'pa_cpu', '', 0, 1),
+(78, 78, 'pa_ssd', '', 0, 1),
+(79, 79, 'pa_видеокарта', '', 0, 3),
+(80, 80, 'pa_процессор', '', 0, 1),
+(81, 81, 'pa_ssd', '', 0, 1),
+(82, 82, 'pa_видеокарта', '', 0, 1),
+(83, 83, 'pa_видеокарта', '', 0, 1),
+(87, 87, 'pa_процессор', '', 0, 1);
 
 -- --------------------------------------------------------
 
@@ -973,11 +1660,14 @@ INSERT INTO `wp_term_taxonomy` (`term_taxonomy_id`, `term_id`, `taxonomy`, `desc
 --
 
 CREATE TABLE IF NOT EXISTS `wp_usermeta` (
-  `umeta_id` bigint(20) unsigned NOT NULL,
+  `umeta_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` bigint(20) unsigned NOT NULL DEFAULT '0',
   `meta_key` varchar(255) DEFAULT NULL,
-  `meta_value` longtext
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8;
+  `meta_value` longtext,
+  PRIMARY KEY (`umeta_id`),
+  KEY `user_id` (`user_id`),
+  KEY `meta_key` (`meta_key`(191))
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=24 ;
 
 --
 -- Дамп данных таблицы `wp_usermeta`
@@ -998,13 +1688,15 @@ INSERT INTO `wp_usermeta` (`umeta_id`, `user_id`, `meta_key`, `meta_value`) VALU
 (12, 1, 'wp_user_level', '10'),
 (13, 1, 'dismissed_wp_pointers', ''),
 (14, 1, 'show_welcome_panel', '1'),
-(15, 1, 'session_tokens', 'a:2:{s:64:"f48457ad24cd7c4187feac9b67ef614e388e9baf568aabfd7b43100365559bcd";a:4:{s:10:"expiration";i:1495986837;s:2:"ip";s:9:"127.0.0.1";s:2:"ua";s:115:"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36";s:5:"login";i:1495814037;}s:64:"a727101d0cb96d711e91d1dcd4ccd3433a1b9d9482f2f77f0f1f6ad85870b87f";a:4:{s:10:"expiration";i:1496030194;s:2:"ip";s:9:"127.0.0.1";s:2:"ua";s:115:"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36";s:5:"login";i:1495857394;}}'),
+(15, 1, 'session_tokens', 'a:2:{s:64:"4759cf44717422d22e89a2ef4dd79e27affc8343a7d2ad81cf766339c6f85301";a:4:{s:10:"expiration";i:1496148889;s:2:"ip";s:9:"127.0.0.1";s:2:"ua";s:102:"Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36";s:5:"login";i:1495976089;}s:64:"bacac8d0ae2e6b650dc7464e01d0c9dddd729514b870515e528841be87735401";a:4:{s:10:"expiration";i:1496213447;s:2:"ip";s:9:"127.0.0.1";s:2:"ua";s:102:"Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36";s:5:"login";i:1496040647;}}'),
 (16, 1, 'wp_dashboard_quick_press_last_post_id', '3'),
-(17, 1, '_woocommerce_persistent_cart', 'a:1:{s:4:"cart";a:1:{s:32:"70efdf2ec9b086079795c442636b55fb";a:9:{s:10:"product_id";i:17;s:12:"variation_id";i:0;s:9:"variation";a:0:{}s:8:"quantity";i:1;s:10:"line_total";d:37000;s:13:"line_subtotal";d:37000;s:8:"line_tax";d:0;s:17:"line_subtotal_tax";d:0;s:13:"line_tax_data";a:2:{s:5:"total";a:0:{}s:8:"subtotal";a:0:{}}}}}'),
-(18, 1, 'wp_user-settings', 'libraryContent=browse'),
-(19, 1, 'wp_user-settings-time', '1495824657'),
+(17, 1, '_woocommerce_persistent_cart', 'a:1:{s:4:"cart";a:0:{}}'),
+(18, 1, 'wp_user-settings', 'libraryContent=browse&editor=tinymce&hidetb=1'),
+(19, 1, 'wp_user-settings-time', '1495992547'),
 (20, 1, 'closedpostboxes_product', 'a:0:{}'),
-(21, 1, 'metaboxhidden_product', 'a:2:{i:0;s:10:"postcustom";i:1;s:7:"slugdiv";}');
+(21, 1, 'metaboxhidden_product', 'a:2:{i:0;s:10:"postcustom";i:1;s:7:"slugdiv";}'),
+(22, 1, 'managenav-menuscolumnshidden', 'a:5:{i:0;s:11:"link-target";i:1;s:11:"css-classes";i:2;s:3:"xfn";i:3;s:11:"description";i:4;s:15:"title-attribute";}'),
+(23, 1, 'metaboxhidden_nav-menus', 'a:4:{i:0;s:21:"add-post-type-product";i:1;s:12:"add-post_tag";i:2;s:15:"add-product_cat";i:3;s:15:"add-product_tag";}');
 
 -- --------------------------------------------------------
 
@@ -1013,7 +1705,7 @@ INSERT INTO `wp_usermeta` (`umeta_id`, `user_id`, `meta_key`, `meta_value`) VALU
 --
 
 CREATE TABLE IF NOT EXISTS `wp_users` (
-  `ID` bigint(20) unsigned NOT NULL,
+  `ID` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `user_login` varchar(60) NOT NULL DEFAULT '',
   `user_pass` varchar(255) NOT NULL DEFAULT '',
   `user_nicename` varchar(50) NOT NULL DEFAULT '',
@@ -1022,8 +1714,12 @@ CREATE TABLE IF NOT EXISTS `wp_users` (
   `user_registered` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `user_activation_key` varchar(255) NOT NULL DEFAULT '',
   `user_status` int(11) NOT NULL DEFAULT '0',
-  `display_name` varchar(250) NOT NULL DEFAULT ''
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+  `display_name` varchar(250) NOT NULL DEFAULT '',
+  PRIMARY KEY (`ID`),
+  KEY `user_login_key` (`user_login`),
+  KEY `user_nicename` (`user_nicename`),
+  KEY `user_email` (`user_email`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
 
 --
 -- Дамп данных таблицы `wp_users`
@@ -1039,7 +1735,7 @@ INSERT INTO `wp_users` (`ID`, `user_login`, `user_pass`, `user_nicename`, `user_
 --
 
 CREATE TABLE IF NOT EXISTS `wp_woocommerce_api_keys` (
-  `key_id` bigint(20) unsigned NOT NULL,
+  `key_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` bigint(20) unsigned NOT NULL,
   `description` varchar(200) DEFAULT NULL,
   `permissions` varchar(10) NOT NULL,
@@ -1047,8 +1743,11 @@ CREATE TABLE IF NOT EXISTS `wp_woocommerce_api_keys` (
   `consumer_secret` char(43) NOT NULL,
   `nonces` longtext,
   `truncated_key` char(7) NOT NULL,
-  `last_access` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `last_access` datetime DEFAULT NULL,
+  PRIMARY KEY (`key_id`),
+  KEY `consumer_key` (`consumer_key`),
+  KEY `consumer_secret` (`consumer_secret`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -1057,13 +1756,15 @@ CREATE TABLE IF NOT EXISTS `wp_woocommerce_api_keys` (
 --
 
 CREATE TABLE IF NOT EXISTS `wp_woocommerce_attribute_taxonomies` (
-  `attribute_id` bigint(20) unsigned NOT NULL,
+  `attribute_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `attribute_name` varchar(200) NOT NULL,
   `attribute_label` varchar(200) DEFAULT NULL,
   `attribute_type` varchar(20) NOT NULL,
   `attribute_orderby` varchar(20) NOT NULL,
-  `attribute_public` int(1) NOT NULL DEFAULT '1'
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8;
+  `attribute_public` int(1) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`attribute_id`),
+  KEY `attribute_name` (`attribute_name`(20))
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=23 ;
 
 --
 -- Дамп данных таблицы `wp_woocommerce_attribute_taxonomies`
@@ -1085,7 +1786,11 @@ INSERT INTO `wp_woocommerce_attribute_taxonomies` (`attribute_id`, `attribute_na
 (13, 'talktime', 'Время разговора', 'text', 'menu_order', 0),
 (14, 'cpu', 'Частота процессора (Мгц)', 'text', 'menu_order', 0),
 (15, 'material', 'Материал', 'select', 'menu_order', 0),
-(16, 'color', 'Цвет', 'text', 'menu_order', 0);
+(16, 'color', 'Цвет', 'text', 'menu_order', 0),
+(18, 'жесткий-диск', 'Жесткий диск', 'text', 'menu_order', 0),
+(19, 'ssd', 'SSD', 'text', 'menu_order', 0),
+(21, 'процессор', 'Процессор', 'text', 'menu_order', 0),
+(22, 'видеокарта', 'Видеокарта', 'text', 'menu_order', 0);
 
 -- --------------------------------------------------------
 
@@ -1094,7 +1799,7 @@ INSERT INTO `wp_woocommerce_attribute_taxonomies` (`attribute_id`, `attribute_na
 --
 
 CREATE TABLE IF NOT EXISTS `wp_woocommerce_downloadable_product_permissions` (
-  `permission_id` bigint(20) unsigned NOT NULL,
+  `permission_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `download_id` varchar(32) NOT NULL,
   `product_id` bigint(20) unsigned NOT NULL,
   `order_id` bigint(20) unsigned NOT NULL DEFAULT '0',
@@ -1104,8 +1809,11 @@ CREATE TABLE IF NOT EXISTS `wp_woocommerce_downloadable_product_permissions` (
   `downloads_remaining` varchar(9) DEFAULT NULL,
   `access_granted` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `access_expires` datetime DEFAULT NULL,
-  `download_count` bigint(20) unsigned NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `download_count` bigint(20) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`permission_id`),
+  KEY `download_order_key_product` (`product_id`,`order_id`,`order_key`(16),`download_id`),
+  KEY `download_order_product` (`download_id`,`order_id`,`product_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -1114,13 +1822,15 @@ CREATE TABLE IF NOT EXISTS `wp_woocommerce_downloadable_product_permissions` (
 --
 
 CREATE TABLE IF NOT EXISTS `wp_woocommerce_log` (
-  `log_id` bigint(20) unsigned NOT NULL,
+  `log_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `timestamp` datetime NOT NULL,
   `level` smallint(4) NOT NULL,
   `source` varchar(200) NOT NULL,
   `message` longtext NOT NULL,
-  `context` longtext
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `context` longtext,
+  PRIMARY KEY (`log_id`),
+  KEY `level` (`level`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -1129,11 +1839,14 @@ CREATE TABLE IF NOT EXISTS `wp_woocommerce_log` (
 --
 
 CREATE TABLE IF NOT EXISTS `wp_woocommerce_order_itemmeta` (
-  `meta_id` bigint(20) unsigned NOT NULL,
+  `meta_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `order_item_id` bigint(20) unsigned NOT NULL,
   `meta_key` varchar(255) DEFAULT NULL,
-  `meta_value` longtext
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `meta_value` longtext,
+  PRIMARY KEY (`meta_id`),
+  KEY `order_item_id` (`order_item_id`),
+  KEY `meta_key` (`meta_key`(32))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -1142,11 +1855,13 @@ CREATE TABLE IF NOT EXISTS `wp_woocommerce_order_itemmeta` (
 --
 
 CREATE TABLE IF NOT EXISTS `wp_woocommerce_order_items` (
-  `order_item_id` bigint(20) unsigned NOT NULL,
+  `order_item_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `order_item_name` text NOT NULL,
   `order_item_type` varchar(200) NOT NULL DEFAULT '',
-  `order_id` bigint(20) unsigned NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `order_id` bigint(20) unsigned NOT NULL,
+  PRIMARY KEY (`order_item_id`),
+  KEY `order_id` (`order_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -1155,11 +1870,14 @@ CREATE TABLE IF NOT EXISTS `wp_woocommerce_order_items` (
 --
 
 CREATE TABLE IF NOT EXISTS `wp_woocommerce_payment_tokenmeta` (
-  `meta_id` bigint(20) unsigned NOT NULL,
+  `meta_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `payment_token_id` bigint(20) unsigned NOT NULL,
   `meta_key` varchar(255) DEFAULT NULL,
-  `meta_value` longtext
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `meta_value` longtext,
+  PRIMARY KEY (`meta_id`),
+  KEY `payment_token_id` (`payment_token_id`),
+  KEY `meta_key` (`meta_key`(32))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -1168,13 +1886,15 @@ CREATE TABLE IF NOT EXISTS `wp_woocommerce_payment_tokenmeta` (
 --
 
 CREATE TABLE IF NOT EXISTS `wp_woocommerce_payment_tokens` (
-  `token_id` bigint(20) unsigned NOT NULL,
+  `token_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `gateway_id` varchar(200) NOT NULL,
   `token` text NOT NULL,
   `user_id` bigint(20) unsigned NOT NULL DEFAULT '0',
   `type` varchar(200) NOT NULL,
-  `is_default` tinyint(1) NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `is_default` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`token_id`),
+  KEY `user_id` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -1183,18 +1903,21 @@ CREATE TABLE IF NOT EXISTS `wp_woocommerce_payment_tokens` (
 --
 
 CREATE TABLE IF NOT EXISTS `wp_woocommerce_sessions` (
-  `session_id` bigint(20) unsigned NOT NULL,
+  `session_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `session_key` char(32) NOT NULL,
   `session_value` longtext NOT NULL,
-  `session_expiry` bigint(20) unsigned NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8;
+  `session_expiry` bigint(20) unsigned NOT NULL,
+  PRIMARY KEY (`session_key`),
+  UNIQUE KEY `session_id` (`session_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=31 ;
 
 --
 -- Дамп данных таблицы `wp_woocommerce_sessions`
 --
 
 INSERT INTO `wp_woocommerce_sessions` (`session_id`, `session_key`, `session_value`, `session_expiry`) VALUES
-(21, '1', 'a:21:{s:8:"customer";s:656:"a:24:{s:8:"postcode";s:0:"";s:4:"city";s:0:"";s:9:"address_1";s:0:"";s:7:"address";s:0:"";s:9:"address_2";s:0:"";s:5:"state";s:0:"";s:7:"country";s:2:"RU";s:17:"shipping_postcode";s:0:"";s:13:"shipping_city";s:0:"";s:18:"shipping_address_1";s:0:"";s:16:"shipping_address";s:0:"";s:18:"shipping_address_2";s:0:"";s:14:"shipping_state";s:0:"";s:16:"shipping_country";s:2:"RU";s:13:"is_vat_exempt";b:0;s:19:"calculated_shipping";b:1;s:10:"first_name";s:0:"";s:9:"last_name";s:0:"";s:7:"company";s:0:"";s:5:"phone";s:0:"";s:5:"email";s:19:"vemberg22@gmail.com";s:19:"shipping_first_name";s:0:"";s:18:"shipping_last_name";s:0:"";s:16:"shipping_company";s:0:"";}";s:4:"cart";s:309:"a:1:{s:32:"70efdf2ec9b086079795c442636b55fb";a:9:{s:10:"product_id";i:17;s:12:"variation_id";i:0;s:9:"variation";a:0:{}s:8:"quantity";i:1;s:10:"line_total";d:37000;s:13:"line_subtotal";d:37000;s:8:"line_tax";d:0;s:17:"line_subtotal_tax";d:0;s:13:"line_tax_data";a:2:{s:5:"total";a:0:{}s:8:"subtotal";a:0:{}}}}";s:15:"applied_coupons";s:6:"a:0:{}";s:23:"coupon_discount_amounts";s:6:"a:0:{}";s:27:"coupon_discount_tax_amounts";s:6:"a:0:{}";s:21:"removed_cart_contents";s:612:"a:2:{s:32:"6512bd43d9caa6e02c990b0a82652dca";a:9:{s:10:"product_id";i:11;s:12:"variation_id";i:0;s:9:"variation";a:0:{}s:8:"quantity";i:1;s:10:"line_total";d:41000;s:13:"line_subtotal";d:41000;s:8:"line_tax";d:0;s:17:"line_subtotal_tax";d:0;s:13:"line_tax_data";a:2:{s:5:"total";a:0:{}s:8:"subtotal";a:0:{}}}s:32:"6f4922f45568161a8cdf4ad2299f6d23";a:9:{s:10:"product_id";i:18;s:12:"variation_id";i:0;s:9:"variation";a:0:{}s:8:"quantity";i:1;s:10:"line_total";d:37000;s:13:"line_subtotal";d:37000;s:8:"line_tax";d:0;s:17:"line_subtotal_tax";d:0;s:13:"line_tax_data";a:2:{s:5:"total";a:0:{}s:8:"subtotal";a:0:{}}}}";s:19:"cart_contents_total";d:37000;s:5:"total";d:37000;s:8:"subtotal";i:37000;s:15:"subtotal_ex_tax";i:37000;s:9:"tax_total";i:0;s:5:"taxes";s:6:"a:0:{}";s:14:"shipping_taxes";s:6:"a:0:{}";s:13:"discount_cart";i:0;s:17:"discount_cart_tax";i:0;s:14:"shipping_total";i:0;s:18:"shipping_tax_total";i:0;s:9:"fee_total";i:0;s:4:"fees";s:6:"a:0:{}";s:10:"wc_notices";N;s:21:"chosen_payment_method";s:0:"";}', 1495998076);
+(29, '1', 'a:21:{s:8:"customer";s:656:"a:24:{s:8:"postcode";s:0:"";s:4:"city";s:0:"";s:9:"address_1";s:0:"";s:7:"address";s:0:"";s:9:"address_2";s:0:"";s:5:"state";s:0:"";s:7:"country";s:2:"RU";s:17:"shipping_postcode";s:0:"";s:13:"shipping_city";s:0:"";s:18:"shipping_address_1";s:0:"";s:16:"shipping_address";s:0:"";s:18:"shipping_address_2";s:0:"";s:14:"shipping_state";s:0:"";s:16:"shipping_country";s:2:"RU";s:13:"is_vat_exempt";b:0;s:19:"calculated_shipping";b:1;s:10:"first_name";s:0:"";s:9:"last_name";s:0:"";s:7:"company";s:0:"";s:5:"phone";s:0:"";s:5:"email";s:19:"vemberg22@gmail.com";s:19:"shipping_first_name";s:0:"";s:18:"shipping_last_name";s:0:"";s:16:"shipping_company";s:0:"";}";s:4:"cart";s:6:"a:0:{}";s:15:"applied_coupons";s:6:"a:0:{}";s:23:"coupon_discount_amounts";s:6:"a:0:{}";s:27:"coupon_discount_tax_amounts";s:6:"a:0:{}";s:21:"removed_cart_contents";s:1220:"a:4:{s:32:"6512bd43d9caa6e02c990b0a82652dca";a:9:{s:10:"product_id";i:11;s:12:"variation_id";i:0;s:9:"variation";a:0:{}s:8:"quantity";i:1;s:10:"line_total";d:41000;s:13:"line_subtotal";d:41000;s:8:"line_tax";d:0;s:17:"line_subtotal_tax";d:0;s:13:"line_tax_data";a:2:{s:5:"total";a:0:{}s:8:"subtotal";a:0:{}}}s:32:"6f4922f45568161a8cdf4ad2299f6d23";a:9:{s:10:"product_id";i:18;s:12:"variation_id";i:0;s:9:"variation";a:0:{}s:8:"quantity";i:1;s:10:"line_total";d:37000;s:13:"line_subtotal";d:37000;s:8:"line_tax";d:0;s:17:"line_subtotal_tax";d:0;s:13:"line_tax_data";a:2:{s:5:"total";a:0:{}s:8:"subtotal";a:0:{}}}s:32:"34173cb38f07f89ddbebc2ac9128303f";a:9:{s:10:"product_id";i:30;s:12:"variation_id";i:0;s:9:"variation";a:0:{}s:8:"quantity";i:4;s:10:"line_total";d:344000;s:13:"line_subtotal";d:344000;s:8:"line_tax";d:0;s:17:"line_subtotal_tax";d:0;s:13:"line_tax_data";a:2:{s:5:"total";a:0:{}s:8:"subtotal";a:0:{}}}s:32:"70efdf2ec9b086079795c442636b55fb";a:9:{s:10:"product_id";i:17;s:12:"variation_id";i:0;s:9:"variation";a:0:{}s:8:"quantity";i:1;s:10:"line_total";d:37000;s:13:"line_subtotal";d:37000;s:8:"line_tax";d:0;s:17:"line_subtotal_tax";d:0;s:13:"line_tax_data";a:2:{s:5:"total";a:0:{}s:8:"subtotal";a:0:{}}}}";s:19:"cart_contents_total";i:0;s:5:"total";i:0;s:8:"subtotal";i:0;s:15:"subtotal_ex_tax";i:0;s:9:"tax_total";i:0;s:5:"taxes";s:6:"a:0:{}";s:14:"shipping_taxes";s:6:"a:0:{}";s:13:"discount_cart";i:0;s:17:"discount_cart_tax";i:0;s:14:"shipping_total";i:0;s:18:"shipping_tax_total";i:0;s:9:"fee_total";i:0;s:4:"fees";s:6:"a:0:{}";s:10:"wc_notices";N;s:21:"chosen_payment_method";s:0:"";}', 1496148890),
+(30, '5f1a602aae46e1e1add57462be0b61b5', 'a:19:{s:4:"cart";s:309:"a:1:{s:32:"072b030ba126b2f4b2374f342be9ed44";a:9:{s:10:"product_id";i:60;s:12:"variation_id";i:0;s:9:"variation";a:0:{}s:8:"quantity";i:1;s:10:"line_total";d:92000;s:13:"line_subtotal";d:92000;s:8:"line_tax";d:0;s:17:"line_subtotal_tax";d:0;s:13:"line_tax_data";a:2:{s:5:"total";a:0:{}s:8:"subtotal";a:0:{}}}}";s:15:"applied_coupons";s:6:"a:0:{}";s:23:"coupon_discount_amounts";s:6:"a:0:{}";s:27:"coupon_discount_tax_amounts";s:6:"a:0:{}";s:21:"removed_cart_contents";s:6:"a:0:{}";s:19:"cart_contents_total";d:92000;s:5:"total";i:0;s:8:"subtotal";i:92000;s:15:"subtotal_ex_tax";i:92000;s:9:"tax_total";i:0;s:5:"taxes";s:6:"a:0:{}";s:14:"shipping_taxes";s:6:"a:0:{}";s:13:"discount_cart";i:0;s:17:"discount_cart_tax";i:0;s:14:"shipping_total";i:0;s:18:"shipping_tax_total";i:0;s:9:"fee_total";i:0;s:4:"fees";s:6:"a:0:{}";s:8:"customer";s:636:"a:24:{s:8:"postcode";s:0:"";s:4:"city";s:0:"";s:9:"address_1";s:0:"";s:7:"address";s:0:"";s:9:"address_2";s:0:"";s:5:"state";s:0:"";s:7:"country";s:2:"RU";s:17:"shipping_postcode";s:0:"";s:13:"shipping_city";s:0:"";s:18:"shipping_address_1";s:0:"";s:16:"shipping_address";s:0:"";s:18:"shipping_address_2";s:0:"";s:14:"shipping_state";s:0:"";s:16:"shipping_country";s:2:"RU";s:13:"is_vat_exempt";b:0;s:19:"calculated_shipping";b:0;s:10:"first_name";s:0:"";s:9:"last_name";s:0:"";s:7:"company";s:0:"";s:5:"phone";s:0:"";s:5:"email";s:0:"";s:19:"shipping_first_name";s:0:"";s:18:"shipping_last_name";s:0:"";s:16:"shipping_company";s:0:"";}";}', 1496215472);
 
 -- --------------------------------------------------------
 
@@ -1203,10 +1926,11 @@ INSERT INTO `wp_woocommerce_sessions` (`session_id`, `session_key`, `session_val
 --
 
 CREATE TABLE IF NOT EXISTS `wp_woocommerce_shipping_zones` (
-  `zone_id` bigint(20) unsigned NOT NULL,
+  `zone_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `zone_name` varchar(200) NOT NULL,
-  `zone_order` bigint(20) unsigned NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `zone_order` bigint(20) unsigned NOT NULL,
+  PRIMARY KEY (`zone_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -1215,11 +1939,14 @@ CREATE TABLE IF NOT EXISTS `wp_woocommerce_shipping_zones` (
 --
 
 CREATE TABLE IF NOT EXISTS `wp_woocommerce_shipping_zone_locations` (
-  `location_id` bigint(20) unsigned NOT NULL,
+  `location_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `zone_id` bigint(20) unsigned NOT NULL,
   `location_code` varchar(200) NOT NULL,
-  `location_type` varchar(40) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `location_type` varchar(40) NOT NULL,
+  PRIMARY KEY (`location_id`),
+  KEY `location_id` (`location_id`),
+  KEY `location_type_code` (`location_type`(10),`location_code`(20))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -1229,11 +1956,12 @@ CREATE TABLE IF NOT EXISTS `wp_woocommerce_shipping_zone_locations` (
 
 CREATE TABLE IF NOT EXISTS `wp_woocommerce_shipping_zone_methods` (
   `zone_id` bigint(20) unsigned NOT NULL,
-  `instance_id` bigint(20) unsigned NOT NULL,
+  `instance_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `method_id` varchar(200) NOT NULL,
   `method_order` bigint(20) unsigned NOT NULL,
-  `is_enabled` tinyint(1) NOT NULL DEFAULT '1'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `is_enabled` tinyint(1) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`instance_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -1242,7 +1970,7 @@ CREATE TABLE IF NOT EXISTS `wp_woocommerce_shipping_zone_methods` (
 --
 
 CREATE TABLE IF NOT EXISTS `wp_woocommerce_tax_rates` (
-  `tax_rate_id` bigint(20) unsigned NOT NULL,
+  `tax_rate_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `tax_rate_country` varchar(2) NOT NULL DEFAULT '',
   `tax_rate_state` varchar(200) NOT NULL DEFAULT '',
   `tax_rate` varchar(8) NOT NULL DEFAULT '',
@@ -1251,8 +1979,13 @@ CREATE TABLE IF NOT EXISTS `wp_woocommerce_tax_rates` (
   `tax_rate_compound` int(1) NOT NULL DEFAULT '0',
   `tax_rate_shipping` int(1) NOT NULL DEFAULT '1',
   `tax_rate_order` bigint(20) unsigned NOT NULL,
-  `tax_rate_class` varchar(200) NOT NULL DEFAULT ''
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `tax_rate_class` varchar(200) NOT NULL DEFAULT '',
+  PRIMARY KEY (`tax_rate_id`),
+  KEY `tax_rate_country` (`tax_rate_country`),
+  KEY `tax_rate_state` (`tax_rate_state`(2)),
+  KEY `tax_rate_class` (`tax_rate_class`(10)),
+  KEY `tax_rate_priority` (`tax_rate_priority`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -1261,350 +1994,15 @@ CREATE TABLE IF NOT EXISTS `wp_woocommerce_tax_rates` (
 --
 
 CREATE TABLE IF NOT EXISTS `wp_woocommerce_tax_rate_locations` (
-  `location_id` bigint(20) unsigned NOT NULL,
+  `location_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `location_code` varchar(200) NOT NULL,
   `tax_rate_id` bigint(20) unsigned NOT NULL,
-  `location_type` varchar(40) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `location_type` varchar(40) NOT NULL,
+  PRIMARY KEY (`location_id`),
+  KEY `tax_rate_id` (`tax_rate_id`),
+  KEY `location_type_code` (`location_type`(10),`location_code`(20))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
---
--- Индексы сохранённых таблиц
---
-
---
--- Индексы таблицы `wp_commentmeta`
---
-ALTER TABLE `wp_commentmeta`
-  ADD PRIMARY KEY (`meta_id`),
-  ADD KEY `comment_id` (`comment_id`),
-  ADD KEY `meta_key` (`meta_key`(191));
-
---
--- Индексы таблицы `wp_comments`
---
-ALTER TABLE `wp_comments`
-  ADD PRIMARY KEY (`comment_ID`),
-  ADD KEY `comment_post_ID` (`comment_post_ID`),
-  ADD KEY `comment_approved_date_gmt` (`comment_approved`,`comment_date_gmt`),
-  ADD KEY `comment_date_gmt` (`comment_date_gmt`),
-  ADD KEY `comment_parent` (`comment_parent`),
-  ADD KEY `comment_author_email` (`comment_author_email`(10)),
-  ADD KEY `woo_idx_comment_type` (`comment_type`);
-
---
--- Индексы таблицы `wp_links`
---
-ALTER TABLE `wp_links`
-  ADD PRIMARY KEY (`link_id`),
-  ADD KEY `link_visible` (`link_visible`);
-
---
--- Индексы таблицы `wp_options`
---
-ALTER TABLE `wp_options`
-  ADD PRIMARY KEY (`option_id`),
-  ADD UNIQUE KEY `option_name` (`option_name`);
-
---
--- Индексы таблицы `wp_postmeta`
---
-ALTER TABLE `wp_postmeta`
-  ADD PRIMARY KEY (`meta_id`),
-  ADD KEY `post_id` (`post_id`),
-  ADD KEY `meta_key` (`meta_key`(191));
-
---
--- Индексы таблицы `wp_posts`
---
-ALTER TABLE `wp_posts`
-  ADD PRIMARY KEY (`ID`),
-  ADD KEY `post_name` (`post_name`(191)),
-  ADD KEY `type_status_date` (`post_type`,`post_status`,`post_date`,`ID`),
-  ADD KEY `post_parent` (`post_parent`),
-  ADD KEY `post_author` (`post_author`);
-
---
--- Индексы таблицы `wp_termmeta`
---
-ALTER TABLE `wp_termmeta`
-  ADD PRIMARY KEY (`meta_id`),
-  ADD KEY `term_id` (`term_id`),
-  ADD KEY `meta_key` (`meta_key`(191));
-
---
--- Индексы таблицы `wp_terms`
---
-ALTER TABLE `wp_terms`
-  ADD PRIMARY KEY (`term_id`),
-  ADD KEY `slug` (`slug`(191)),
-  ADD KEY `name` (`name`(191));
-
---
--- Индексы таблицы `wp_term_relationships`
---
-ALTER TABLE `wp_term_relationships`
-  ADD PRIMARY KEY (`object_id`,`term_taxonomy_id`),
-  ADD KEY `term_taxonomy_id` (`term_taxonomy_id`);
-
---
--- Индексы таблицы `wp_term_taxonomy`
---
-ALTER TABLE `wp_term_taxonomy`
-  ADD PRIMARY KEY (`term_taxonomy_id`),
-  ADD UNIQUE KEY `term_id_taxonomy` (`term_id`,`taxonomy`),
-  ADD KEY `taxonomy` (`taxonomy`);
-
---
--- Индексы таблицы `wp_usermeta`
---
-ALTER TABLE `wp_usermeta`
-  ADD PRIMARY KEY (`umeta_id`),
-  ADD KEY `user_id` (`user_id`),
-  ADD KEY `meta_key` (`meta_key`(191));
-
---
--- Индексы таблицы `wp_users`
---
-ALTER TABLE `wp_users`
-  ADD PRIMARY KEY (`ID`),
-  ADD KEY `user_login_key` (`user_login`),
-  ADD KEY `user_nicename` (`user_nicename`),
-  ADD KEY `user_email` (`user_email`);
-
---
--- Индексы таблицы `wp_woocommerce_api_keys`
---
-ALTER TABLE `wp_woocommerce_api_keys`
-  ADD PRIMARY KEY (`key_id`),
-  ADD KEY `consumer_key` (`consumer_key`),
-  ADD KEY `consumer_secret` (`consumer_secret`);
-
---
--- Индексы таблицы `wp_woocommerce_attribute_taxonomies`
---
-ALTER TABLE `wp_woocommerce_attribute_taxonomies`
-  ADD PRIMARY KEY (`attribute_id`),
-  ADD KEY `attribute_name` (`attribute_name`(20));
-
---
--- Индексы таблицы `wp_woocommerce_downloadable_product_permissions`
---
-ALTER TABLE `wp_woocommerce_downloadable_product_permissions`
-  ADD PRIMARY KEY (`permission_id`),
-  ADD KEY `download_order_key_product` (`product_id`,`order_id`,`order_key`(16),`download_id`),
-  ADD KEY `download_order_product` (`download_id`,`order_id`,`product_id`);
-
---
--- Индексы таблицы `wp_woocommerce_log`
---
-ALTER TABLE `wp_woocommerce_log`
-  ADD PRIMARY KEY (`log_id`),
-  ADD KEY `level` (`level`);
-
---
--- Индексы таблицы `wp_woocommerce_order_itemmeta`
---
-ALTER TABLE `wp_woocommerce_order_itemmeta`
-  ADD PRIMARY KEY (`meta_id`),
-  ADD KEY `order_item_id` (`order_item_id`),
-  ADD KEY `meta_key` (`meta_key`(32));
-
---
--- Индексы таблицы `wp_woocommerce_order_items`
---
-ALTER TABLE `wp_woocommerce_order_items`
-  ADD PRIMARY KEY (`order_item_id`),
-  ADD KEY `order_id` (`order_id`);
-
---
--- Индексы таблицы `wp_woocommerce_payment_tokenmeta`
---
-ALTER TABLE `wp_woocommerce_payment_tokenmeta`
-  ADD PRIMARY KEY (`meta_id`),
-  ADD KEY `payment_token_id` (`payment_token_id`),
-  ADD KEY `meta_key` (`meta_key`(32));
-
---
--- Индексы таблицы `wp_woocommerce_payment_tokens`
---
-ALTER TABLE `wp_woocommerce_payment_tokens`
-  ADD PRIMARY KEY (`token_id`),
-  ADD KEY `user_id` (`user_id`);
-
---
--- Индексы таблицы `wp_woocommerce_sessions`
---
-ALTER TABLE `wp_woocommerce_sessions`
-  ADD PRIMARY KEY (`session_key`),
-  ADD UNIQUE KEY `session_id` (`session_id`);
-
---
--- Индексы таблицы `wp_woocommerce_shipping_zones`
---
-ALTER TABLE `wp_woocommerce_shipping_zones`
-  ADD PRIMARY KEY (`zone_id`);
-
---
--- Индексы таблицы `wp_woocommerce_shipping_zone_locations`
---
-ALTER TABLE `wp_woocommerce_shipping_zone_locations`
-  ADD PRIMARY KEY (`location_id`),
-  ADD KEY `location_id` (`location_id`),
-  ADD KEY `location_type_code` (`location_type`(10),`location_code`(20));
-
---
--- Индексы таблицы `wp_woocommerce_shipping_zone_methods`
---
-ALTER TABLE `wp_woocommerce_shipping_zone_methods`
-  ADD PRIMARY KEY (`instance_id`);
-
---
--- Индексы таблицы `wp_woocommerce_tax_rates`
---
-ALTER TABLE `wp_woocommerce_tax_rates`
-  ADD PRIMARY KEY (`tax_rate_id`),
-  ADD KEY `tax_rate_country` (`tax_rate_country`),
-  ADD KEY `tax_rate_state` (`tax_rate_state`(2)),
-  ADD KEY `tax_rate_class` (`tax_rate_class`(10)),
-  ADD KEY `tax_rate_priority` (`tax_rate_priority`);
-
---
--- Индексы таблицы `wp_woocommerce_tax_rate_locations`
---
-ALTER TABLE `wp_woocommerce_tax_rate_locations`
-  ADD PRIMARY KEY (`location_id`),
-  ADD KEY `tax_rate_id` (`tax_rate_id`),
-  ADD KEY `location_type_code` (`location_type`(10),`location_code`(20));
-
---
--- AUTO_INCREMENT для сохранённых таблиц
---
-
---
--- AUTO_INCREMENT для таблицы `wp_commentmeta`
---
-ALTER TABLE `wp_commentmeta`
-  MODIFY `meta_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT для таблицы `wp_comments`
---
-ALTER TABLE `wp_comments`
-  MODIFY `comment_ID` bigint(20) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
---
--- AUTO_INCREMENT для таблицы `wp_links`
---
-ALTER TABLE `wp_links`
-  MODIFY `link_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT для таблицы `wp_options`
---
-ALTER TABLE `wp_options`
-  MODIFY `option_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=439;
---
--- AUTO_INCREMENT для таблицы `wp_postmeta`
---
-ALTER TABLE `wp_postmeta`
-  MODIFY `meta_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=207;
---
--- AUTO_INCREMENT для таблицы `wp_posts`
---
-ALTER TABLE `wp_posts`
-  MODIFY `ID` bigint(20) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=24;
---
--- AUTO_INCREMENT для таблицы `wp_termmeta`
---
-ALTER TABLE `wp_termmeta`
-  MODIFY `meta_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=44;
---
--- AUTO_INCREMENT для таблицы `wp_terms`
---
-ALTER TABLE `wp_terms`
-  MODIFY `term_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=49;
---
--- AUTO_INCREMENT для таблицы `wp_term_taxonomy`
---
-ALTER TABLE `wp_term_taxonomy`
-  MODIFY `term_taxonomy_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=49;
---
--- AUTO_INCREMENT для таблицы `wp_usermeta`
---
-ALTER TABLE `wp_usermeta`
-  MODIFY `umeta_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=22;
---
--- AUTO_INCREMENT для таблицы `wp_users`
---
-ALTER TABLE `wp_users`
-  MODIFY `ID` bigint(20) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
---
--- AUTO_INCREMENT для таблицы `wp_woocommerce_api_keys`
---
-ALTER TABLE `wp_woocommerce_api_keys`
-  MODIFY `key_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT для таблицы `wp_woocommerce_attribute_taxonomies`
---
-ALTER TABLE `wp_woocommerce_attribute_taxonomies`
-  MODIFY `attribute_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=17;
---
--- AUTO_INCREMENT для таблицы `wp_woocommerce_downloadable_product_permissions`
---
-ALTER TABLE `wp_woocommerce_downloadable_product_permissions`
-  MODIFY `permission_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT для таблицы `wp_woocommerce_log`
---
-ALTER TABLE `wp_woocommerce_log`
-  MODIFY `log_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT для таблицы `wp_woocommerce_order_itemmeta`
---
-ALTER TABLE `wp_woocommerce_order_itemmeta`
-  MODIFY `meta_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT для таблицы `wp_woocommerce_order_items`
---
-ALTER TABLE `wp_woocommerce_order_items`
-  MODIFY `order_item_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT для таблицы `wp_woocommerce_payment_tokenmeta`
---
-ALTER TABLE `wp_woocommerce_payment_tokenmeta`
-  MODIFY `meta_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT для таблицы `wp_woocommerce_payment_tokens`
---
-ALTER TABLE `wp_woocommerce_payment_tokens`
-  MODIFY `token_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT для таблицы `wp_woocommerce_sessions`
---
-ALTER TABLE `wp_woocommerce_sessions`
-  MODIFY `session_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=22;
---
--- AUTO_INCREMENT для таблицы `wp_woocommerce_shipping_zones`
---
-ALTER TABLE `wp_woocommerce_shipping_zones`
-  MODIFY `zone_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT для таблицы `wp_woocommerce_shipping_zone_locations`
---
-ALTER TABLE `wp_woocommerce_shipping_zone_locations`
-  MODIFY `location_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT для таблицы `wp_woocommerce_shipping_zone_methods`
---
-ALTER TABLE `wp_woocommerce_shipping_zone_methods`
-  MODIFY `instance_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT для таблицы `wp_woocommerce_tax_rates`
---
-ALTER TABLE `wp_woocommerce_tax_rates`
-  MODIFY `tax_rate_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT для таблицы `wp_woocommerce_tax_rate_locations`
---
-ALTER TABLE `wp_woocommerce_tax_rate_locations`
-  MODIFY `location_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
